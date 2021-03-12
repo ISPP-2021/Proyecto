@@ -13,7 +13,8 @@
 		<version>2.2.4.RELEASE</version>
 	</parent>
 
-	
+	<packaging>war</packaging>
+    
 	<properties>
 
 	    <!-- Generic properties -->
@@ -143,6 +144,14 @@
     </dependencies>
     <build>
         <plugins>
+            <plugin>
+                <groupId>com.heroku.sdk</groupId>
+                <artifactId>heroku-maven-plugin</artifactId>
+                <version>3.0.3</version>
+                <configuration>
+                    <appName>stalion73</appName>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
