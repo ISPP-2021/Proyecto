@@ -5,5 +5,5 @@ jdk: oraclejdk8
 services:
   - mysql
 before_install:
-  - mysql -e 'CREATE DATABASE tempura17;'
+  - mysql -e 'CREATE DATABASE stalion76;'
 script: mvn test -Dspring-boot.run.profiles=mysql-travis
