@@ -1,30 +1,16 @@
 package com.stalion73.model;
 
-import java.util.HashSet;
-import java.util.Set;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-
 @Entity
-@Table(name = "consumers")
-public class Consumer extends BaseEntity {
-
+@Table(name =" suppliers")
+public class Supplier extends BaseEntity{
 
     private String name;
     private String lastname;
@@ -36,8 +22,10 @@ public class Consumer extends BaseEntity {
     @JsonIgnore
 	private User user;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "consumer", fetch = FetchType.LAZY)
-    private Set<Booking> bookings;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "business_id", referencedColumnName = "id")
+    @JsonIgnore
+    private Business business;
 
     public String getName() {
         return name;
@@ -79,14 +67,12 @@ public class Consumer extends BaseEntity {
         this.user = user;
     }
 
-    public Set<Booking> getBookings() {
-        return bookings;
+    public Business getBusiness() {
+        return business;
     }
 
-    public void setBookings(Set<Booking> bookings) {
-        this.bookings = bookings;
+    public void setBusiness(Business business) {
+        this.business = business;
     }
 
-
-    
-}   
+}
