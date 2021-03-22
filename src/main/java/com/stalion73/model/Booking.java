@@ -41,15 +41,18 @@ public class Booking extends BaseEntity {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date emisionDate;
 
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
     @ManyToOne
     @JoinColumn(name ="consumer_id")
     @JsonIgnore
     private Consumer consumer;
 
     @ManyToOne
-    @JoinColumn(name ="service_id")
+    @JoinColumn(name ="servise_id")
     @JsonIgnore
-    private Service service;
+    private Servise servise;
 
     public Date getBookDate() {
         return bookDate;
@@ -75,12 +78,12 @@ public class Booking extends BaseEntity {
         this.consumer = consumer;
     }
 
-    public Service getService() {
-        return service;
+    public Servise getServise() {
+        return servise;
     }
 
-    public void setService(Service service) {
-        this.service = service;
+    public void setService(Servise service) {
+        this.servise = servise;
     }
 
 

@@ -12,8 +12,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "services")
-public class Service extends BaseEntity{
+@Table(name = "servises")
+public class Servise extends BaseEntity{
     private String name;
     private String description;
     private Double price;
@@ -26,7 +26,7 @@ public class Service extends BaseEntity{
     @JoinColumn(name ="business_id")
     private Business business;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "service", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "servise", fetch = FetchType.LAZY)
     private Set<Booking> bookings;
 
     public String getName() {

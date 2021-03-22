@@ -4,6 +4,8 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
@@ -16,7 +18,10 @@ public class Business extends BaseEntity{
 
     private String name;
     private String address;
+
+    @Enumerated(EnumType.STRING)
     private BusinessType businessType;
+    
     private Boolean automatedAccept;
     
     @OneToOne(cascade = CascadeType.ALL)
@@ -24,7 +29,7 @@ public class Business extends BaseEntity{
     private Supplier supplier;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "business", fetch = FetchType.LAZY)
-    private Set<Service> services;
+    private Set<Servise> servises;
 
     public String getName() {
         return name;
@@ -66,12 +71,12 @@ public class Business extends BaseEntity{
         this.supplier = supplier;
     }
 
-    public Set<Service> getServices() {
-        return services;
+    public Set<Servise> getServices() {
+        return servises;
     }
 
-    public void setServices(Set<Service> services) {
-        this.services = services;
+    public void setServices(Set<Servise> servises) {
+        this.servises = servises;
     }
     
 }
