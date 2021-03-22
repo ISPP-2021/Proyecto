@@ -15,3 +15,11 @@ INSERT INTO suppliers(id, name, lastName, dni, email, username) VALUES (
     '1111111A', 
     'random@gmail.com', 
     'josito');
+
+INSERT INTO business(id, supplier_id, name, address, type, automated) VALUES (
+    1,
+    1,
+    'business_name_1',
+    'address_1',
+    'HAIRDRESSER',
+    TRUE);

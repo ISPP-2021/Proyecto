@@ -3,6 +3,7 @@ package com.stalion73.model;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -12,6 +13,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "business")
 public class Business extends BaseEntity{
@@ -20,8 +23,10 @@ public class Business extends BaseEntity{
     private String address;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "type")
     private BusinessType businessType;
     
+    @Column(name = "automated")
     private Boolean automatedAccept;
     
     @OneToOne(cascade = CascadeType.ALL)
@@ -29,6 +34,7 @@ public class Business extends BaseEntity{
     private Supplier supplier;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "business", fetch = FetchType.LAZY)
+    @JsonIgnore
     private Set<Servise> servises;
 
     public String getName() {
