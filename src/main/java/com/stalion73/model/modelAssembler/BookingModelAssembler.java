@@ -5,10 +5,11 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
+import org.springframework.stereotype.Component;
 
 import com.stalion73.model.Booking;
 import com.stalion73.web.BookingController;
-
+@Component
 public class BookingModelAssembler implements RepresentationModelAssembler<Booking, EntityModel<Booking>> {
 
 	@Override
