@@ -7,3 +7,11 @@ INSERT INTO consumers(id, name, lastname, dni, email, username) VALUES (
     '00000000A', 
     'cosas@gmail.com', 
     'josito');
+
+INSERT INTO suppliers(id, name, lastName, dni, email, username) VALUES (
+    1,
+    'supplier_name_1', 
+    'supplier_lastname_1',
+    '1111111A', 
+    'random@gmail.com', 
+    'josito');
