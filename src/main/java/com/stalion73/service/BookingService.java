@@ -6,19 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.Set;
 
-import javax.validation.Valid;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import org.springframework.dao.DataAccessException;
-import org.springframework.stereotype.Service;
-
 import com.stalion73.model.Booking;
-import com.stalion73.repository.ConsumerRepository;
 
 @Service
 public class BookingService {

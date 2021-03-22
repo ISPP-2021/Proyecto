@@ -1,27 +1,18 @@
 package com.stalion73.model;
 
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
+
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
@@ -83,7 +74,7 @@ public class Booking extends BaseEntity {
     }
 
     public void setService(Servise service) {
-        this.servise = servise;
+        this.servise = service;
     }
 
 
