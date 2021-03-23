@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -26,10 +27,12 @@ public class Booking extends BaseEntity {
     
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Column(name = "book")
     private Date bookDate;
 
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Column(name = "emision")
     private Date emisionDate;
 
     @Enumerated(EnumType.STRING)
@@ -75,6 +78,18 @@ public class Booking extends BaseEntity {
 
     public void setService(Servise service) {
         this.servise = service;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public void setServise(Servise servise) {
+        this.servise = servise;
     }
 
 

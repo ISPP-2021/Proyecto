@@ -23,3 +23,11 @@ INSERT INTO business(id, supplier_id, name, address, type, automated) VALUES (
     'address_1',
     'HAIRDRESSER',
     TRUE);
+
+INSERT INTO bookings(id, consumer_id, servise_id, book, emision, status) VALUES (
+    1,
+    1,
+    null,
+    '2021-01-27 22:00:00',
+    '2022-01-27 22:00:00',
+    'IN_PROGRESS');
