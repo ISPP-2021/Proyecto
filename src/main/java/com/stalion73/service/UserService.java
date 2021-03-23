@@ -51,4 +51,9 @@ public class UserService {
 	public Optional<User> findUser(String username) {
 		return userRepository.findById(username);
 	}
+
+	@Transactional
+    public void delete(User user) {
+        userRepository.delete(user);
+    }
 }
