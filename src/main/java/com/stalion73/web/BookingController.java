@@ -5,6 +5,10 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.MediaTypes;
+import org.springframework.hateoas.mediatype.problem.Problem;
+
+
 
 import java.util.Date;
 import java.util.List;
@@ -134,7 +138,12 @@ public class BookingController {
             return ResponseEntity.ok(assembler.toModel(booking));
         }
 
-        return new ResponseEntity<Booking>(HttpStatus.BAD_REQUEST);
+        return ResponseEntity
+        .status(HttpStatus.METHOD_NOT_ALLOWED) 
+        .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) 
+        .body(Problem.create()
+            .withTitle("Method not allowed") 
+            .withDetail("You can't cancel a booking that is in the " + booking.getStatus() + " status"));
     }
 
     @PutMapping("/{id}/complete")
