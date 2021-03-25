@@ -1,25 +1,16 @@
 package com.stalion73.model;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 
 @Entity
 @Table(name = "consumers")

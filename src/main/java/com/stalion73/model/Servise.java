@@ -1,6 +1,5 @@
 package com.stalion73.model;
 
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
