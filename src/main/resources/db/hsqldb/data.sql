@@ -24,10 +24,30 @@ INSERT INTO business(id, supplier_id, name, address, type, automated) VALUES (
     'HAIRDRESSER',
     TRUE);
 
+INSERT INTO servises(id, name, description, price, duration, capacity, deposit, tax, business_id) VALUES (
+    1,
+    'servise_name',
+    'servise_description_1',
+    20.3,
+    2,
+    2,
+    40.7,
+    0.05,
+    1
+);
+
 INSERT INTO bookings(id, consumer_id, servise_id, book, emision, status) VALUES (
     1,
     1,
-    null,
+    1,
     '2021-01-27 22:00:00',
     '2022-01-27 22:00:00',
+    'IN_PROGRESS');
+
+INSERT INTO bookings(id, consumer_id, servise_id, book, emision, status) VALUES (
+    2,
+    1,
+    null,
+    '2021-01-27 22:00:00',
+    '2023-01-27 22:00:00',
     'IN_PROGRESS');

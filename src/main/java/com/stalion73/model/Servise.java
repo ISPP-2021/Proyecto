@@ -10,19 +10,23 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "servises")
 public class Servise extends BaseEntity{
+
     private String name;
     private String description;
     private Double price;
     private Integer duration;
     private Integer capacity;
     private Double deposit;
-    private Double Tax;
+    private Double tax;
 
     @ManyToOne
     @JoinColumn(name ="business_id")
+    @JsonIgnore
     private Business business;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "servise", fetch = FetchType.LAZY)
@@ -77,11 +81,11 @@ public class Servise extends BaseEntity{
     }
 
     public Double getTax() {
-        return Tax;
+        return tax;
     }
 
     public void setTax(Double tax) {
-        Tax = tax;
+        this.tax = tax;
     }
 
     public Business getBusiness() {
