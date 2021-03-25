@@ -22,5 +22,8 @@ public class ConsumerModelAssembler implements RepresentationModelAssembler<Cons
         linkTo(methodOn(ConsumerController.class).all()).withRel("/consumers"));
 
     return consumerModel;
+    
+    
+    
   }
 }
