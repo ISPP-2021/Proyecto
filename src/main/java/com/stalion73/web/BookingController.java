@@ -149,6 +149,4 @@ public class BookingController {
         return new ResponseEntity<Booking>(HttpStatus.BAD_REQUEST);
     }
 
-
-
 }

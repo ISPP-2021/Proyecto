@@ -1,5 +1,6 @@
 package com.stalion73.model.modelAssembler;
 
+
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 import com.stalion73.web.BookingController;
@@ -9,6 +10,7 @@ import com.stalion73.model.Status;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
+
 
 @Component
 public class BookingModelAssembler implements RepresentationModelAssembler<Booking, EntityModel<Booking>> {
