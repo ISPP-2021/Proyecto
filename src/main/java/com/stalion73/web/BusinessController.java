@@ -29,6 +29,13 @@ public class BusinessController {
     @Autowired
     private final BusinessService businessService;
 
+    private final static HttpHeaders headers = new HttpHeaders();
+
+
+    public  static void setup(){
+        headers.setAccessControlAllowOrigin("*");
+    }
+
     public BusinessController(BusinessService businessService){
         this.businessService = businessService;
     }
@@ -39,7 +46,7 @@ public class BusinessController {
         if (businesses.isEmpty()) {
             return new ResponseEntity<Collection<Business>>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<Collection<Business>>(businesses, HttpStatus.OK);
+        return new ResponseEntity<Collection<Business>>(businesses, headers, HttpStatus.OK);
 
     }
 
@@ -49,7 +56,7 @@ public class BusinessController {
         if (business == null) {
             return new ResponseEntity<Business>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<Business>(business, HttpStatus.OK);
+        return new ResponseEntity<Business>(business, headers, HttpStatus.OK);
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST, produces = "application/json")
@@ -107,19 +114,19 @@ public class BusinessController {
                         return newBusiness;
                     });
 
-		return new ResponseEntity<Business>(updatedBusiness, HttpStatus.NO_CONTENT);
+		return new ResponseEntity<Business>(updatedBusiness, headers, HttpStatus.NO_CONTENT);
 	}
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "application/json")
 	public ResponseEntity<Void> delete(@PathVariable("id") Integer id){
 		Business business = this.businessService.findById(id).get();
 		if(business == null){
-			return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Void>(headers, HttpStatus.NOT_FOUND);
 		}
         business.setSupplier(null);
         business.setServices(null);
 		this.businessService.delete(business);
-		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+		return new ResponseEntity<Void>(headers, HttpStatus.NO_CONTENT);
 	}
 
 }

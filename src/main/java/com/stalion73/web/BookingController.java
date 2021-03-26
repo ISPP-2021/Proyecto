@@ -47,6 +47,15 @@ public class BookingController {
     @Autowired
     private final BookingModelAssembler assembler;
 
+    private final static HttpHeaders headers = new HttpHeaders();
+
+
+    public  static void setup(){
+        headers.setAccessControlAllowOrigin("*");
+   }
+
+
+
     public BookingController(BookingService bookingService, BookingModelAssembler assembler){
         this.bookingService = bookingService;
         this.assembler = assembler;
