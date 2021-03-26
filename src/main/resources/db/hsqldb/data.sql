@@ -51,3 +51,11 @@ INSERT INTO bookings(id, consumer_id, servise_id, book, emision, status) VALUES 
     '2021-01-27 22:00:00',
     '2023-01-27 22:00:00',
     'IN_PROGRESS');
+
+INSERT INTO options(id, automated_Accept, limit_Automated, default_Deposit, deposit_Time_Limit, business_id) VALUES (
+    1,
+    true,
+    3,
+    0.7,
+    5,
+    1);
