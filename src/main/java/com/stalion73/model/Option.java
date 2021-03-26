@@ -19,11 +19,6 @@ public class Option extends BaseEntity{
     //En minutos.
     private int depositTimeLimit;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "business_id", referencedColumnName = "id")
-    @JsonIgnore
-    private Business business;
-
     public boolean isAutomatedAccept() {
         return automatedAccept;
     }
@@ -56,11 +51,4 @@ public class Option extends BaseEntity{
         this.depositTimeLimit = depositTimeLimit;
     }
 
-    public Business getBusiness() {
-        return business;
-    }
-
-    public void setBusiness(Business business) {
-        this.business = business;
-    }
 }
