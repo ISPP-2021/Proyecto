@@ -120,8 +120,6 @@ public class BookingController {
                             booking.setEmisionDate(emisionDate);
                             Status status = newBooking.getStatus() == null ? booking.getStatus() : newBooking.getStatus();
                             booking.setStatus(status);
-                            Consumer consumer = newBooking.getConsumer() == null ? booking.getConsumer() : newBooking.getConsumer();
-                            booking.setConsumer(consumer);
                             Servise servise = newBooking.getServise() == null ? booking.getServise() : newBooking.getServise();
                             booking.setServise(servise);
                             this.bookingService.save(booking);
