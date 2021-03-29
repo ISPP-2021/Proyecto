@@ -24,12 +24,12 @@ public class Servise extends BaseEntity{
     private Double deposit;
     private Double tax;
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name ="business_id")
     @JsonIgnore
     private Business business;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "servise", fetch = FetchType.LAZY)
+    @OneToMany(orphanRemoval = true, mappedBy =  "servise", fetch = FetchType.LAZY)
     private Set<Booking> bookings;
 
     public String getName() {

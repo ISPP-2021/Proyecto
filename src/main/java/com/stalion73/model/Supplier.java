@@ -14,7 +14,7 @@ public class Supplier extends Person{
 
 
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "business_id", referencedColumnName = "id")
     @JsonIgnore
     private Business business;

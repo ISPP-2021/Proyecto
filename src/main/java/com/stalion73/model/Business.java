@@ -33,7 +33,7 @@ public class Business extends BaseEntity{
     @JoinColumn(name = "supplier_id", referencedColumnName = "id")
     private Supplier supplier;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "business", fetch = FetchType.LAZY)
+    @OneToMany(orphanRemoval = true, mappedBy = "business", fetch = FetchType.LAZY)
     private Set<Servise> servises;
 
     @OneToOne(cascade = CascadeType.ALL)
