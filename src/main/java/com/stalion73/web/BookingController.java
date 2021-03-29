@@ -62,29 +62,35 @@ public class BookingController {
     }
 
     @GetMapping
-    public CollectionModel<EntityModel<Booking>> all() {
+    public ResponseEntity<List<EntityModel<Booking>>> all() {
+        BookingController.setup();
         List<EntityModel<Booking>> bookings = this.bookingService.findAll().stream()
                         .map(assembler::toModel)
                         .collect(Collectors.toList());
 
-        return new CollectionModel(bookings, 
-            linkTo(methodOn(BookingController.class).all()).withSelfRel());
-
+        return ResponseEntity
+                .status(HttpStatus.OK) 
+                .headers(headers) 
+                .body(bookings);
     }
 
     @GetMapping("/{id}")
-    public EntityModel<Booking> one(@PathVariable Integer id) {
+    public ResponseEntity<EntityModel<Booking>> one(@PathVariable Integer id) {
+        BookingController.setup();
         Booking booking = bookingService.findById((id))
             				.orElseThrow(null);
 
-        return assembler.toModel(booking);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .headers(headers)
+                .body(assembler.toModel(booking));
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST, produces = "application/json")
     public ResponseEntity<Booking> create(@Valid @RequestBody Booking booking,
                                             BindingResult bindingResult, 
                                             UriComponentsBuilder ucBuilder) {
-
+        BookingController.setup();
         BindingErrorsResponse errors = new BindingErrorsResponse();
         HttpHeaders headers = new HttpHeaders();
         if (bindingResult.hasErrors() || (booking == null)) {
@@ -101,6 +107,7 @@ public class BookingController {
 	public ResponseEntity<Booking> update(@PathVariable("id") Integer id, 
                                             @RequestBody @Valid Booking newBooking, 
                                             BindingResult bindingResult){
+        BookingController.setup();
 		BindingErrorsResponse errors = new BindingErrorsResponse();
 		HttpHeaders headers = new HttpHeaders();
 		if(bindingResult.hasErrors() || (newBooking == null)){
@@ -138,6 +145,7 @@ public class BookingController {
 
     @DeleteMapping("/{id}/cancel")
     public ResponseEntity<?> cancel(@PathVariable Integer id) {
+        BookingController.setup();
         Booking booking = bookingService.findById(id).get();
         if (booking.getStatus() == Status.IN_PROGRESS) {
             booking.setStatus(Status.CANCELLED);
@@ -155,6 +163,7 @@ public class BookingController {
 
     @PutMapping("/{id}/complete")
     public ResponseEntity<?> complete(@PathVariable Integer id) {
+        BookingController.setup();
         Booking booking = this.bookingService.findById(id).get();        
         if (booking.getStatus() == Status.IN_PROGRESS) {
             booking.setStatus(Status.COMPLETED);
@@ -164,5 +173,13 @@ public class BookingController {
 
         return new ResponseEntity<Booking>(HttpStatus.BAD_REQUEST);
     }
+
+    @DeleteMapping("/{id}")
+	ResponseEntity<?> delete(@PathVariable Integer id) {
+        BookingController.setup();
+		this.bookingService.deleteById(id);
+	
+		return ResponseEntity.noContent().build();
+	}
 
 }
