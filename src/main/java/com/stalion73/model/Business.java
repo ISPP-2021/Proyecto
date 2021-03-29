@@ -33,9 +33,12 @@ public class Business extends BaseEntity{
     @JoinColumn(name = "supplier_id", referencedColumnName = "id")
     private Supplier supplier;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "business", fetch = FetchType.LAZY)
-    @JsonIgnore
+    @OneToMany(orphanRemoval = true, mappedBy = "business", fetch = FetchType.LAZY)
     private Set<Servise> servises;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "option_id", referencedColumnName = "id")
+    private Option option;
 
     public String getName() {
         return name;
@@ -84,5 +87,15 @@ public class Business extends BaseEntity{
     public void setServices(Set<Servise> servises) {
         this.servises = servises;
     }
+
+    public Option getOption() {
+        return option;
+    }
+
+    public void setOption(Option option) {
+        this.option = option;
+    }
+
+    
     
 }

@@ -1,4 +1,6 @@
 INSERT INTO users(username,password,enabled) VALUES ('josito','1234',TRUE);
+INSERT INTO authorities(id,username,authority) VALUES (1,'josito','consumer');
+
 
 INSERT INTO consumers(id, name, lastname, dni, email, username) VALUES (
     1,
@@ -16,7 +18,15 @@ INSERT INTO suppliers(id, name, lastName, dni, email, username) VALUES (
     'random@gmail.com', 
     'josito');
 
-INSERT INTO business(id, supplier_id, name, address, type, automated) VALUES (
+INSERT INTO options(id, automated_Accept, limit_Automated, default_Deposit, deposit_Time_Limit) VALUES (
+    1,
+    true,
+    3,
+    0.7,
+    5);
+
+INSERT INTO business(id, supplier_id, option_id, name, address, type, automated) VALUES (
+    1,
     1,
     1,
     'business_name_1',
@@ -52,10 +62,3 @@ INSERT INTO bookings(id, consumer_id, servise_id, book, emision, status) VALUES 
     '2023-01-27 22:00:00',
     'IN_PROGRESS');
 
-INSERT INTO options(id, automated_Accept, limit_Automated, default_Deposit, deposit_Time_Limit, business_id) VALUES (
-    1,
-    true,
-    3,
-    0.7,
-    5,
-    1);

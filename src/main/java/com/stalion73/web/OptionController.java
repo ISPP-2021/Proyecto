@@ -76,8 +76,6 @@ public class OptionController {
 							option.setLimitAutomated(limitAutomated);
 							Boolean automatedAccept = newOption.isAutomatedAccept();
 							option.setAutomatedAccept(automatedAccept);
-							Business business = newOption.getBusiness().getSupplier() == null ? option.getBusiness() : newOption.getBusiness();
-							option.setBusiness(business);
 							option.setAutomatedAccept(automatedAccept);
 							this.optionService.save(option);
 							return option;
@@ -98,7 +96,6 @@ public class OptionController {
 		if(option == null){
 			return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
 		}
-		option.setBusiness(null);
 		this.optionService.delete(option);
 		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 	}

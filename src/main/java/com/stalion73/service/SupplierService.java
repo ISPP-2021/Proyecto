@@ -44,4 +44,27 @@ public class SupplierService {
     public void delete(Supplier supplier) {
         supplierRepository.delete(supplier);
     }
+
+    public void update(Integer id, Supplier newSupplier){
+        Supplier updatedSupplier = this.supplierRepository.findById(id)
+                    .map(supplier -> {
+                            String name = newSupplier.getName() == null ? supplier.getName() : newSupplier.getName();
+                            supplier.setName(name);
+                            String lastName = newSupplier.getLastname() == null ? supplier.getLastname() : newSupplier.getLastname();
+                            supplier.setLastname(lastName);
+                            String dni = newSupplier.getDni() == null ? supplier.getDni() : newSupplier.getDni();
+                            supplier.setDni(dni);
+                            String email = newSupplier.getEmail() == null ? supplier.getEmail() : newSupplier.getEmail();
+                            supplier.setEmail(email);
+                            this.supplierRepository.save(supplier);
+                            return supplier;
+                        }
+                    ) 
+                    .orElseGet(() -> {
+                        newSupplier.setId(id);
+                        this.supplierRepository.save(newSupplier);
+                        return newSupplier;
+                    });
+        this.supplierRepository.save(updatedSupplier);
+    }
 }

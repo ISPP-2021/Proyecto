@@ -18,7 +18,6 @@ public class Person extends NamedEntity {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "username", referencedColumnName = "username")
-    @JsonIgnore
 	private User user;
     
 

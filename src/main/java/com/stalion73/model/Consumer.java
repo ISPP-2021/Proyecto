@@ -14,7 +14,7 @@ import javax.persistence.Table;
 public class Consumer extends Person {
 
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "consumer", fetch = FetchType.LAZY)
+    @OneToMany(orphanRemoval = true, mappedBy = "consumer", fetch = FetchType.LAZY)
     private Set<Booking> bookings;
 
 
