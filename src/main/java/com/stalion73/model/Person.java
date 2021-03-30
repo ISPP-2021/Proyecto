@@ -4,13 +4,14 @@ import javax.persistence.CascadeType;
 import javax.persistence.JoinColumn;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @MappedSuperclass
 public class Person extends NamedEntity {
     
-    
+    @NotEmpty
     private String name;
     private String lastname;
     private String dni;

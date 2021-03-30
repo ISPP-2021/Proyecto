@@ -45,6 +45,7 @@ public class SupplierService {
         supplierRepository.delete(supplier);
     }
 
+    @Transactional
     public void update(Integer id, Supplier newSupplier){
         Supplier updatedSupplier = this.supplierRepository.findById(id)
                     .map(supplier -> {
