@@ -43,6 +43,27 @@ public class ConsumerService {
     public void deleteById(Integer id){
         consumerRepository.deleteById(id);
     }
+
+    @Transactional
+    public void update(Integer id, Consumer newConsumer){
+        Consumer updatedConsumer = this.consumerRepository.findById(id)
+                    .map(consumer -> {
+                        String name = newConsumer.getName() == null ? consumer.getName() : newConsumer.getName();
+                        consumer.setName(name);
+                        String lastName = newConsumer.getLastname() == null ? consumer.getLastname() : newConsumer.getLastname();
+                        consumer.setLastname(lastName);
+                        String dni = newConsumer.getDni() == null ? consumer.getDni() : newConsumer.getDni();
+                        consumer.setDni(dni);
+                        String email = newConsumer.getEmail() == null ? consumer.getEmail() : newConsumer.getEmail();
+                        consumer.setEmail(email);
+                        this.consumerRepository.save(consumer);
+                        return consumer;
+                    })
+                    .orElseGet(() -> {
+                        return null;
+                    });
+        this.consumerRepository.save(updatedConsumer);        
+    }
     
     @Transactional
     public void delete(Consumer consumer) {
