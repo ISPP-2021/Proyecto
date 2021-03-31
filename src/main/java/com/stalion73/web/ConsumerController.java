@@ -12,17 +12,14 @@ import com.stalion73.model.modelAssembler.ConsumerModelAssembler;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
-import org.apache.tomcat.util.http.parser.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.mediatype.problem.Problem;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.server.reactive.HttpHeadResponseDecorator;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,7 +46,7 @@ public class ConsumerController{
 
     public  static void setup(){
         headers.setAccessControlAllowOrigin("*");
-   }
+   	}
     
 
     public ConsumerController(ConsumerService consumerService, ConsumerModelAssembler assembler){
@@ -59,17 +56,23 @@ public class ConsumerController{
 
 	
 	@GetMapping
-	public ResponseEntity<List<EntityModel<Consumer>>> all() {
+	public ResponseEntity<?> all() {
 		ConsumerController.setup();
 		List<EntityModel<Consumer>>  consumers = this.consumerService
 						.findAll().stream()
 						.map(assembler::toModel)
 						.collect(Collectors.toList());
-			
-		return ResponseEntity
-				.status(HttpStatus.OK)
-				.headers(headers)
-				.body(consumers);
+		if(consumers.isEmpty()){
+			return ResponseEntity
+					.status(HttpStatus.NO_CONTENT)
+					.headers(headers)
+					.body(consumers);
+		}else{
+			return ResponseEntity
+			.status(HttpStatus.OK)
+			.headers(headers)
+			.body(consumers);
+		}	
 	}
 
 	@GetMapping("/{id}")
@@ -86,11 +89,10 @@ public class ConsumerController{
 				.withTitle("Ineffected ID")
 				.withDetail("The provided ID doesn't exist"));
 		}else{
-
-        return ResponseEntity
-			.status(HttpStatus.OK) 
-			.headers(headers) 
-			.body(assembler.toModel(consumer.get()));
+			return ResponseEntity
+				.status(HttpStatus.OK) 
+				.headers(headers) 
+				.body(assembler.toModel(consumer.get()));
 		}
 	  }
 
@@ -128,10 +130,8 @@ public class ConsumerController{
 	ResponseEntity<?> update(@PathVariable("id") Integer id, @Valid @RequestBody Consumer newConsumer,
 																BindingResult bindingResult, 
                                             					UriComponentsBuilder ucBuilder) {
-
 		ConsumerController.setup();
 		BindingErrorsResponse errors = new BindingErrorsResponse();
-
 		if (bindingResult.hasErrors() || (newConsumer == null)) {
             errors.addAllErrors(bindingResult);
             headers.add("errors", errors.toJSON());

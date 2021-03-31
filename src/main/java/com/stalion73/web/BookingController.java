@@ -13,6 +13,7 @@ import org.springframework.hateoas.mediatype.problem.Problem;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -52,9 +53,7 @@ public class BookingController {
 
     public  static void setup(){
         headers.setAccessControlAllowOrigin("*");
-   }
-
-
+    }
 
     public BookingController(BookingService bookingService, BookingModelAssembler assembler){
         this.bookingService = bookingService;
@@ -62,84 +61,94 @@ public class BookingController {
     }
 
     @GetMapping
-    public ResponseEntity<List<EntityModel<Booking>>> all() {
+    public ResponseEntity<?> all() {
         BookingController.setup();
         List<EntityModel<Booking>> bookings = this.bookingService.findAll().stream()
                         .map(assembler::toModel)
                         .collect(Collectors.toList());
-
-        return ResponseEntity
+        if(bookings.isEmpty()){
+            return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .headers(headers)
+                .body(bookings);
+        }else{
+            return ResponseEntity
                 .status(HttpStatus.OK) 
                 .headers(headers) 
                 .body(bookings);
+        }
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EntityModel<Booking>> one(@PathVariable Integer id) {
+    public ResponseEntity<?> one(@PathVariable("id") Integer id) {
         BookingController.setup();
-        Booking booking = bookingService.findById((id))
-            				.orElseThrow(null);
-
-        return ResponseEntity
+        Optional<Booking> booking = bookingService.findById((id));
+        if(booking.isPresent()){
+            return ResponseEntity
                 .status(HttpStatus.OK)
                 .headers(headers)
-                .body(assembler.toModel(booking));
+                .body(assembler.toModel(booking.get()));
+        }else{
+            return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
+                .headers(headers)
+                .body(Problem.create()
+                    .withTitle("Ineffected ID")
+                    .withDetail("The provided ID doesn't exist"));
+        }
+        
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST, produces = "application/json")
-    public ResponseEntity<Booking> create(@Valid @RequestBody Booking booking,
+    public ResponseEntity<?> create(@Valid @RequestBody Booking booking,
                                             BindingResult bindingResult, 
                                             UriComponentsBuilder ucBuilder) {
         BookingController.setup();
         BindingErrorsResponse errors = new BindingErrorsResponse();
-        HttpHeaders headers = new HttpHeaders();
         if (bindingResult.hasErrors() || (booking == null)) {
             errors.addAllErrors(bindingResult);
             headers.add("errors", errors.toJSON());
-            return new ResponseEntity<Booking>(headers, HttpStatus.BAD_REQUEST);
+            return ResponseEntity
+				.status(HttpStatus.BAD_REQUEST)
+				.headers(headers)
+				.body(Problem.create()
+					.withTitle("Validation error")
+					.withDetail("The provided consumer was not successfuly validated"));
+        }else{
+            this.bookingService.save(booking);
+            headers.setLocation(ucBuilder.path("/bookings" + booking.getId()).buildAndExpand(booking.getId()).toUri());
+            return new ResponseEntity<Booking>(booking, headers, HttpStatus.CREATED);
         }
-        this.bookingService.save(booking);
-        headers.setLocation(ucBuilder.path("/bookings").buildAndExpand(booking.getId()).toUri());
-        return new ResponseEntity<Booking>(booking, headers, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = "application/json")
-	public ResponseEntity<Booking> update(@PathVariable("id") Integer id, 
+	public ResponseEntity<?> update(@PathVariable("id") Integer id, 
                                             @RequestBody @Valid Booking newBooking, 
                                             BindingResult bindingResult){
         BookingController.setup();
 		BindingErrorsResponse errors = new BindingErrorsResponse();
-		HttpHeaders headers = new HttpHeaders();
 		if(bindingResult.hasErrors() || (newBooking == null)){
-			errors.addAllErrors(bindingResult);
-			headers.add("errors", errors.toJSON());
-			return new ResponseEntity<Booking>(headers, HttpStatus.BAD_REQUEST);
-		}
-		if(this.bookingService.findById(id).get() == null){
-			return new ResponseEntity<Booking>(HttpStatus.NOT_FOUND);
-		}
-        // bookings(bookDate, emisionDate, status, consumer, servise)
-        Booking updatedBooking= this.bookingService.findById(id)
-                    .map(booking -> {
-                            Date bookDate = newBooking.getBookDate()== null ? booking.getBookDate() : newBooking.getBookDate();
-                            booking.setBookDate(bookDate);
-                            Date emisionDate = newBooking.getEmisionDate() == null ? booking.getEmisionDate() : newBooking.getEmisionDate();
-                            booking.setEmisionDate(emisionDate);
-                            Status status = newBooking.getStatus() == null ? booking.getStatus() : newBooking.getStatus();
-                            booking.setStatus(status);
-                            Servise servise = newBooking.getServise() == null ? booking.getServise() : newBooking.getServise();
-                            booking.setServise(servise);
-                            this.bookingService.save(booking);
-                            return booking;
-                        }
-                    ) 
-                    .orElseGet(() -> {
-                        newBooking.setId(id);
-                        this.bookingService.save(newBooking);
-                        return newBooking;
-                    });
-
-		return new ResponseEntity<Booking>(updatedBooking, HttpStatus.NO_CONTENT);
+            errors.addAllErrors(bindingResult);
+            headers.add("errors", errors.toJSON());
+            return ResponseEntity
+				.status(HttpStatus.BAD_REQUEST)
+				.headers(headers)
+				.body(Problem.create()
+					.withTitle("Validation error")
+					.withDetail("The provided consumer was not successfuly validated"));
+		}else if(!this.bookingService.findById(id).isPresent()){
+            return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
+                .headers(headers)
+                .body(Problem.create()
+                    .withTitle("Ineffected ID")
+                    .withDetail("The provided ID doesn't exist"));
+		}else{
+            this.bookingService.update(id, newBooking);
+		    return new ResponseEntity<Booking>(newBooking, headers, HttpStatus.NO_CONTENT);
+        }
 	}
 
 
@@ -150,15 +159,19 @@ public class BookingController {
         if (booking.getStatus() == Status.IN_PROGRESS) {
             booking.setStatus(Status.CANCELLED);
             this.bookingService.save(booking);
-            return ResponseEntity.ok(assembler.toModel(booking));
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .headers(headers)
+                    .body(assembler.toModel(booking));
+        }else{
+            return ResponseEntity
+                .status(HttpStatus.METHOD_NOT_ALLOWED) 
+                .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) 
+                .headers(headers)
+                .body(Problem.create()
+                    .withTitle("Method not allowed") 
+                    .withDetail("You can't cancel a booking that is in the " + booking.getStatus() + " status"));
         }
-
-        return ResponseEntity
-        .status(HttpStatus.METHOD_NOT_ALLOWED) 
-        .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) 
-        .body(Problem.create()
-            .withTitle("Method not allowed") 
-            .withDetail("You can't cancel a booking that is in the " + booking.getStatus() + " status"));
     }
 
     @PutMapping("/{id}/complete")
@@ -168,18 +181,46 @@ public class BookingController {
         if (booking.getStatus() == Status.IN_PROGRESS) {
             booking.setStatus(Status.COMPLETED);
             this.bookingService.save(booking);
-            return ResponseEntity.ok(assembler.toModel(booking));
+            return ResponseEntity
+                .status(HttpStatus.OK)
+                .headers(headers)
+                .body(assembler.toModel(booking));
+        }else if(booking.getStatus() == Status.COMPLETED){
+            return ResponseEntity
+                .status(HttpStatus.METHOD_NOT_ALLOWED) 
+                .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) 
+                .headers(headers)
+                .body(Problem.create()
+                    .withTitle("Method not allowed") 
+                    .withDetail("You can't complete a booking that is in the " + booking.getStatus() + " status")); 
+        }else{
+            return ResponseEntity
+                .status(HttpStatus.METHOD_NOT_ALLOWED) 
+                .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) 
+                .headers(headers)
+                .body(Problem.create()
+                    .withTitle("Method not allowed") 
+                    .withDetail("You can't complete a booking that is in the " + booking.getStatus() + " status"));
         }
 
-        return new ResponseEntity<Booking>(HttpStatus.BAD_REQUEST);
     }
 
     @DeleteMapping("/{id}")
 	ResponseEntity<?> delete(@PathVariable Integer id) {
         BookingController.setup();
-		this.bookingService.deleteById(id);
-	
-		return ResponseEntity.noContent().build();
+        Optional<Booking> booking = this.bookingService.findById(id);
+		if(booking.isPresent()){
+            this.bookingService.deleteById(id);
+			return ResponseEntity.noContent().build();
+		}else{
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
+                    .headers(headers)
+                    .body(Problem.create()
+                        .withTitle("Ineffected ID")
+                        .withDetail("The provided ID doesn't exist"));
+        }
 	}
 
 }
