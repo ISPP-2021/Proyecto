@@ -10,7 +10,6 @@ import org.springframework.hateoas.mediatype.problem.Problem;
 
 
 
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Optional;
@@ -19,9 +18,7 @@ import javax.validation.Valid;
 
 import com.stalion73.service.BookingService;
 import com.stalion73.model.Booking;
-import com.stalion73.model.Consumer;
 import com.stalion73.model.Status;
-import com.stalion73.model.Servise;
 import com.stalion73.model.modelAssembler.BookingModelAssembler;
 
 import org.springframework.http.HttpHeaders;
@@ -114,7 +111,7 @@ public class BookingController {
 				.headers(headers)
 				.body(Problem.create()
 					.withTitle("Validation error")
-					.withDetail("The provided consumer was not successfuly validated"));
+					.withDetail("The provided booking was not successfuly validated"));
         }else{
             this.bookingService.save(booking);
             headers.setLocation(ucBuilder.path("/bookings" + booking.getId()).buildAndExpand(booking.getId()).toUri());
@@ -136,7 +133,7 @@ public class BookingController {
 				.headers(headers)
 				.body(Problem.create()
 					.withTitle("Validation error")
-					.withDetail("The provided consumer was not successfuly validated"));
+					.withDetail("The provided booking was not successfuly validated"));
 		}else if(!this.bookingService.findById(id).isPresent()){
             return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)

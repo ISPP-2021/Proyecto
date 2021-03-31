@@ -1,4 +1,6 @@
 package com.stalion73.service;
+import static org.junit.Assert.assertNotNull;
+
 import java.util.Collection;
 import java.util.Optional;
 
@@ -34,6 +36,33 @@ public class ServiseService {
     @Transactional
     public void save(Servise servise){
         serviseRepository.save(servise);
+    }
+
+    @Transactional
+    public void update(Integer id, Servise newServise){
+        assertNotNull(this.serviseRepository.findById(id).get());
+        Servise updatedServise = this.serviseRepository.findById(id).map(servise -> {
+			String name = newServise.getName() == null ? servise.getName() : newServise.getName();
+			servise.setName(name);
+			String description = newServise.getDescription() == null ? servise.getDescription()
+					: newServise.getDescription();
+			servise.setDescription(description);
+			Double price = newServise.getPrice() == null ? servise.getPrice() : newServise.getPrice();
+			servise.setPrice(price);
+			Integer duration = newServise.getDuration() == null ? servise.getDuration() : newServise.getDuration();
+			servise.setDuration(duration);
+			Integer capacity = newServise.getCapacity() == null ? servise.getCapacity() : newServise.getCapacity();
+			servise.setCapacity(capacity);
+			Double deposit = newServise.getDeposit() == null ? servise.getDeposit() : newServise.getDeposit();
+			servise.setDeposit(deposit);
+			Double tax = newServise.getTax() == null ? servise.getTax() : newServise.getTax();
+			servise.setTax(tax);
+			this.serviseRepository.save(servise);
+			return servise;
+		}).orElseGet(() -> {
+			return null;
+		});
+        this.serviseRepository.save(updatedServise);
     }
 
     @Transactional
