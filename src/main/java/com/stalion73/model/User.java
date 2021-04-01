@@ -20,6 +20,8 @@ public class User{
 	String username;
 	
 	String password;
+
+	String token;
 	
 	boolean enabled;
 	
@@ -49,6 +51,14 @@ public class User{
 
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
+	}
+
+	public String getToken(){
+		return token;
+	}
+	
+	public void setToken(String token){
+		this.token = token;
 	}
 
 	public Set<Authorities> getAuthorities() {

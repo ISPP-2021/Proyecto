@@ -30,6 +30,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @RestController
 @RequestMapping("/consumers")
@@ -79,7 +81,7 @@ public class ConsumerController{
     public ResponseEntity<?> one(@PathVariable Integer id) {
         ConsumerController.setup();
 		Optional<Consumer> consumer = consumerService.findById((id));
-            				
+        
 		if(!consumer.isPresent()){
 			return ResponseEntity
 			.status(HttpStatus.NOT_FOUND)
