@@ -30,6 +30,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @RestController
 @RequestMapping("/consumers")
@@ -78,21 +80,33 @@ public class ConsumerController{
 	@GetMapping("/{id}")
     public ResponseEntity<?> one(@PathVariable Integer id) {
         ConsumerController.setup();
-		Optional<Consumer> consumer = consumerService.findById((id));
-            				
-		if(!consumer.isPresent()){
-			return ResponseEntity
-			.status(HttpStatus.NOT_FOUND)
-			.header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
-			.headers(headers)
-			.body(Problem.create()
-				.withTitle("Ineffected ID")
-				.withDetail("The provided ID doesn't exist"));
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication.getName().equals("")){
+
+			Optional<Consumer> consumer = consumerService.findById((id));
+        
+			if(!consumer.isPresent()){
+				return ResponseEntity
+				.status(HttpStatus.NOT_FOUND)
+				.header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
+				.headers(headers)
+				.body(Problem.create()
+					.withTitle("Ineffected ID")
+					.withDetail("The provided ID doesn't exist"));
+			}else{
+				return ResponseEntity
+					.status(HttpStatus.OK) 
+					.headers(headers) 
+					.body(assembler.toModel(consumer.get()));
+			}
 		}else{
 			return ResponseEntity
-				.status(HttpStatus.OK) 
-				.headers(headers) 
-				.body(assembler.toModel(consumer.get()));
+				.status(HttpStatus.NOT_FOUND)
+				.header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
+				.headers(headers)
+				.body(Problem.create()
+					.withTitle("Ineffected ID")
+					.withDetail("The provided ID doesn't exist"));
 		}
 	  }
 

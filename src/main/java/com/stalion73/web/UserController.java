@@ -1,20 +1,19 @@
 package com.stalion73.web;
 
+import com.stalion73.model.Authorities;
 import com.stalion73.model.User;
 import com.stalion73.service.UserService;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.ArrayList;
 import java.util.Date;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
-
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
@@ -32,11 +31,9 @@ public class UserController {
     public User login(@RequestParam("user") String username, 
                         @RequestParam("password") String password){
 
-			// System.out.println(password);
 			User user = this.userService.findUser(username).get();
-			// System.out.println(user.getPassword()==password);
 			if(user.getPassword().equals(password)){
-				String token = getJWTToken(username);
+				String token = getJWTToken(user);
 				user.setToken(token);
 			} else {
 				user=null;
@@ -44,19 +41,16 @@ public class UserController {
             return user;
     }
 
-    private String getJWTToken(String username) {
+    private String getJWTToken(User user) {
 		String secretKey = "mySecretKey";
-		List<GrantedAuthority> grantedAuthorities = AuthorityUtils
-				.commaSeparatedStringToAuthorityList("user");
-		System.out.println(grantedAuthorities);
-		
+		List<Authorities> authorities = new ArrayList<>(user.getAuthorities());
+		System.out.println(authorities);
 		String token = Jwts
 				.builder()
 				.setId("softtekJWT")
-				.setSubject(username)
+				.setSubject(user.getUsername())
 				.claim("authorities",
-						grantedAuthorities.stream()
-								.map(GrantedAuthority::getAuthority)
+						authorities.stream().map(Authorities::getAuthority)
 								.collect(Collectors.toList()))
 				.setIssuedAt(new Date(System.currentTimeMillis()))
 				.setExpiration(new Date(System.currentTimeMillis() + 600000))
