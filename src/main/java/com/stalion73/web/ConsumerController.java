@@ -80,33 +80,21 @@ public class ConsumerController{
 	@GetMapping("/{id}")
     public ResponseEntity<?> one(@PathVariable Integer id) {
         ConsumerController.setup();
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (authentication.getName().equals("")){
-
-			Optional<Consumer> consumer = consumerService.findById((id));
+		Optional<Consumer> consumer = consumerService.findById((id));
         
-			if(!consumer.isPresent()){
-				return ResponseEntity
-				.status(HttpStatus.NOT_FOUND)
-				.header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
-				.headers(headers)
-				.body(Problem.create()
-					.withTitle("Ineffected ID")
-					.withDetail("The provided ID doesn't exist"));
-			}else{
-				return ResponseEntity
-					.status(HttpStatus.OK) 
-					.headers(headers) 
-					.body(assembler.toModel(consumer.get()));
-			}
+		if(!consumer.isPresent()){
+			return ResponseEntity
+			.status(HttpStatus.NOT_FOUND)
+			.header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
+			.headers(headers)
+			.body(Problem.create()
+				.withTitle("Ineffected ID")
+				.withDetail("The provided ID doesn't exist"));
 		}else{
 			return ResponseEntity
-				.status(HttpStatus.NOT_FOUND)
-				.header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
-				.headers(headers)
-				.body(Problem.create()
-					.withTitle("Ineffected ID")
-					.withDetail("The provided ID doesn't exist"));
+				.status(HttpStatus.OK) 
+				.headers(headers) 
+				.body(assembler.toModel(consumer.get()));
 		}
 	  }
 
