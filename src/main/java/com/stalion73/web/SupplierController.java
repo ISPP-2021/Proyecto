@@ -1,14 +1,19 @@
 package com.stalion73.web;
 
 import java.util.Collection;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
+import com.stalion73.service.BusinessService;
 import com.stalion73.service.SupplierService;
+import com.stalion73.model.Business;
 import com.stalion73.model.Supplier;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.MediaTypes;
+import org.springframework.hateoas.mediatype.problem.Problem;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,96 +31,137 @@ public class SupplierController {
 
     @Autowired
     private final SupplierService supplierService;
+    private final BusinessService businessService;
 
-    public SupplierController(SupplierService supplierService){
+    private final static HttpHeaders headers = new HttpHeaders();
+
+
+    public  static void setup(){
+        headers.setAccessControlAllowOrigin("*");
+   	}
+
+    public SupplierController(SupplierService supplierService, BusinessService businessService){
         this.supplierService = supplierService;
+        this.businessService = businessService;
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<Collection<Supplier>> all() {
+    public ResponseEntity<?> all() {
+        SupplierController.setup();
         Collection<Supplier> suppliers = this.supplierService.findAll();
         if (suppliers.isEmpty()) {
-            return new ResponseEntity<Collection<Supplier>>(HttpStatus.NOT_FOUND);
+            return ResponseEntity
+                    .status(HttpStatus.NO_CONTENT)
+                    .headers(headers)
+                    .body(suppliers);
+        }else{
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .headers(headers)
+                    .body(suppliers);
         }
-        return new ResponseEntity<Collection<Supplier>>(suppliers, HttpStatus.OK);
 
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<Supplier> one(@PathVariable("id") Integer id) {
-        Supplier supplier = this.supplierService.findById(id).get();
-        if (supplier == null) {
-            return new ResponseEntity<Supplier>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<?> one(@PathVariable("id") Integer id) {
+        SupplierController.setup();
+        Optional<Supplier> supplier = this.supplierService.findById(id);
+        if (!supplier.isPresent()) {
+            return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
+                .headers(headers)
+                .body(Problem.create()
+                    .withTitle("Ineffected ID")
+                    .withDetail("The provided ID doesn't exist"));
+        }else{
+            return ResponseEntity
+                .status(HttpStatus.OK) 
+                .headers(headers) 
+                .body(supplier.get());
         }
-        return new ResponseEntity<Supplier>(supplier, HttpStatus.OK);
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST, produces = "application/json")
-    public ResponseEntity<Supplier> create(@Valid @RequestBody Supplier supplier,
+    public ResponseEntity<?> create(@Valid @RequestBody Supplier supplier,
                                             BindingResult bindingResult, 
                                             UriComponentsBuilder ucBuilder) {
 
+        SupplierController.setup();                                        
         BindingErrorsResponse errors = new BindingErrorsResponse();
         HttpHeaders headers = new HttpHeaders();
-        if (bindingResult.hasErrors() || (supplier == null)) {
+        if (bindingResult.hasErrors() || ( supplier== null)) {
             errors.addAllErrors(bindingResult);
             headers.add("errors", errors.toJSON());
-            return new ResponseEntity<Supplier>(headers, HttpStatus.BAD_REQUEST);
+            return ResponseEntity
+				.status(HttpStatus.BAD_REQUEST)
+				.headers(headers)
+				.body(Problem.create()
+					.withTitle("Validation error")
+					.withDetail("The provided consumer was not successfuly validated"));
+        }else{
+            this.supplierService.save(supplier);
+            headers.setLocation(ucBuilder.path("/business").buildAndExpand(supplier.getId()).toUri());
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .headers(headers)
+                    .body(supplier);
         }
-        this.supplierService.save(supplier);
-        headers.setLocation(ucBuilder.path("/suppliers").buildAndExpand(supplier.getId()).toUri());
-        return new ResponseEntity<Supplier>(supplier, headers, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = "application/json")
-	public ResponseEntity<Supplier> update(@PathVariable("id") Integer id, 
+	public ResponseEntity<?> update(@PathVariable("id") Integer id, 
                                             @RequestBody @Valid Supplier newSupplier, 
                                             BindingResult bindingResult){
-		BindingErrorsResponse errors = new BindingErrorsResponse();
-		HttpHeaders headers = new HttpHeaders();
-		if(bindingResult.hasErrors() || (newSupplier == null)){
-			errors.addAllErrors(bindingResult);
-			headers.add("errors", errors.toJSON());
-			return new ResponseEntity<Supplier>(headers, HttpStatus.BAD_REQUEST);
-		}
-		if(this.supplierService.findById(id).get() == null){
-			return new ResponseEntity<Supplier>(HttpStatus.NOT_FOUND);
-		}
-        // suppliers (id, name, lastName, dni, email, username)
-        // we need to be able to find users by username to update that attribute
-        // User user = this.userService.findByName(username).get();
-        Supplier updatedSupplier = this.supplierService.findById(id)
-                    .map(supplier -> {
-                            String name = newSupplier.getName() == null ? supplier.getName() : newSupplier.getName();
-                            supplier.setName(name);
-                            String lastName = newSupplier.getLastname() == null ? supplier.getLastname() : newSupplier.getLastname();
-                            supplier.setLastname(lastName);
-                            String dni = newSupplier.getDni() == null ? supplier.getDni() : newSupplier.getDni();
-                            supplier.setDni(dni);
-                            String email = newSupplier.getEmail() == null ? supplier.getEmail() : newSupplier.getEmail();
-                            supplier.setEmail(email);
-                            this.supplierService.save(supplier);
-                            return supplier;
-                        }
-                    ) 
-                    .orElseGet(() -> {
-                        newSupplier.setId(id);
-                        this.supplierService.save(newSupplier);
-                        return newSupplier;
-                    });
 
-		return new ResponseEntity<Supplier>(updatedSupplier, HttpStatus.NO_CONTENT);
+        SupplierController.setup();
+		BindingErrorsResponse errors = new BindingErrorsResponse();                                        
+        if(bindingResult.hasErrors() || (newSupplier == null)){
+            errors.addAllErrors(bindingResult);
+            headers.add("errors", errors.toJSON());
+            return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .headers(headers)
+                .body(Problem.create()
+                    .withTitle("Validation error")
+                    .withDetail("The provided consumer was not successfuly validated"));
+        }else if(!this.supplierService.findById(id).isPresent()){
+            return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
+                .headers(headers)
+                .body(Problem.create()
+                    .withTitle("Ineffected ID")
+                    .withDetail("The provided ID doesn't exist"));
+        }else{
+    
+            this.supplierService.update(id, newSupplier);
+            Supplier updatedSupplier = this.supplierService.findById(id).get();
+            return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
+					.headers(headers)
+					.body(updatedSupplier);
+        }
 	}
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "application/json")
-	public ResponseEntity<Void> delete(@PathVariable("id") Integer id){
-		Supplier supplier = this.supplierService.findById(id).get();
-		if(supplier == null){
-			return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
-		}
-        supplier.setUser(null);
-		this.supplierService.delete(supplier);
-		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+	public ResponseEntity<?> delete(@PathVariable("id") Integer id){
+		SupplierController.setup();
+		Optional<Supplier> supplier = this.supplierService.findById(id);
+		if(supplier.isPresent()){
+            Business spBusiness = this.businessService.findBusinessBySupplierId(id);
+            this.businessService.delete(spBusiness);
+            this.supplierService.deleteById(id);
+			return ResponseEntity.noContent().build();
+		}else{
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
+                    .headers(headers)
+                    .body(Problem.create()
+                        .withTitle("Ineffected ID")
+                        .withDetail("The provided ID doesn't exist"));
+        }
 	}
     
 }

@@ -1,8 +1,12 @@
 package com.stalion73.web;
 
 import java.util.Collection;
+import java.util.Optional;
 
 import javax.validation.Valid;
+
+import org.springframework.hateoas.MediaTypes;
+import org.springframework.hateoas.mediatype.problem.Problem;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -22,8 +26,15 @@ import com.stalion73.service.ServiseService;
 @RestController
 @RequestMapping("/servises")
 public class ServiseController {
+
 	@Autowired
 	private final ServiseService serviseService;
+
+	private final static HttpHeaders headers = new HttpHeaders();
+
+	public  static void setup(){
+        headers.setAccessControlAllowOrigin("*");
+    }
 
 	public ServiseController(ServiseService serviseService) {
 		this.serviseService = serviseService;
@@ -31,87 +42,103 @@ public class ServiseController {
 
 	@RequestMapping(value = "", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<Collection<Servise>> all() {
+		ServiseController.setup();
 		Collection<Servise> servises = this.serviseService.findAll();
 		if (servises.isEmpty()) {
-			return new ResponseEntity<Collection<Servise>>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Collection<Servise>>(headers, HttpStatus.NOT_FOUND);
+		}else{
+			return new ResponseEntity<Collection<Servise>>(servises, headers, HttpStatus.OK);
 		}
-		return new ResponseEntity<Collection<Servise>>(servises, HttpStatus.OK);
 
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
-	public ResponseEntity<Servise> one(@PathVariable("id") Integer id) {
-		Servise servise = this.serviseService.findById(id).get();
-		if (servise == null) {
-			return new ResponseEntity<Servise>(HttpStatus.NOT_FOUND);
+	public ResponseEntity<?> one(@PathVariable("id") Integer id) {
+		ServiseController.setup();
+		Optional<Servise> servise = this.serviseService.findById(id);
+		if (!servise.isPresent()) {
+			return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
+                .headers(headers)
+                .body(Problem.create()
+                    .withTitle("Ineffected ID")
+                    .withDetail("The provided ID doesn't exist"));
 		}
-		return new ResponseEntity<Servise>(servise, HttpStatus.OK);
+		return new ResponseEntity<Servise>(servise.get(), headers, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "", method = RequestMethod.POST, produces = "application/json")
-	public ResponseEntity<Servise> create(@Valid @RequestBody Servise servise, BindingResult bindingResult,
-			UriComponentsBuilder ucBuilder) {
-
+	public ResponseEntity<?> create(@Valid @RequestBody Servise servise, 
+												BindingResult bindingResult,
+												UriComponentsBuilder ucBuilder) {
+		ServiseController.setup();
 		BindingErrorsResponse errors = new BindingErrorsResponse();
-		HttpHeaders headers = new HttpHeaders();
 		if (bindingResult.hasErrors() || (servise == null)) {
 			errors.addAllErrors(bindingResult);
-			headers.add("errors", errors.toJSON());
-			return new ResponseEntity<Servise>(headers, HttpStatus.BAD_REQUEST);
+            headers.add("errors", errors.toJSON());
+            return ResponseEntity
+				.status(HttpStatus.BAD_REQUEST)
+				.headers(headers)
+				.body(Problem.create()
+					.withTitle("Validation error")
+					.withDetail("The provided servise was not successfuly validated"));
+		}else{
+			this.serviseService.save(servise);
+			headers.setLocation(ucBuilder.path("/servises" + servise.getId()).buildAndExpand(servise.getId()).toUri());
+			return new ResponseEntity<Servise>(servise, headers, HttpStatus.CREATED);
 		}
-		this.serviseService.save(servise);
-		headers.setLocation(ucBuilder.path("/servises").buildAndExpand(servise.getId()).toUri());
-		return new ResponseEntity<Servise>(servise, headers, HttpStatus.CREATED);
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = "application/json")
-	public ResponseEntity<Servise> update(@PathVariable("id") Integer id, @RequestBody @Valid Servise newServise,
-			BindingResult bindingResult) {
+	public ResponseEntity<?> update(@PathVariable("id") Integer id, 
+												@RequestBody @Valid Servise newServise,
+												BindingResult bindingResult) {
+		ServiseController.setup();				
 		BindingErrorsResponse errors = new BindingErrorsResponse();
-		HttpHeaders headers = new HttpHeaders();
 		if (bindingResult.hasErrors() || (newServise == null)) {
 			errors.addAllErrors(bindingResult);
-			headers.add("errors", errors.toJSON());
-			return new ResponseEntity<Servise>(headers, HttpStatus.BAD_REQUEST);
+            headers.add("errors", errors.toJSON());
+            return ResponseEntity
+				.status(HttpStatus.BAD_REQUEST)
+				.headers(headers)
+				.body(Problem.create()
+					.withTitle("Validation error")
+					.withDetail("The provided servise was not successfuly validated"));
+		}else if(!this.serviseService.findById(id).isPresent()){
+			return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .headers(headers)
+                .body(Problem.create()
+                    .withTitle("Ineffected ID")
+                    .withDetail("The provided ID doesn't exist"));
+		}else{
+			this.serviseService.update(id, newServise);
+			newServise.setId(id);	
+			return ResponseEntity 
+					.status(HttpStatus.PARTIAL_CONTENT)
+					.headers(headers)
+					.body(newServise);
 		}
-		if (this.serviseService.findById(id).get() == null) {
-			return new ResponseEntity<Servise>(HttpStatus.NOT_FOUND);
-		}
-		Servise updatedServise = this.serviseService.findById(id).map(servise -> {
-			String name = newServise.getName() == null ? servise.getName() : newServise.getName();
-			servise.setName(name);
-			String description = newServise.getDescription() == null ? servise.getDescription()
-					: newServise.getDescription();
-			servise.setDescription(description);
-			Double price = newServise.getPrice() == null ? servise.getPrice() : newServise.getPrice();
-			servise.setPrice(price);
-			Integer duration = newServise.getDuration() == null ? servise.getDuration() : newServise.getDuration();
-			servise.setDuration(duration);
-			Integer capacity = newServise.getCapacity() == null ? servise.getCapacity() : newServise.getCapacity();
-			servise.setCapacity(capacity);
-			Double deposit = newServise.getDeposit() == null ? servise.getDeposit() : newServise.getDeposit();
-			servise.setDeposit(deposit);
-			Double tax = newServise.getTax() == null ? servise.getTax() : newServise.getTax();
-			servise.setTax(tax);
-			this.serviseService.save(servise);
-			return servise;
-		}).orElseGet(() -> {
-			newServise.setId(id);
-			this.serviseService.save(newServise);
-			return newServise;
-		});
 
-		return new ResponseEntity<Servise>(updatedServise, HttpStatus.NO_CONTENT);
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "application/json")
-	public ResponseEntity<Void> delete(@PathVariable("id") Integer id) {
-		Servise servise = this.serviseService.findById(id).get();
-		if (servise == null) {
-			return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
-		}
-		this.serviseService.delete(servise);
-		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+	public ResponseEntity<?> delete(@PathVariable("id") Integer id) {
+        ServiseController.setup();
+        Optional<Servise> servise = this.serviseService.findById(id);
+		if(servise.isPresent()){
+            this.serviseService.deleteById(id);
+			return ResponseEntity.noContent().build();
+		}else{
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
+                    .headers(headers)
+                    .body(Problem.create()
+                        .withTitle("Ineffected ID")
+                        .withDetail("The provided ID doesn't exist"));
+        }
 	}
 
 }

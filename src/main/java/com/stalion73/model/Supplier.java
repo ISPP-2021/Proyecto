@@ -13,18 +13,4 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class Supplier extends Person{
 
 
-
-    @OneToOne(orphanRemoval = true, cascade = CascadeType.ALL)
-    @JoinColumn(name = "business_id", referencedColumnName = "id")
-    @JsonIgnore
-    private Business business;
-
-    public Business getBusiness() {
-        return business;
-    }
-
-    public void setBusiness(Business business) {
-        this.business = business;
-    }
-
 }
