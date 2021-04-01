@@ -75,4 +75,9 @@ public class BusinessService {
                     });
         this.businessRepository.save(updatedBusiness);
     }
+    @Transactional
+    public Business findBusinessBySupplierId(Integer supplierId) {
+        Business business = this.businessRepository.findBusinessBySupplierId(supplierId);
+        return business;
+    }
 }
