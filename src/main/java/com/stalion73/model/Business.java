@@ -20,89 +20,87 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "business")
-public class Business extends BaseEntity{
+public class Business extends BaseEntity {
 
 	@NotBlank
 	@Length(max = 50)
-    private String name;
+	private String name;
 	@NotBlank
 	@Length(max = 100)
-    private String address;
+	private String address;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "type")
-    private BusinessType businessType;
-    
-    @Column(name = "automated")
-    private Boolean automatedAccept;
-    
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "supplier_id", referencedColumnName = "id")
-    private Supplier supplier;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "type")
+	private BusinessType businessType;
 
-    @OneToMany(orphanRemoval = true, mappedBy = "business", fetch = FetchType.LAZY)
-    private Set<Servise> servises;
+	@Column(name = "automated")
+	private Boolean automatedAccept;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "option_id", referencedColumnName = "id")
-    private Option option;
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "supplier_id", referencedColumnName = "id")
+	private Supplier supplier;
 
-    public String getName() {
-        return name;
-    }
+	@OneToMany(orphanRemoval = true, mappedBy = "business", fetch = FetchType.LAZY)
+	private Set<Servise> servises;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "option_id", referencedColumnName = "id")
+	private Option option;
 
-    public String getAddress() {
-        return address;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public BusinessType getBusinessType() {
-        return businessType;
-    }
+	public String getAddress() {
+		return address;
+	}
 
-    public void setBusinessType(BusinessType businessType) {
-        this.businessType = businessType;
-    }
+	public void setAddress(String address) {
+		this.address = address;
+	}
 
-    public Boolean getAutomatedAccept() {
-        return automatedAccept;
-    }
+	public BusinessType getBusinessType() {
+		return businessType;
+	}
 
-    public void setAutomatedAccept(Boolean automatedAccept) {
-        this.automatedAccept = automatedAccept;
-    }
+	public void setBusinessType(BusinessType businessType) {
+		this.businessType = businessType;
+	}
 
-    public Supplier getSupplier() {
-        return supplier;
-    }
+	public Boolean getAutomatedAccept() {
+		return automatedAccept;
+	}
 
-    public void setSupplier(Supplier supplier) {
-        this.supplier = supplier;
-    }
+	public void setAutomatedAccept(Boolean automatedAccept) {
+		this.automatedAccept = automatedAccept;
+	}
 
-    public Set<Servise> getServices() {
-        return servises;
-    }
+	public Supplier getSupplier() {
+		return supplier;
+	}
 
-    public void setServices(Set<Servise> servises) {
-        this.servises = servises;
-    }
+	public void setSupplier(Supplier supplier) {
+		this.supplier = supplier;
+	}
 
-    public Option getOption() {
-        return option;
-    }
+	public Set<Servise> getServices() {
+		return servises;
+	}
 
-    public void setOption(Option option) {
-        this.option = option;
-    }
+	public void setServices(Set<Servise> servises) {
+		this.servises = servises;
+	}
 
-    
-    
+	public Option getOption() {
+		return option;
+	}
+
+	public void setOption(Option option) {
+		this.option = option;
+	}
+
 }

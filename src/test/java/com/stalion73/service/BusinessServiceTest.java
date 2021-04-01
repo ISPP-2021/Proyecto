@@ -1,4 +1,4 @@
-package com.stalion73;
+package com.stalion73.service;
 
 import java.util.Collection;
 import java.util.List;

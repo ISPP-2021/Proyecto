@@ -32,8 +32,9 @@ public class Servise extends BaseEntity {
 	private Integer duration;
 	@PositiveOrZero
 	private Integer capacity;
-	private Double deposit;
-	private Double tax;
+	@PositiveOrZero
+	private Double deposit; //fianza
+	private Double tax; //lo que cobramos al negocio (impuesto)
 
 	@ManyToOne()
 	@JoinColumn(name = "business_id")

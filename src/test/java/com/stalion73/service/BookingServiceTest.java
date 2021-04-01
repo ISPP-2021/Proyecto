@@ -1,4 +1,4 @@
-package com.stalion73;
+package com.stalion73.service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

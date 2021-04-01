@@ -16,7 +16,7 @@ import org.hibernate.validator.constraints.Length;
 @MappedSuperclass
 public class Person extends NamedEntity {
 
-	@NotEmpty
+	
 	@NotBlank
 	@Length(max = 20)
 	private String name;
