@@ -1,6 +1,7 @@
 package com.stalion73.web;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -18,9 +19,11 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,6 +49,9 @@ public class ConsumerController{
 
     public  static void setup(){
         headers.setAccessControlAllowOrigin("*");
+		List<HttpMethod> methods = new ArrayList<>();
+		//methods.add(HttpMethod.POST);
+		//headers.setAccessControlAllowMethods(methods);
    	}
     
 
@@ -54,7 +60,7 @@ public class ConsumerController{
 		this.assembler = assembler;
     }
 
-	
+	@CrossOrigin
 	@GetMapping
 	public ResponseEntity<?> all() {
 		ConsumerController.setup();
