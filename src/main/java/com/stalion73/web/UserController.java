@@ -53,7 +53,7 @@ public class UserController {
 		// System.out.println(authorities);
 		String token = Jwts.builder().setId("softtekJWT").setSubject(user.getUsername())
 				.claim("authorities", authorities.stream().map(Authorities::getAuthority).collect(Collectors.toList()))
-				.setIssuedAt(new Date(System.currentTimeMillis())).setExpiration(new Date(System.currentTimeMillis() + 600000))
+				.setIssuedAt(new Date(System.currentTimeMillis())).setExpiration(new Date(System.currentTimeMillis() + 6000000))
 				.signWith(SignatureAlgorithm.HS512, secretKey.getBytes()).compact();
 
 		return "Bearer " + token;
