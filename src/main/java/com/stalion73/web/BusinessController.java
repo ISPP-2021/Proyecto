@@ -22,6 +22,7 @@ import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +32,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequestMapping("/business")
+@CrossOrigin(origins = "*")
 public class BusinessController {
 
     @Autowired
@@ -41,9 +43,9 @@ public class BusinessController {
 
     private final static HttpHeaders headers = new HttpHeaders();
 
-    public static void setup() {
-        headers.setAccessControlAllowOrigin("*");
-    }
+    // public static void setup() {
+    //     headers.setAccessControlAllowOrigin("*");
+    // }
 
     public BusinessController(BusinessService businessService, SupplierService supplierService) {
         this.businessService = businessService;
@@ -52,7 +54,7 @@ public class BusinessController {
 
     @RequestMapping(value = "", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<?> all() {
-        BusinessController.setup();
+        // BusinessController.setup();
         Collection<Business> businesses = this.businessService.findAll();
         if (businesses.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).headers(headers).body(businesses);
@@ -63,7 +65,7 @@ public class BusinessController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<?> one(@PathVariable("id") Integer id) {
-        BusinessController.setup();
+        // BusinessController.setup();
         Optional<Business> business = this.businessService.findById(id);
         if (!business.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -77,7 +79,7 @@ public class BusinessController {
     @RequestMapping(value = "", method = RequestMethod.POST, produces = "application/json")
     public ResponseEntity<?> create(@Valid @RequestBody Business business, BindingResult bindingResult,
             UriComponentsBuilder ucBuilder) {
-        BusinessController.setup();
+        // BusinessController.setup();
         BindingErrorsResponse errors = new BindingErrorsResponse();
         if (bindingResult.hasErrors() || (business == null)) {
             errors.addAllErrors(bindingResult);
@@ -94,7 +96,7 @@ public class BusinessController {
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = "application/json")
     public ResponseEntity<?> update(@PathVariable("id") Integer id, @RequestBody @Valid Business newBusiness,
             BindingResult bindingResult) {
-        BusinessController.setup();
+        // BusinessController.setup();
         BindingErrorsResponse errors = new BindingErrorsResponse();
         if (bindingResult.hasErrors() || (newBusiness == null)) {
             errors.addAllErrors(bindingResult);
@@ -128,7 +130,7 @@ public class BusinessController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "application/json")
     public ResponseEntity<?> delete(@PathVariable("id") Integer id) {
-        BusinessController.setup();
+        // BusinessController.setup();
         Optional<Business> business = this.businessService.findById(id);
         if (business.isPresent()) {
             this.businessService.deleteById(id);
