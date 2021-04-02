@@ -17,6 +17,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.RestController; 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 
 @RestController
 @RequestMapping("/users")
@@ -36,9 +38,9 @@ public class UserController {
 	}
 
     @PostMapping("/login")
-    public User login(@RequestParam("user") String username, 
+    public ResponseEntity<?> login(@RequestParam("user") String username, 
                         @RequestParam("password") String password){
-
+			UserController.setup();
 			User user = this.userService.findUser(username).get();
 			if(user.getPassword().equals(password)){
 				String token = getJWTToken(user);
@@ -46,7 +48,10 @@ public class UserController {
 			} else {
 				user=null;
 			}
-            return user;
+        return ResponseEntity
+                  .status(HttpStatus.OK)
+                  .headers(headers)
+                  .body(user);
     }
 
     private String getJWTToken(User user) {
