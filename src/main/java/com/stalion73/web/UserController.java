@@ -44,7 +44,7 @@ public class UserController {
 		} else {
 			user = null;
 		}
-		return ResponseEntity.status(HttpStatus.OK).headers(headers).body(user);
+		return ResponseEntity.status(HttpStatus.OK).headers(headers).body(usuario);
 	}
 
 	private String getJWTToken(User user) {
