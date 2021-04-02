@@ -13,7 +13,8 @@ import java.util.Date;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpHeaders;
+import org.springframework.web.bind.annotation.RestController; 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
@@ -22,6 +23,13 @@ import io.jsonwebtoken.SignatureAlgorithm;
 public class UserController {
 
 	private UserService userService;
+
+	private final static HttpHeaders headers = new HttpHeaders();
+
+    
+    public  static void setup(){
+        headers.setAccessControlAllowOrigin("*");
+    }
 
 	public UserController(UserService userService){
 		this.userService = userService;
