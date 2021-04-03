@@ -11,7 +11,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 
 import com.stalion73.model.Consumer;
-
+import com.stalion73.model.Supplier;
+import com.stalion73.model.User;
 import com.stalion73.service.ConsumerService;
 
 
@@ -33,6 +34,25 @@ public class ConsumerServiceTest {
 		Assertions.assertTrue(consumer.get().getName().equals("Jose") && consumer.get().getLastname().equals("Garcia")
 				&& consumer.get().getDni().equals("00000000A") && consumer.get().getEmail().equals("cosas@gmail.com")
 				&& consumer.get().getUser().getUsername().equals("josito"));
+	}
+	
+	@Test
+	void saveConsumerTest() {
+		User user = new User();
+		user.setUsername("jorge");
+		Consumer consumer = new Consumer();
+		consumer.setId(3);
+		consumer.setName("Jorge");
+		consumer.setLastname("Socorro");
+		consumer.setDni("62537287P");
+		consumer.setEmail("jorgeamigo@gmail.com");
+		consumer.setUser(user);
+		this.consumerService.save(consumer);
+		Optional<Consumer> consumers = this.consumerService.findById(3);
+		Assertions.assertTrue(!consumers.isEmpty() && consumers.get().getName().equals("Jorge")
+				&& consumers.get().getLastname().equals("Socorro") 
+				&& consumers.get().getDni().equals("62537287P")
+				&& consumers.get().getEmail().equals("jorgeamigo@gmail.com"));
 	}
 
 	@Test

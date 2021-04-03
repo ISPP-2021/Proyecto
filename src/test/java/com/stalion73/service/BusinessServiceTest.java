@@ -13,7 +13,10 @@ import org.springframework.stereotype.Service;
 
 import com.stalion73.model.Business;
 import com.stalion73.model.BusinessType;
-
+import com.stalion73.model.Consumer;
+import com.stalion73.model.Option;
+import com.stalion73.model.Supplier;
+import com.stalion73.model.User;
 import com.stalion73.service.BusinessService;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(Service.class))
@@ -34,6 +37,39 @@ public class BusinessServiceTest {
 		Assertions.assertTrue(
 				business.get().getName().equals("business_name_1") && business.get().getAddress().equals("address_1")
 						&& business.get().getBusinessType().equals(BusinessType.HAIRDRESSER));
+	}
+	
+	@Test
+	void saveBusinessTest() {
+		User user = new User();
+		user.setUsername("rafita");
+		Supplier supplier = new Supplier();
+		supplier.setId(3);
+		supplier.setName("Pablo");
+		supplier.setLastname("Calvo");
+		supplier.setDni("12345678G");
+		supplier.setEmail("pablocalvo@gmail.com");
+		supplier.setUser(user);
+		Option option = new Option();
+		option.setId(2);
+		option.setAutomatedAccept(true);
+		option.setLimitAutomated(2);
+		option.setDefaultDeposit(0.6);
+		option.setDepositTimeLimit(4);
+		Business business = new Business();
+		business.setId(4);
+		business.setSupplier(supplier);
+		business.setOption(option);
+		business.setName("Negocio");
+		business.setAddress("Calle Calle");
+		business.setBusinessType(BusinessType.RESTAURANT);
+		business.setAutomatedAccept(true);
+		this.businessService.save(business);
+		Optional<Business> business2 = this.businessService.findById(4);
+		Assertions.assertTrue(!business2.isEmpty() && business.getName().equals("Negocio") 
+				&& business.getAddress().equals("Calle Calle") 
+				&& business.getBusinessType().equals(BusinessType.RESTAURANT) 
+				&& business.getAutomatedAccept().equals(true));
 	}
 
 //	@Test

@@ -12,6 +12,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 
 import com.stalion73.model.Supplier;
+import com.stalion73.model.User;
 //import com.stalion73.model.User;
 import com.stalion73.service.SupplierService;
 //import com.stalion73.service.UserService;
@@ -40,22 +41,25 @@ public class SupplierServiceTest {
 				&& supplier.get().getUser().getUsername().equals("josito"));
 	}
 
-//	@Test
-//	void saveSupplier() {
-//		Supplier supplier = new Supplier();
-//		supplier.setId(10);
-//		supplier.setName("Pablo");
-//		supplier.setLastname("Calvo");
-//		supplier.setDni("12345678G");
-//		supplier.setEmail("pablocalvo@gmail.com");
-//		//falta el username
-//		this.supplierService.save(supplier);
-//		Optional<Supplier> suppliers = this.supplierService.findById(10);
-//		Assertions.assertTrue(!suppliers.isEmpty() && suppliers.get().getName().equals("Pablo")
-//				&& suppliers.get().getLastname().equals("Calvo") 
-//				&& suppliers.get().getDni().equals("12345678G")
-//				&& suppliers.get().getEmail().equals("pablocalvo@gmail.com"));
-//	}
+	@Test
+	void saveSupplier() {
+		User user = new User();
+		user.setUsername("rafita");
+		Supplier supplier = new Supplier();
+		supplier.setId(3);
+		supplier.setName("Pablo");
+		supplier.setLastname("Calvo");
+		supplier.setDni("12345678G");
+		supplier.setEmail("pablocalvo@gmail.com");
+		supplier.setUser(user);
+		this.supplierService.save(supplier);
+		Optional<Supplier> suppliers = this.supplierService.findById(3);
+		Assertions.assertTrue(!suppliers.isEmpty() && suppliers.get().getName().equals("Pablo")
+				&& suppliers.get().getLastname().equals("Calvo") 
+				&& suppliers.get().getDni().equals("12345678G")
+				&& suppliers.get().getEmail().equals("pablocalvo@gmail.com"));
+	}
+	
 //	@Test
 //	void deleteSupplierTest() {
 //		Supplier supplier = this.supplierService.findById(1).get();

@@ -31,6 +31,20 @@ public class OptionServiceTest {
 		Assertions.assertTrue(option.get().getLimitAutomated() == 3 && option.get().getDefaultDeposit() == 0.7
 				&& option.get().getDepositTimeLimit() == 5);
 	}
+	
+	@Test
+	void saveOptionTest() {
+		Option option = new Option();
+		option.setId(2);
+		option.setAutomatedAccept(true);
+		option.setLimitAutomated(2);
+		option.setDefaultDeposit(0.6);
+		option.setDepositTimeLimit(4);
+		this.optionService.save(option);
+		Optional<Option> options = this.optionService.findById(2);
+		Assertions.assertTrue(!options.isEmpty() && options.get().getLimitAutomated() == 2
+				&& options.get().getDefaultDeposit() == 0.6 && options.get().getDepositTimeLimit() == 4);
+	}
 
 //	@Test
 //	void deleteOptionTest() {

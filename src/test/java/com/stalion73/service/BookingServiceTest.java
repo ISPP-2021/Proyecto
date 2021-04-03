@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,8 +17,14 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 import com.stalion73.model.Booking;
+import com.stalion73.model.Business;
+import com.stalion73.model.Consumer;
+import com.stalion73.model.Option;
+import com.stalion73.model.Servise;
 import com.stalion73.model.Booking;
 import com.stalion73.model.Status;
+import com.stalion73.model.Supplier;
+import com.stalion73.model.User;
 import com.stalion73.service.BookingService;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(Service.class))
@@ -32,17 +39,32 @@ public class BookingServiceTest {
 		Assertions.assertTrue(!bookings.isEmpty() && bookings.size() == 2);
 	}
 
-//	@Test
-//	void findBookingByIdTest() throws ParseException {
-//		Optional<Booking> booking = this.bookingService.findById(1);
-////		Date d1 = new Date(2021, 01, 27);
-////		Date d2 = new Date(2022, 01, 27);
-//		SimpleDateFormat objSDF = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss"); 
-//		Date dt_1 = objSDF.parse("27-01-2021 22:00:00"); 
-//		Date dt_2 = objSDF.parse("27-01-2022 22:00:00");
-//		Assertions.assertTrue(booking.get().getBookDate().equals(dt_1) && booking.get().getEmisionDate().equals(dt_2)
-//				&& booking.get().getStatus().equals(Status.IN_PROGRESS));
-//	}
+	@Test
+	void findBookingByIdTest() throws ParseException {
+		Optional<Booking> booking = this.bookingService.findById(1);
+		Assertions.assertTrue(booking.get().getStatus().equals(Status.IN_PROGRESS));
+	}
+	
+	@Test
+	void saveBookingTest() {
+		Consumer consumer = new Consumer();
+		consumer.setId(1);
+		Servise servise = new Servise();
+		servise.setId(1);
+		Booking booking = new Booking();
+		booking.setId(3);
+		booking.setBookDate(new GregorianCalendar(2021, 03, 04).getTime());
+		booking.setEmisionDate(new GregorianCalendar(2021, 03, 03).getTime());
+		booking.setStatus(Status.IN_PROGRESS);
+		booking.setConsumer(consumer);
+		booking.setServise(servise);
+		this.bookingService.save(booking);
+		Optional<Booking> bookings = this.bookingService.findById(3);
+		Assertions.assertTrue(
+				!bookings.isEmpty() && booking.getBookDate().equals(new GregorianCalendar(2021, 03, 04).getTime())
+						&& booking.getEmisionDate().equals(new GregorianCalendar(2021, 03, 03).getTime())
+						&& booking.getStatus().equals(Status.IN_PROGRESS));
+	}
 
 	@Test
 	void deleteBookingTest() {
