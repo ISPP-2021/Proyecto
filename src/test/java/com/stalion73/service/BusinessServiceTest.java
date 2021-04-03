@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -13,11 +14,9 @@ import org.springframework.stereotype.Service;
 
 import com.stalion73.model.Business;
 import com.stalion73.model.BusinessType;
-import com.stalion73.model.Consumer;
 import com.stalion73.model.Option;
 import com.stalion73.model.Supplier;
 import com.stalion73.model.User;
-import com.stalion73.service.BusinessService;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(Service.class))
 public class BusinessServiceTest {
@@ -25,18 +24,25 @@ public class BusinessServiceTest {
 	@Autowired
 	protected BusinessService businessService;
 
+	private int count;
+
+	@BeforeEach
+	void setUp(){
+		count = businessService.findAll().size();
+	}
+
 	@Test
 	void findAllBusinessTest() {
 		List<Business> business = (List<Business>) this.businessService.findAll();
-		Assertions.assertTrue(!business.isEmpty() && business.size() == 3);
+		Assertions.assertTrue(!business.isEmpty() && business.size() == count);
 	}
 
 	@Test
 	void findBusinessByIdTest() {
 		Optional<Business> business = this.businessService.findById(1);
 		Assertions.assertTrue(
-				business.get().getName().equals("business_name_1") && business.get().getAddress().equals("address_1")
-						&& business.get().getBusinessType().equals(BusinessType.HAIRDRESSER));
+				business.get().getName().equals("Pizzeria Gus") && business.get().getAddress().equals("address_1")
+						&& business.get().getBusinessType().equals(BusinessType.RESTAURANT));
 	}
 	
 	@Test
@@ -72,38 +78,38 @@ public class BusinessServiceTest {
 				&& business.getAutomatedAccept().equals(true));
 	}
 
-//	@Test
-//	void deleteBusinessTest() {
-//		Business business = this.businessService.findById(1).get();
-//		this.businessService.delete(business);
-//		List<Business> businessList = (List<Business>) this.businessService.findAll();
-//		Assertions.assertTrue(businessList.size() == 2);
-//	}
-//
-//	@Test
-//	void deleteBusinessByIdTest() {
-//		Business business = this.businessService.findById(1).get();
-//		this.businessService.deleteById(business.getId());
-//		List<Business> businessList = (List<Business>) this.businessService.findAll();
-//		Assertions.assertTrue(businessList.size() == 2);
-//	}
+	@Test
+	void deleteBusinessTest() {
+		Business business = this.businessService.findById(1).get();
+		this.businessService.delete(business);
+		List<Business> businessList = (List<Business>) this.businessService.findAll();
+		Assertions.assertTrue(businessList.size() == count-1);
+	}
+
+	@Test
+	void deleteBusinessByIdTest() {
+		Business business = this.businessService.findById(1).get();
+		this.businessService.deleteById(business.getId());
+		List<Business> businessList = (List<Business>) this.businessService.findAll();
+		Assertions.assertTrue(businessList.size() == count-1);
+	}
 
 	@Test
 	void BusinessFindByName() {
-		Collection<Business> b = businessService.findBusinessByName("business_name_1");
+		Collection<Business> b = businessService.findBusinessByName("Pizzeria Gus");
 		Assertions.assertTrue(b.size() == 1);
 	}
 
 	@Test
 	void BusinessFindByAddress() {
-		Collection<Business> b = businessService.findBusinessByAddress("address_2");
-		Assertions.assertTrue(b.size() == 2);
+		Collection<Business> b = businessService.findBusinessByAddress("address_1");
+		Assertions.assertTrue(b.size() == 3);
 	}
 
 	@Test
 	void BusinessFindByType() {
 		Collection<Business> b = businessService.findBusinessByType(BusinessType.HAIRDRESSER);
-		Assertions.assertTrue(b.size() == 2);
+		Assertions.assertTrue(b.size() == 1);
 	}
 
 }

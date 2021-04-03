@@ -21,4 +21,11 @@ public interface BusinessRepository extends CrudRepository<Business, Integer> {
 	@Query("SELECT DISTINCT business FROM Business business WHERE business.businessType LIKE :businessType")
 	Collection<Business> findBusinessByType(@Param("businessType") BusinessType businessType);
 
+	@Query("SELECT b FROM Business b WHERE b.supplier.id =  :supplierId")
+	Business findBusinessBySupplierId(@Param("supplierId")Integer supplierId);
+
+	//@Query("SELECT b FROM Option b WHERE b.options.id =  :optionId")
+	//Business findBusinessByOptionId(@Param("optionId")Integer optionId);
+
+
 }

@@ -13,6 +13,7 @@ import java.util.Optional;
 public class OptionService {
 
     OptionRepository optionRepository;
+    //BusinessRepository businessRepository;
 
     @Autowired
     public OptionService(OptionRepository optionRepository) { this.optionRepository = optionRepository; }
@@ -30,10 +31,20 @@ public class OptionService {
         optionRepository.save(option);
     }
 
-    @Transactional
+    /*    @Transactional
     public void deleteById(Integer id){
+        int ID = businessRepository.findBusinessByOptionId(id).getId();
+        businessRepository.deleteById(ID);
         optionRepository.deleteById(id);
     }
+
+    @Transactional
+    public void delete(Option option) {
+        int id = businessRepository.findBusinessBySupplierId(option.getId()).getId();
+        businessRepository.deleteById(id);
+        optionRepository.delete(option);
+    }
+ */
 
     @Transactional
     public void delete(Option option) {

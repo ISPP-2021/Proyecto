@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -13,9 +14,6 @@ import org.springframework.stereotype.Service;
 
 import com.stalion73.model.Supplier;
 import com.stalion73.model.User;
-//import com.stalion73.model.User;
-import com.stalion73.service.SupplierService;
-//import com.stalion73.service.UserService;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(Service.class))
 public class SupplierServiceTest {
@@ -26,19 +24,26 @@ public class SupplierServiceTest {
 //	@Autowired
 //	private UserService userService;
 
+	private int count;
+
+	@BeforeEach
+	void setUp(){
+		count = supplierService.findAll().size();
+	}
+
 	@Test
 	void findAllSuppliersTest() {
 		List<Supplier> suppliers = (List<Supplier>) this.supplierService.findAll();
-		Assertions.assertTrue(!suppliers.isEmpty() && suppliers.size() == 2);
+		Assertions.assertTrue(!suppliers.isEmpty() && suppliers.size() == count);
 	}
 
 	@Test
 	void findSupplierByIdTest() {
 		Optional<Supplier> supplier = this.supplierService.findById(1);
-		Assertions.assertTrue(supplier.get().getName().equals("supplier_name_1")
-				&& supplier.get().getLastname().equals("supplier_lastname_1")
-				&& supplier.get().getDni().equals("1111111A") && supplier.get().getEmail().equals("random@gmail.com")
-				&& supplier.get().getUser().getUsername().equals("josito"));
+		Assertions.assertTrue(supplier.get().getName().equals("Augusto")
+				&& supplier.get().getLastname().equals("Garcia")
+				&& supplier.get().getDni().equals("00000000A") && supplier.get().getEmail().equals("cosas@gmail.com")
+				&& supplier.get().getUser().getUsername().equals("aug"));
 	}
 
 	@Test
@@ -60,12 +65,21 @@ public class SupplierServiceTest {
 				&& suppliers.get().getEmail().equals("pablocalvo@gmail.com"));
 	}
 	
-//	@Test
-//	void deleteSupplierTest() {
-//		Supplier supplier = this.supplierService.findById(1).get();
-//		this.supplierService.delete(supplier);
-//		List<Supplier> suppliers = (List<Supplier>) this.supplierService.findAll();
-//		Assertions.assertTrue(suppliers.size() == 1);
-//
-//	}
+	@Test
+	void deleteSupplierTest() {
+		Supplier supplier = this.supplierService.findById(1).get();
+		this.supplierService.delete(supplier);
+		List<Supplier> suppliers = (List<Supplier>) this.supplierService.findAll();
+		Assertions.assertTrue(suppliers.size() == count - 1);
+
+	}
+
+	@Test
+	void deleteSupplierByIdTest() {
+		Supplier supplier = this.supplierService.findById(2).get();
+		this.supplierService.deleteById(supplier.getId());
+		List<Supplier> suppliers = (List<Supplier>) this.supplierService.findAll();
+		Assertions.assertTrue(suppliers.size() == count - 1);
+
+	}
 }

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -11,12 +12,10 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 
 import com.stalion73.model.Business;
-import com.stalion73.model.BusinessType;
 import com.stalion73.model.Option;
 import com.stalion73.model.Servise;
 import com.stalion73.model.Supplier;
 import com.stalion73.model.User;
-import com.stalion73.service.ServiseService;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(Service.class))
 public class ServiseServiceTest {
@@ -24,17 +23,24 @@ public class ServiseServiceTest {
 	@Autowired
 	protected ServiseService serviseService;
 
+	private int count;
+
+	@BeforeEach
+	void setUp(){
+		count = serviseService.findAll().size();
+	}
+
 	@Test
 	void findAllServiseTest() {
 		List<Servise> servises = (List<Servise>) this.serviseService.findAll();
-		Assertions.assertTrue(!servises.isEmpty() && servises.size() == 1);
+		Assertions.assertTrue(!servises.isEmpty() && servises.size() == count);
 	}
 
 	@Test
 	void findServiseByIdTest() {
 		Optional<Servise> servise = this.serviseService.findById(1);
-		Assertions.assertTrue(servise.get().getName().equals("servise_name")
-				&& servise.get().getDescription().equals("servise_description_1") && servise.get().getPrice() == 20.3
+		Assertions.assertTrue(servise.get().getName().equals("Comer")
+				&& servise.get().getDescription().equals("Ven a comer al restaurante y disfruta") && servise.get().getPrice() == 20.3
 				&& servise.get().getDuration() == 2 && servise.get().getCapacity() == 2
 				&& servise.get().getDeposit() == 40.7 && servise.get().getTax() == 0.05);
 	}
@@ -58,12 +64,6 @@ public class ServiseServiceTest {
 		option.setDepositTimeLimit(4);
 		Business business = new Business();
 		business.setId(3);
-//		business.setSupplier(supplier);
-//		business.setOption(option);
-//		business.setName("Negocio");
-//		business.setAddress("Calle Calle");
-//		business.setBusinessType(BusinessType.RESTAURANT);
-//		business.setAutomatedAccept(true);
 		Servise servise = new Servise();
 		servise.setId(2);
 		servise.setName("Servicio");
@@ -84,7 +84,7 @@ public class ServiseServiceTest {
 		Servise servise = this.serviseService.findById(1).get();
 		this.serviseService.delete(servise);
 		List<Servise> servises = (List<Servise>) this.serviseService.findAll();
-		Assertions.assertTrue(servises.size() == 0);
+		Assertions.assertTrue(servises.size() == count-1);
 	}
 
 	@Test
@@ -92,7 +92,7 @@ public class ServiseServiceTest {
 		Servise servise = this.serviseService.findById(1).get();
 		this.serviseService.deleteById(servise.getId());
 		List<Servise> servises = (List<Servise>) this.serviseService.findAll();
-		Assertions.assertTrue(servises.size() == 0);
+		Assertions.assertTrue(servises.size() == count-1);
 	}
 
 }

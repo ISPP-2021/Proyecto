@@ -1,31 +1,21 @@
 package com.stalion73.service;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 import com.stalion73.model.Booking;
-import com.stalion73.model.Business;
 import com.stalion73.model.Consumer;
-import com.stalion73.model.Option;
 import com.stalion73.model.Servise;
-import com.stalion73.model.Booking;
 import com.stalion73.model.Status;
-import com.stalion73.model.Supplier;
-import com.stalion73.model.User;
-import com.stalion73.service.BookingService;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(Service.class))
 public class BookingServiceTest {
@@ -33,10 +23,17 @@ public class BookingServiceTest {
 	@Autowired
 	protected BookingService bookingService;
 
+	private int count;
+
+	@BeforeEach
+	void setUp(){
+		count = bookingService.findAll().size();
+	}
+
 	@Test
 	void findAllBookingTest() {
 		List<Booking> bookings = (List<Booking>) this.bookingService.findAll();
-		Assertions.assertTrue(!bookings.isEmpty() && bookings.size() == 2);
+		Assertions.assertTrue(!bookings.isEmpty() && bookings.size() == count);
 	}
 
 	@Test
@@ -71,7 +68,7 @@ public class BookingServiceTest {
 		Booking booking = this.bookingService.findById(1).get();
 		this.bookingService.delete(booking);
 		List<Booking> bookings = (List<Booking>) this.bookingService.findAll();
-		Assertions.assertTrue(bookings.size() == 1);
+		Assertions.assertTrue(bookings.size() == count-1);
 	}
 
 	@Test
@@ -79,7 +76,7 @@ public class BookingServiceTest {
 		Booking booking = this.bookingService.findById(1).get();
 		this.bookingService.deleteById(booking.getId());
 		List<Booking> bookings = (List<Booking>) this.bookingService.findAll();
-		Assertions.assertTrue(bookings.size() == 1);
+		Assertions.assertTrue(bookings.size() == count-1);
 	}
 
 }
