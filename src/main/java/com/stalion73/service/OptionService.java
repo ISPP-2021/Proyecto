@@ -2,6 +2,7 @@ package com.stalion73.service;
 
 import com.stalion73.model.Option;
 import com.stalion73.repository.OptionRepository;
+import com.stalion73.repository.BusinessRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +14,7 @@ import java.util.Optional;
 public class OptionService {
 
     OptionRepository optionRepository;
+    BusinessRepository businessRepository;
 
     @Autowired
     public OptionService(OptionRepository optionRepository) { this.optionRepository = optionRepository; }
@@ -31,15 +33,17 @@ public class OptionService {
     }
 
     @Transactional
+    public void delete(Option option) {
+        int id = businessRepository.findBusinessBySupplierId(option.getId()).getId();
+        businessRepository.deleteById(id);
+        optionRepository.delete(option);
+    }
+
+    @Transactional
     public void deleteById(Integer id){
         optionRepository.deleteById(id);
     }
 
-    @Transactional
-    public void delete(Option option) {
-        optionRepository.delete(option);
-    }
-    //bool automatedAccept, int limitAutomated, double defaultdeposit, int deposittimelimit
     @Transactional
     public void update(Integer id, Option newOption){
         Option updatedOption = this.optionRepository.findById(id)

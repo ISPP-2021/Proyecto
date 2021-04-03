@@ -1,4 +1,4 @@
-package com.stalion73;
+package com.stalion73.service;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

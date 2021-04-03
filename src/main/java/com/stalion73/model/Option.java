@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
+import javax.validation.constraints.Positive;
 
 @Entity
 @Table(name = "options")
@@ -17,6 +18,7 @@ public class Option extends BaseEntity{
     private double defaultDeposit;
 
     //En minutos.
+    @Positive
     private int depositTimeLimit;
 
     public boolean isAutomatedAccept() {
