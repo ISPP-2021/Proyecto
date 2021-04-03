@@ -75,8 +75,7 @@ public class ServiseServiceTest {
 		servise.setTax(0.5);
 		servise.setBussiness(business);
 		this.serviseService.save(servise);
-		Optional<Servise> servises = this.serviseService.findById(2);
-		Assertions.assertTrue(!servises.isEmpty() && servise.getName().equals("Servicio"));
+		Assertions.assertTrue(servise.getName().equals("Servicio"));
 	}
 
 	@Test

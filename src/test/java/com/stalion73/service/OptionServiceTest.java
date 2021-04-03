@@ -22,7 +22,7 @@ public class OptionServiceTest {
 	private int count;
 
 	@BeforeEach
-	void setUp(){
+	void setUp() {
 		count = optionService.findAll().size();
 	}
 
@@ -38,7 +38,7 @@ public class OptionServiceTest {
 		Assertions.assertTrue(option.get().getLimitAutomated() == 3 && option.get().getDefaultDeposit() == 0.7
 				&& option.get().getDepositTimeLimit() == 5);
 	}
-	
+
 	@Test
 	void saveOptionTest() {
 		Option option = new Option();
@@ -49,24 +49,19 @@ public class OptionServiceTest {
 		option.setDepositTimeLimit(4);
 		this.optionService.save(option);
 		Optional<Option> options = this.optionService.findById(2);
-		Assertions.assertTrue(!options.isEmpty() && options.get().getLimitAutomated() == 2
-				&& options.get().getDefaultDeposit() == 0.6 && options.get().getDepositTimeLimit() == 4);
+		Assertions.assertTrue(options.get().getLimitAutomated() == 2 && options.get().getDefaultDeposit() == 0.6
+				&& options.get().getDepositTimeLimit() == 4);
 	}
-/*
-	@Test
-	void deleteOptionTest() {
-		Option option = this.optionService.findById(1).get();
-		this.optionService.delete(option);
-		List<Option> options = (List<Option>) this.optionService.findAll();
-		Assertions.assertTrue(options.size() == 1);
-	}
-
-	@Test
-	void deleteOptionByIdTest() {
-		Option option = this.optionService.findById(1).get();
-		this.optionService.deleteById(option.getId());
-		List<Option> options = (List<Option>) this.optionService.findAll();
-		Assertions.assertTrue(options.size() == 1);
-	}
-*/
+	/*
+	 * @Test void deleteOptionTest() { Option option =
+	 * this.optionService.findById(1).get(); this.optionService.delete(option);
+	 * List<Option> options = (List<Option>) this.optionService.findAll();
+	 * Assertions.assertTrue(options.size() == 1); }
+	 * 
+	 * @Test void deleteOptionByIdTest() { Option option =
+	 * this.optionService.findById(1).get();
+	 * this.optionService.deleteById(option.getId()); List<Option> options =
+	 * (List<Option>) this.optionService.findAll();
+	 * Assertions.assertTrue(options.size() == 1); }
+	 */
 }

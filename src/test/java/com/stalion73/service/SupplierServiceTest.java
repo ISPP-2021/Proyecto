@@ -59,7 +59,7 @@ public class SupplierServiceTest {
 		supplier.setUser(user);
 		this.supplierService.save(supplier);
 		Optional<Supplier> suppliers = this.supplierService.findById(3);
-		Assertions.assertTrue(!suppliers.isEmpty() && suppliers.get().getName().equals("Pablo")
+		Assertions.assertTrue(suppliers.get().getName().equals("Pablo")
 				&& suppliers.get().getLastname().equals("Calvo") 
 				&& suppliers.get().getDni().equals("12345678G")
 				&& suppliers.get().getEmail().equals("pablocalvo@gmail.com"));

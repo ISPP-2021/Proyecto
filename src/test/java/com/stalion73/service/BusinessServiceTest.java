@@ -71,8 +71,7 @@ public class BusinessServiceTest {
 		business.setBusinessType(BusinessType.RESTAURANT);
 		business.setAutomatedAccept(true);
 		this.businessService.save(business);
-		Optional<Business> business2 = this.businessService.findById(4);
-		Assertions.assertTrue(!business2.isEmpty() && business.getName().equals("Negocio") 
+		Assertions.assertTrue(business.getName().equals("Negocio") 
 				&& business.getAddress().equals("Calle Calle") 
 				&& business.getBusinessType().equals(BusinessType.RESTAURANT) 
 				&& business.getAutomatedAccept().equals(true));

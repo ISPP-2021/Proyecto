@@ -56,9 +56,7 @@ public class BookingServiceTest {
 		booking.setConsumer(consumer);
 		booking.setServise(servise);
 		this.bookingService.save(booking);
-		Optional<Booking> bookings = this.bookingService.findById(3);
-		Assertions.assertTrue(
-				!bookings.isEmpty() && booking.getBookDate().equals(new GregorianCalendar(2021, 03, 04).getTime())
+		Assertions.assertTrue(booking.getBookDate().equals(new GregorianCalendar(2021, 03, 04).getTime())
 						&& booking.getEmisionDate().equals(new GregorianCalendar(2021, 03, 03).getTime())
 						&& booking.getStatus().equals(Status.IN_PROGRESS));
 	}

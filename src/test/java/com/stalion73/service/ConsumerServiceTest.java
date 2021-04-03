@@ -55,7 +55,7 @@ public class ConsumerServiceTest {
 		consumer.setUser(user);
 		this.consumerService.save(consumer);
 		Optional<Consumer> consumers = this.consumerService.findById(3);
-		Assertions.assertTrue(!consumers.isEmpty() && consumers.get().getName().equals("Jorge")
+		Assertions.assertTrue(consumers.get().getName().equals("Jorge")
 				&& consumers.get().getLastname().equals("Socorro") 
 				&& consumers.get().getDni().equals("62537287P")
 				&& consumers.get().getEmail().equals("jorgeamigo@gmail.com"));
