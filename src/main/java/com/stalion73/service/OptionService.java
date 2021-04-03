@@ -13,7 +13,7 @@ import java.util.Optional;
 public class OptionService {
 
     OptionRepository optionRepository;
-    //BusinessRepository businessRepository;
+    BusinessRepository businessRepository;
 
     @Autowired
     public OptionService(OptionRepository optionRepository) { this.optionRepository = optionRepository; }
@@ -44,13 +44,7 @@ public class OptionService {
         businessRepository.deleteById(id);
         optionRepository.delete(option);
     }
- 
 
-    @Transactional
-    public void delete(Option option) {
-        optionRepository.delete(option);
-    }
-    //bool automatedAccept, int limitAutomated, double defaultdeposit, int deposittimelimit
     @Transactional
     public void update(Integer id, Option newOption){
         Option updatedOption = this.optionRepository.findById(id)
