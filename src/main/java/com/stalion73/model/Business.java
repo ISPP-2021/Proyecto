@@ -29,7 +29,7 @@ public class Business extends BaseEntity{
     @Column(name = "automated")
     private Boolean automatedAccept;
     
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne()
     @JoinColumn(name = "supplier_id", referencedColumnName = "id")
     private Supplier supplier;
 

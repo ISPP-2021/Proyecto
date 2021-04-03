@@ -4,12 +4,17 @@ import com.stalion73.model.Business;
 import com.stalion73.model.Option;
 import com.stalion73.service.OptionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.MediaTypes;
+import org.springframework.hateoas.mediatype.problem.Problem;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.Collection;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -21,83 +26,134 @@ public class OptionController {
 	@Autowired
 	private final OptionService optionService;
 
+	private final static HttpHeaders headers = new HttpHeaders();
+
+
+    public  static void setup(){
+        headers.setAccessControlAllowOrigin("*");
+   	}
+
 	public OptionController(OptionService optionService){
 		this.optionService = optionService;
 	}
 
+
+	@RequestMapping(value = "", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<?> all() {
+        OptionController.setup();
+        Collection<Option> options = this.optionService.findAll();
+        if (options.isEmpty()) {
+            return ResponseEntity
+                    .status(HttpStatus.NO_CONTENT)
+                    .headers(headers)
+                    .body(options);
+        }else{
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .headers(headers)
+                    .body(options);
+        }
+
+    }
+
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
-	public ResponseEntity<Option> one(@PathVariable("id") Integer id) {
-		Option option = this.optionService.findById(id).get();
-		if (option == null) {
-			return new ResponseEntity<Option>(HttpStatus.NOT_FOUND);
-		}
-		return new ResponseEntity<Option>(option, HttpStatus.OK);
-	}
+	public ResponseEntity<?> one(@PathVariable("id") Integer id) {
+
+		OptionController.setup();
+		Optional<Option> option = this.optionService.findById(id);
+        if (!option.isPresent()) {
+            return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
+                .headers(headers)
+                .body(Problem.create()
+                    .withTitle("Ineffected ID")
+                    .withDetail("The provided ID doesn't exist"));
+        }else{
+            return ResponseEntity
+                .status(HttpStatus.OK) 
+                .headers(headers) 
+                .body(option.get());
+        }
+    }
 
 	@RequestMapping(value = "", method = RequestMethod.POST, produces = "application/json")
-	public ResponseEntity<Option> create(@Valid @RequestBody Option option,
+	public ResponseEntity<?> create(@Valid @RequestBody Option option,
 										   BindingResult bindingResult,
 										   UriComponentsBuilder ucBuilder) {
 
-		BindingErrorsResponse errors = new BindingErrorsResponse();
+		OptionController.setup();
+		BindingErrorsResponse errors = new BindingErrorsResponse();							
 		HttpHeaders headers = new HttpHeaders();
-		if (bindingResult.hasErrors() || (option == null)) {
-			errors.addAllErrors(bindingResult);
-			headers.add("errors", errors.toJSON());
-			return new ResponseEntity<Option>(headers, HttpStatus.BAD_REQUEST);
-		}
-		this.optionService.save(option);
-		headers.setLocation(ucBuilder.path("/option").buildAndExpand(option.getId()).toUri());
-		return new ResponseEntity<Option>(option, headers, HttpStatus.CREATED);
-	}
-
+        if (bindingResult.hasErrors() || ( option== null)) {
+            errors.addAllErrors(bindingResult);
+            headers.add("errors", errors.toJSON());
+            return ResponseEntity
+				.status(HttpStatus.BAD_REQUEST)
+				.headers(headers)
+				.body(Problem.create()
+					.withTitle("Validation error")
+					.withDetail("The provided consumer was not successfuly validated"));
+        }else{
+            this.optionService.save(option);
+            headers.setLocation(ucBuilder.path("/business").buildAndExpand(option.getId()).toUri());
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .headers(headers)
+                    .body(option);
+        }
+    }
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = "application/json")
-	public ResponseEntity<Option> update(@PathVariable("id") Integer id,
+	public ResponseEntity<?> update(@PathVariable("id") Integer id,
 										   @RequestBody @Valid Option newOption,
 										   BindingResult bindingResult){
-		BindingErrorsResponse errors = new BindingErrorsResponse();
-		HttpHeaders headers = new HttpHeaders();
+		OptionController.setup();
+		BindingErrorsResponse errors = new BindingErrorsResponse();                                        
 		if(bindingResult.hasErrors() || (newOption == null)){
 			errors.addAllErrors(bindingResult);
 			headers.add("errors", errors.toJSON());
-			return new ResponseEntity<Option>(headers, HttpStatus.BAD_REQUEST);
+			return ResponseEntity
+				.status(HttpStatus.BAD_REQUEST)
+				.headers(headers)
+				.body(Problem.create()
+					.withTitle("Validation error")
+					.withDetail("The provided consumer was not successfuly validated"));
+		}else if(!this.optionService.findById(id).isPresent()){
+			return ResponseEntity
+				.status(HttpStatus.NOT_FOUND)
+				.header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
+				.headers(headers)
+				.body(Problem.create()
+					.withTitle("Ineffected ID")
+					.withDetail("The provided ID doesn't exist"));
+		}else{
+	
+			this.optionService.update(id, newOption);
+			Option updatedOption = this.optionService.findById(id).get();
+			return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
+					.headers(headers)
+					.body(updatedOption);
 		}
-		if(this.optionService.findById(id).get() == null){
-			return new ResponseEntity<Option>(HttpStatus.NOT_FOUND);
-		}
-		// option(name, address, optionType, automatedAccept, Supplier, Servises)
-		Option updatedOption = this.optionService.findById(id)
-				.map(option -> {
-							double defaultDeposit = newOption.getDefaultDeposit();
-							option.setDefaultDeposit(defaultDeposit);
-							int depositTimeLimit = newOption.getDepositTimeLimit();
-							option.setDepositTimeLimit(depositTimeLimit);
-							Integer limitAutomated = newOption.getLimitAutomated() == null ? option.getLimitAutomated() : newOption.getLimitAutomated();
-							option.setLimitAutomated(limitAutomated);
-							Boolean automatedAccept = newOption.isAutomatedAccept();
-							option.setAutomatedAccept(automatedAccept);
-							option.setAutomatedAccept(automatedAccept);
-							this.optionService.save(option);
-							return option;
-						}
-				)
-				.orElseGet(() -> {
-					newOption.setId(id);
-					this.optionService.save(newOption);
-					return newOption;
-				});
-
-		return new ResponseEntity<Option>(updatedOption, HttpStatus.NO_CONTENT);
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "application/json")
-	public ResponseEntity<Void> delete(@PathVariable("id") Integer id){
-		Option option = this.optionService.findById(id).get();
-		if(option == null){
-			return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
-		}
-		this.optionService.delete(option);
-		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+	public ResponseEntity<?> delete(@PathVariable("id") Integer id){
+		OptionController.setup();
+		Optional<Option> option = this.optionService.findById(id);
+		
+		if(option.isPresent()){
+            this.optionService.deleteById(id);
+			return ResponseEntity.noContent().build();
+
+		}else{
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
+                    .headers(headers)
+                    .body(Problem.create()
+                        .withTitle("Ineffected ID")
+                        .withDetail("The provided ID doesn't exist"));
+        }
 	}
   
 
