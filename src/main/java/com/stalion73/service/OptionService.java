@@ -33,17 +33,15 @@ public class OptionService {
     }
 
     @Transactional
-    public void deleteById(Integer id){
-        int ID = businessRepository.findBusinessByOptionId(id).getId();
-        businessRepository.deleteById(ID);
-        optionRepository.deleteById(id);
-    }
-
-    @Transactional
     public void delete(Option option) {
         int id = businessRepository.findBusinessBySupplierId(option.getId()).getId();
         businessRepository.deleteById(id);
         optionRepository.delete(option);
+    }
+
+    @Transactional
+    public void deleteById(Integer id){
+        optionRepository.deleteById(id);
     }
 
     @Transactional
