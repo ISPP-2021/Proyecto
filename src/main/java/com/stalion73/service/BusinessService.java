@@ -91,4 +91,11 @@ public class BusinessService {
 	public Collection<Business> findBusinessByType(BusinessType type) {
 		return	businessRepository.findBusinessByType(type);
 	}
+
+    @Transactional
+    public Business findBusinessBySupplierId(Integer supplierId) {
+        Business business = this.businessRepository.findBusinessBySupplierId(supplierId);
+        return business;
+    }
+
 }

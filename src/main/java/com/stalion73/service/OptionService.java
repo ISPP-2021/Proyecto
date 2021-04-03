@@ -50,5 +50,28 @@ public class OptionService {
     public void delete(Option option) {
         optionRepository.delete(option);
     }
+    //bool automatedAccept, int limitAutomated, double defaultdeposit, int deposittimelimit
+    @Transactional
+    public void update(Integer id, Option newOption){
+        Option updatedOption = this.optionRepository.findById(id)
+                    .map(option-> {
+                        Boolean automatedAccept = newOption.isAutomatedAccept() == false ? option.isAutomatedAccept() : newOption.isAutomatedAccept();
+                        option.setAutomatedAccept(automatedAccept);
+                        Integer limitAutomated = newOption.getLimitAutomated() == 0 ? option.getLimitAutomated(): newOption.getLimitAutomated();
+                        option.setLimitAutomated(limitAutomated);
+                        Double defaultDeposit = newOption.getDefaultDeposit() == 0.0 ? option.getDefaultDeposit(): newOption.getDefaultDeposit();
+                        option.setDefaultDeposit(defaultDeposit);
+                        Integer depositTimeLimit = newOption.getDepositTimeLimit() == 0 ? option.getDepositTimeLimit(): newOption.getDepositTimeLimit();
+                        option.setDepositTimeLimit(depositTimeLimit);
+                        return option;
+                        }
+                    )
+                    .orElseGet(()->{
+                        newOption.setId(id);
+                        this.optionRepository.save(newOption);
+                        return newOption;
+                    });
+        this.optionRepository.save(updatedOption);
+    }
 
 }

@@ -12,7 +12,6 @@ INSERT INTO authorities(id,username,authority) VALUES (4,'aug','owner');
 INSERT INTO authorities(id,username,authority) VALUES (5,'rodri','owner');
 INSERT INTO authorities(id,username,authority) VALUES (6,'antonio','owner');
 
-
 INSERT INTO consumers(id, name, lastname, dni, email, username)
 VALUES (1,'Jose','Garcia','23487343A', 'cosas@gmail.com', 'josito');
 INSERT INTO consumers(id, name, lastname, dni, email, username)
@@ -59,13 +58,11 @@ VALUES (7,'Tattoo grande','Tatuaje mediano/grande',20.3,2,2,40.7,0.05,2);
 INSERT INTO servises(id, name, description, price, duration, capacity, deposit, tax, business_id)
 VALUES (8,'Menú del día','Menú del día de la pizzería',20.3,2,2,40.7,0.05,1);
 
-
-
-INSERT INTO bookings(id, consumer_id, servise_id, book, emision, status)
-VALUES (1,1,1,'2021-01-27 22:00:00','2022-01-27 22:00:00','IN_PROGRESS');
-INSERT INTO bookings(id, consumer_id, servise_id, book, emision, status)
-VALUES (2,2,1,'2021-01-27 22:00:00','2022-01-27 22:00:00','IN_PROGRESS');
-INSERT INTO bookings(id, consumer_id, servise_id, book, emision, status)
-VALUES (3,3,1,'2021-01-27 22:00:00','2022-01-27 22:00:00','COMPLETED');
-INSERT INTO bookings(id, consumer_id, servise_id, book, emision, status)
-VALUES (4,1,2,'2021-01-27 22:00:00','2022-01-27 22:00:00','IN_PROGRESS');
+INSERT INTO bookings(id, consumer_id, servise_id, book, emision, status) 
+        VALUES (1,1,1,'2021-01-27 22:00:00','2022-01-27 22:00:00','IN_PROGRESS');
+INSERT INTO bookings(id, consumer_id, servise_id, book, emision, status) 
+        VALUES (2,2,1,'2021-01-27 22:00:00','2022-01-27 22:00:00','IN_PROGRESS');
+INSERT INTO bookings(id, consumer_id, servise_id, book, emision, status) 
+        VALUES (3,3,1,'2021-01-27 22:00:00','2022-01-27 22:00:00','COMPLETED');
+INSERT INTO bookings(id, consumer_id, servise_id, book, emision, status) 
+        VALUES (4,1,2,'2021-01-27 22:00:00','2022-01-27 22:00:00','IN_PROGRESS');

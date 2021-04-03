@@ -27,5 +27,4 @@ public interface BusinessRepository extends CrudRepository<Business, Integer> {
 	//@Query("SELECT b FROM Option b WHERE b.options.id =  :optionId")
 	//Business findBusinessByOptionId(@Param("optionId")Integer optionId);
 
-
 }
