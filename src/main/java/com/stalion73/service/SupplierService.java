@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 import com.stalion73.model.Supplier;
+import com.stalion73.repository.BusinessRepository;
 import com.stalion73.repository.SupplierRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,12 +13,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class SupplierService {
-    
+
     SupplierRepository supplierRepository;
+    BusinessRepository businessRepository;
 
     @Autowired
-    public SupplierService(SupplierRepository supplierRepository){
+    public SupplierService(SupplierRepository supplierRepository, BusinessRepository businessRepository){
         this.supplierRepository = supplierRepository;
+        this.businessRepository = businessRepository;
     }
 
     @Transactional(readOnly = true)
@@ -31,17 +34,25 @@ public class SupplierService {
     }
 
     @Transactional
+    public Supplier findSupplierByUsername(String username){
+        return this.supplierRepository.findSupplierByUsername(username);
+    }
+
+    @Transactional
     public void save(Supplier supplier){
         supplierRepository.save(supplier);
     }
 
     @Transactional
     public void deleteById(Integer id){
-        supplierRepository.deleteById(id);
+        int newId = businessRepository.findBusinessBySupplierId(id).getId();
+        businessRepository.deleteById(newId);
     }
-    
+
     @Transactional
     public void delete(Supplier supplier) {
+        int id = businessRepository.findBusinessBySupplierId(supplier.getId()).getId();
+        businessRepository.deleteById(id);
         supplierRepository.delete(supplier);
     }
 

@@ -28,6 +28,11 @@ public class ConsumerService {
     public Collection<Consumer> findAll(){
       return consumerRepository.findAll();
     }
+
+    @Transactional
+    public Consumer findConsumerByUsername(String username){
+        return this.consumerRepository.findConsumerByUsername(username);
+    }
     
     @Transactional(readOnly = true)
     public Optional<Consumer> findById(Integer id){
