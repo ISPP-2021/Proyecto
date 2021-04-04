@@ -2,6 +2,10 @@ package com.stalion73.model;
 
 import java.util.Set;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.stalion73.model.transformer.*;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -26,7 +30,8 @@ public class Servise extends BaseEntity{
 
     @ManyToOne()
     @JoinColumn(name ="business_id")
-    @JsonIgnore
+    @JsonSerialize(using = BusinessSerializer.class)
+	@JsonDeserialize(using = BusinessDeserializer.class)
     private Business business;
 
     @OneToMany(orphanRemoval = true, mappedBy =  "servise", fetch = FetchType.LAZY)
