@@ -3,6 +3,9 @@ package com.stalion73.model;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.stalion73.model.transformer.*;
 
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -46,7 +49,8 @@ public class Booking extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name ="servise_id")
-    @JsonIgnore
+    @JsonSerialize(using = ServiseSerializer.class)
+	@JsonDeserialize(using = ServiseDeserializer.class)
     private Servise servise;
 
     public Date getBookDate() {

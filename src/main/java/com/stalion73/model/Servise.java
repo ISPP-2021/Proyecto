@@ -2,6 +2,11 @@ package com.stalion73.model;
 
 import java.util.Set;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.stalion73.model.transformer.*;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -36,10 +41,11 @@ public class Servise extends BaseEntity {
 	private Double deposit; //fianza
 	private Double tax; //lo que cobramos al negocio (impuesto)
 
-	@ManyToOne()
-	@JoinColumn(name = "business_id")
-	@JsonIgnore
-	private Business business;
+    @ManyToOne()
+    @JoinColumn(name ="business_id")
+    @JsonSerialize(using = BusinessSerializer.class)
+	@JsonDeserialize(using = BusinessDeserializer.class)
+    private Business business;
 
 	@OneToMany(orphanRemoval = true, mappedBy = "servise", fetch = FetchType.LAZY)
 	private Set<Booking> bookings;
