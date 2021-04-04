@@ -2,7 +2,11 @@ package com.stalion73.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import com.stalion73.model.Authorities;
+import com.stalion73.model.Consumer;
+import com.stalion73.model.Supplier;
 import com.stalion73.model.User;
+import com.stalion73.service.ConsumerService;
+import com.stalion73.service.SupplierService;
 import com.stalion73.service.UserService;
 
 import java.util.List;
@@ -18,6 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.http.HttpStatus;
 
 @RestController
@@ -28,10 +34,20 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
+	@Autowired
+	private ConsumerService consumerService;
+
+	@Autowired
+	private SupplierService supplierService;
+
 	private final static HttpHeaders headers = new HttpHeaders();
 
-	public UserController(UserService userService) {
-		this.userService = userService;
+	public UserController(UserService userService,
+						ConsumerService consumerService,
+						SupplierService supplierService) {
+				this.consumerService = consumerService;
+				this.supplierService = supplierService;
+				this.userService = userService;
 	}
 
 	@RequestMapping(value = "/login")
@@ -39,12 +55,31 @@ public class UserController {
 		User usuario = this.userService.findUser(user.getUsername()).get();
 		if (usuario.getPassword().equals(usuario.getPassword())) {
 			String token = getJWTToken(usuario);
-			headers.add("token", token);
 			usuario.setToken(token);
+			this.userService.saveUser(usuario);
 		} else {
 			user = null;
 		}
 		return ResponseEntity.status(HttpStatus.OK).headers(headers).body(usuario);
+	}
+
+	@RequestMapping(value = "/profile")
+	public ResponseEntity<?> profile(SecurityContextHolder contextHolder) {
+		String authority = contextHolder.getContext().getAuthentication().getAuthorities().iterator().next().getAuthority();
+		if(authority.equals("user")){
+			Consumer user = this.consumerService
+				.findConsumerByUsername((String)contextHolder.getContext()
+												.getAuthentication().getPrincipal());
+		
+		return ResponseEntity.status(HttpStatus.OK).headers(headers).body(user);
+
+		} else if(authority.equals("owner")) {
+		    Supplier user = this.supplierService.findSupplierByUsername((String)contextHolder.getContext()
+												.getAuthentication().getPrincipal());
+		return ResponseEntity.status(HttpStatus.OK).headers(headers).body(user);
+	}
+		
+		return ResponseEntity.status(HttpStatus.OK).headers(headers).body("user");
 	}
 
 	private String getJWTToken(User user) {

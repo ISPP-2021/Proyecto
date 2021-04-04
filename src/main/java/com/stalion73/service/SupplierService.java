@@ -34,6 +34,11 @@ public class SupplierService {
     }
 
     @Transactional
+    public Supplier findSupplierByUsername(String username){
+        return this.supplierRepository.findSupplierByUsername(username);
+    }
+
+    @Transactional
     public void save(Supplier supplier){
         supplierRepository.save(supplier);
     }

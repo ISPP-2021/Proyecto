@@ -15,9 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.mediatype.problem.Problem;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/suppliers")
 public class SupplierController {
@@ -37,7 +41,7 @@ public class SupplierController {
 
 
     public  static void setup(){
-        headers.setAccessControlAllowOrigin("*");
+        // headers.setAccessControlAllowOrigin("*");
    	}
 
     public SupplierController(SupplierService supplierService, BusinessService businessService){
@@ -163,5 +167,27 @@ public class SupplierController {
                         .withDetail("The provided ID doesn't exist"));
         }
 	}
+
+    // -------------AUGUSTO'S BAD&IMPROVABLE CODE------------
+
+	@RequestMapping(value = "/profile", method = RequestMethod.GET,produces = "application/json")
+	public ResponseEntity<?> profile(SecurityContextHolder contextHolder){
+
+		String username = (String) contextHolder.getContext().getAuthentication().getPrincipal();
+		Supplier supplier = this.supplierService.findSupplierByUsername(username);
+		if(supplier!=null){
+		
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.headers(headers) 
+				.body(supplier);
+		}else {
+			return ResponseEntity
+				.status(HttpStatus.NOT_FOUND)
+				.headers(headers).body("Sorry");
+		}
+	}
+
+	// ---------------AUGUSTO'S BAD&IMPROVABLE CODE---------------
     
 }

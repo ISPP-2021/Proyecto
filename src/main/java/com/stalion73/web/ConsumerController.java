@@ -9,6 +9,7 @@ import javax.validation.Valid;
 
 import com.stalion73.service.ConsumerService;
 import com.stalion73.model.Consumer;
+import com.stalion73.model.User;
 import com.stalion73.model.modelAssembler.ConsumerModelAssembler;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
@@ -36,6 +37,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/consumers")
 public class ConsumerController{
@@ -50,8 +52,8 @@ public class ConsumerController{
 
 
     public  static void setup(){
-        headers.setAccessControlAllowOrigin("*");
-		List<HttpMethod> methods = new ArrayList<>();
+        // headers.setAccessControlAllowOrigin("*");
+		// List<HttpMethod> methods = new ArrayList<>();
 		//methods.add(HttpMethod.POST);
 		//headers.setAccessControlAllowMethods(methods);
    	}
@@ -62,7 +64,6 @@ public class ConsumerController{
 		this.assembler = assembler;
     }
 
-	@CrossOrigin
 	@GetMapping
 	public ResponseEntity<?> all() {
 		ConsumerController.setup();
@@ -82,6 +83,7 @@ public class ConsumerController{
 			.body(consumers);
 		}	
 	}
+
 
 	@GetMapping("/{id}")
     public ResponseEntity<?> one(@PathVariable Integer id) {
@@ -183,5 +185,26 @@ public class ConsumerController{
 	}
   
 
+	// -------------AUGUSTO'S BAD&IMPROVABLE CODE------------
+
+	@GetMapping("/profile")
+	public ResponseEntity<?> profile(SecurityContextHolder contextHolder){
+
+		String username = (String) contextHolder.getContext().getAuthentication().getPrincipal();
+		Consumer consumer = this.consumerService.findConsumerByUsername(username);
+		if(consumer!=null){
+		
+		return ResponseEntity
+				.status(HttpStatus.OK) 
+				.headers(headers) 
+				.body(consumer);
+		}else {
+			return ResponseEntity
+				.status(HttpStatus.NOT_FOUND)
+				.headers(headers).body("Sorry");
+		}
+	}
+
+	// ---------------AUGUSTO'S BAD&IMPROVABLE CODE---------------
 
 }

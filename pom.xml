@@ -159,7 +159,7 @@
                 <artifactId>heroku-maven-plugin</artifactId>
                 <version>3.0.3</version>
                 <configuration>
-                    <appName>stalion73</appName>
+                    <appName>bico-despliegue1</appName>
                 </configuration>
             </plugin>
             <plugin>
