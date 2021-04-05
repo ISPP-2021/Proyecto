@@ -9,6 +9,7 @@ import java.util.Optional;
 import javax.validation.Valid;
 
 import com.stalion73.service.BusinessService;
+import com.stalion73.service.ServiseService;
 import com.stalion73.service.SupplierService;
 import com.stalion73.model.Business;
 import com.stalion73.model.Servise;
@@ -41,17 +42,21 @@ public class BusinessController {
     @Autowired
     private final SupplierService supplierService;
 
+    @Autowired
+    private final ServiseService serviseService;
+
     private final static HttpHeaders headers = new HttpHeaders();
 
     // public static void setup() {
     //     headers.setAccessControlAllowOrigin("*");
     // }
 
-    public BusinessController(BusinessService businessService, SupplierService supplierService) {
+    public BusinessController(BusinessService businessService, SupplierService supplierService
+    , ServiseService serviseService) {
         this.businessService = businessService;
         this.supplierService = supplierService;
+        this.serviseService = serviseService;
     }
-
     @RequestMapping(value = "", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<?> all() {
         // BusinessController.setup();
@@ -126,6 +131,49 @@ public class BusinessController {
             });
             return new ResponseEntity<Business>(updatedBusiness, headers, HttpStatus.NO_CONTENT);
         }
+    }
+
+    @RequestMapping(value = "/{id}/addition", method = RequestMethod.PUT, produces = "application/json")
+    public ResponseEntity<?> addServise(@PathVariable("id") Integer id, @RequestBody @Valid Servise servise,
+            BindingResult bindingResult) {
+        BindingErrorsResponse errors = new BindingErrorsResponse();
+        HttpHeaders headers = new HttpHeaders();
+        if (bindingResult.hasErrors() || (servise == null)) {
+            errors.addAllErrors(bindingResult);
+            headers.add("errors", errors.toJSON());
+            return new ResponseEntity<Servise>(headers, HttpStatus.BAD_REQUEST);
+        }
+        Business business = this.businessService.findById(id).get();
+        servise.setBussiness(business);
+        this.serviseService.save(servise);
+        business.addServise(servise);
+        this.businessService.save(business);
+        return new ResponseEntity<Servise>(servise, headers, HttpStatus.CREATED);
+
+    }
+
+    @RequestMapping(value = "/{id}/additions", method = RequestMethod.PUT, produces = "application/json")
+    public ResponseEntity<?> addServises(@PathVariable("id") Integer id, @RequestBody @Valid Set<Servise> servises,
+            BindingResult bindingResult) {
+        BindingErrorsResponse errors = new BindingErrorsResponse();
+        HttpHeaders headers = new HttpHeaders();
+        if (bindingResult.hasErrors() || (servises == null)) {
+            errors.addAllErrors(bindingResult);
+            headers.add("errors", errors.toJSON());
+            return new ResponseEntity<Servise>(headers, HttpStatus.BAD_REQUEST);
+        }
+        Business business = this.businessService.findById(id).get();
+
+        servises.stream()
+                    .map(servise -> {
+                        servise.setBussiness(business);
+                        return servise;
+                    })
+                    .forEach(x -> this.serviseService.save(x));
+        business.addServises(servises);
+        this.businessService.save(business);
+        return new ResponseEntity<Set<Servise>>(servises, headers, HttpStatus.CREATED);
+
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "application/json")

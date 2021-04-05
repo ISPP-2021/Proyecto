@@ -1,5 +1,14 @@
 package com.stalion73.web;
 
+
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.util.Collection;
 import java.util.Optional;
 
@@ -7,6 +16,8 @@ import javax.validation.Valid;
 
 import com.stalion73.service.BusinessService;
 import com.stalion73.service.SupplierService;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stalion73.model.Business;
 import com.stalion73.model.Supplier;
 
@@ -71,6 +82,8 @@ public class SupplierController {
     public ResponseEntity<?> one(@PathVariable("id") Integer id) {
         SupplierController.setup();
         Optional<Supplier> supplier = this.supplierService.findById(id);
+        Business business = this.businessService.findBusinessBySupplierId(supplier.get().getId());
+        HttpHeaders headers = new HttpHeaders();
         if (!supplier.isPresent()) {
             return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
@@ -80,6 +93,7 @@ public class SupplierController {
                     .withTitle("Ineffected ID")
                     .withDetail("The provided ID doesn't exist"));
         }else{
+            headers.add("business_id", toJSON(business.getId().toString()));
             return ResponseEntity
                 .status(HttpStatus.OK) 
                 .headers(headers) 
@@ -188,6 +202,16 @@ public class SupplierController {
 		}
 	}
 
-	// ---------------AUGUSTO'S CODE---------------
+    public String toJSON(String s) {
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
+		String json = "";
+		try {
+			json = mapper.writeValueAsString(s);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		return json;
+	}
     
 }
