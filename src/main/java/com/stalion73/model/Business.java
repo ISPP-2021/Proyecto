@@ -114,4 +114,14 @@ public class Business extends BaseEntity {
         }
     }
 
+	public void addServises(Set<Servise> servises){
+        if(this.servises == null){
+            this.servises = new HashSet<>();
+            this.servises.addAll(servises);
+            setServices(servises);
+        }else{
+            this.servises.addAll(servises);
+        }
+    }
+
 }

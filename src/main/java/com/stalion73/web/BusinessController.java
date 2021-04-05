@@ -152,6 +152,30 @@ public class BusinessController {
 
     }
 
+    @RequestMapping(value = "/{id}/additions", method = RequestMethod.PUT, produces = "application/json")
+    public ResponseEntity<?> addServises(@PathVariable("id") Integer id, @RequestBody @Valid Set<Servise> servises,
+            BindingResult bindingResult) {
+        BindingErrorsResponse errors = new BindingErrorsResponse();
+        HttpHeaders headers = new HttpHeaders();
+        if (bindingResult.hasErrors() || (servises == null)) {
+            errors.addAllErrors(bindingResult);
+            headers.add("errors", errors.toJSON());
+            return new ResponseEntity<Servise>(headers, HttpStatus.BAD_REQUEST);
+        }
+        Business business = this.businessService.findById(id).get();
+
+        servises.stream()
+                    .map(servise -> {
+                        servise.setBussiness(business);
+                        return servise;
+                    })
+                    .forEach(x -> this.serviseService.save(x));
+        business.addServises(servises);
+        this.businessService.save(business);
+        return new ResponseEntity<Set<Servise>>(servises, headers, HttpStatus.CREATED);
+
+    }
+
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "application/json")
     public ResponseEntity<?> delete(@PathVariable("id") Integer id) {
         // BusinessController.setup();
