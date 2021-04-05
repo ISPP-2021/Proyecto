@@ -60,9 +60,6 @@ public class BusinessService {
 			BusinessType type = newBusiness.getBusinessType() == null ? business.getBusinessType()
 					: newBusiness.getBusinessType();
 			business.setBusinessType(type);
-			Set<Servise> servises = newBusiness.getServices() == null ? business.getServices()
-					: newBusiness.getServices();
-			business.setServices(servises);
 			Option option = newBusiness.getOption() == null ? business.getOption() : newBusiness.getOption();
 			business.setOption(option);
 			Boolean automatedAccept = newBusiness.getAutomatedAccept() == null ? business.getAutomatedAccept()
