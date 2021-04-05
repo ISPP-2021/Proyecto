@@ -1,5 +1,6 @@
 package com.stalion73.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -102,5 +103,15 @@ public class Business extends BaseEntity {
 	public void setOption(Option option) {
 		this.option = option;
 	}
+
+	public void addServise(Servise servise){
+        if(this.servises == null){
+            this.servises = new HashSet<>();
+            this.servises.add(servise);
+            setServices(servises);
+        }else{
+            this.servises.add(servise);
+        }
+    }
 
 }
