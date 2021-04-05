@@ -17,13 +17,19 @@ import java.util.Optional;
 import javax.validation.Valid;
 
 import com.stalion73.service.BookingService;
+import com.stalion73.service.ConsumerService;
+import com.stalion73.service.ServiseService;
 import com.stalion73.model.Booking;
+import com.stalion73.model.Consumer;
+import com.stalion73.model.Servise;
 import com.stalion73.model.Status;
+import com.stalion73.model.User;
 import com.stalion73.model.modelAssembler.BookingModelAssembler;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,16 +39,23 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/bookings")
+@CrossOrigin(origins = "*")
 public class BookingController {
     
     @Autowired
     private final BookingService bookingService;
+
+    @Autowired
+    private final ServiseService serviseService;
+    
+    @Autowired
+    private final ConsumerService consumerService;
 
     @Autowired
     private final BookingModelAssembler assembler;
@@ -51,11 +64,15 @@ public class BookingController {
 
 
     public  static void setup(){
-        headers.setAccessControlAllowOrigin("*");
+        // headers.setAccessControlAllowOrigin("*");
     }
 
-    public BookingController(BookingService bookingService, BookingModelAssembler assembler){
+    public BookingController(BookingService bookingService,
+                        ConsumerService consumerService,
+                        ServiseService serviseService, BookingModelAssembler assembler){
         this.bookingService = bookingService;
+        this.serviseService = serviseService;
+        this.consumerService = consumerService;
         this.assembler = assembler;
     }
 
@@ -77,7 +94,7 @@ public class BookingController {
                 .body(bookings);
         }
     }
-
+    
     @GetMapping("/{id}")
     public ResponseEntity<?> one(@PathVariable("id") Integer id) {
         BookingController.setup();
@@ -99,9 +116,10 @@ public class BookingController {
         
     }
 
-    @RequestMapping(value = "", method = RequestMethod.POST, produces = "application/json")
-    public ResponseEntity<?> create(@Valid @RequestBody Booking booking,
-                                            BindingResult bindingResult, 
+    @RequestMapping(value = "/{id}", method = RequestMethod.POST, produces = "application/json")
+    public ResponseEntity<?> create(@Valid @RequestBody Booking booking,SecurityContextHolder contextHolder,
+                                            BindingResult bindingResult,
+                                            @PathVariable("id")Integer serviseId, 
                                             UriComponentsBuilder ucBuilder) {
         BookingController.setup();
         BindingErrorsResponse errors = new BindingErrorsResponse();
@@ -115,11 +133,19 @@ public class BookingController {
 					.withTitle("Validation error")
 					.withDetail("The provided booking was not successfuly validated"));
         }else{
+            String username = (String)contextHolder
+            .getContext().getAuthentication().getPrincipal();
+           Consumer consumer = this.consumerService.findConsumerByUsername(username);
+            booking.setConsumer(consumer);
+            Servise servise = this.serviseService.findById(serviseId).get();
+            booking.setService(servise);
             this.bookingService.save(booking);
             headers.setLocation(ucBuilder.path("/bookings" + booking.getId()).buildAndExpand(booking.getId()).toUri());
-            return new ResponseEntity<Booking>(booking, headers, HttpStatus.CREATED);
+            return ResponseEntity.status(HttpStatus.CREATED).headers(headers).body(booking);
         }
     }
+
+    
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = "application/json")
 	public ResponseEntity<?> update(@PathVariable("id") Integer id, 

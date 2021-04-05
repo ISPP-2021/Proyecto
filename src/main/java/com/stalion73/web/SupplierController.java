@@ -182,7 +182,7 @@ public class SupplierController {
         }
 	}
 
-    // -------------AUGUSTO'S BAD&IMPROVABLE CODE------------
+    // -------------AUGUSTO'S CODE------------
 
 	@RequestMapping(value = "/profile", method = RequestMethod.GET,produces = "application/json")
 	public ResponseEntity<?> profile(SecurityContextHolder contextHolder){

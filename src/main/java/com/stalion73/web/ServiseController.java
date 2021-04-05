@@ -24,8 +24,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.stalion73.model.Servise;
 import com.stalion73.service.ServiseService;
 
-@CrossOrigin(origins = "*")
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/servises")
 public class ServiseController {
 
