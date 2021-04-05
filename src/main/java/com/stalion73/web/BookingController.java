@@ -94,7 +94,7 @@ public class BookingController {
                 .body(bookings);
         }
     }
-
+    
     @GetMapping("/{id}")
     public ResponseEntity<?> one(@PathVariable("id") Integer id) {
         BookingController.setup();
@@ -141,7 +141,7 @@ public class BookingController {
             booking.setService(servise);
             this.bookingService.save(booking);
             headers.setLocation(ucBuilder.path("/bookings" + booking.getId()).buildAndExpand(booking.getId()).toUri());
-            return new ResponseEntity<Booking>(booking, headers, HttpStatus.CREATED);
+            return ResponseEntity.status(HttpStatus.CREATED).headers(headers).body(booking);
         }
     }
 
