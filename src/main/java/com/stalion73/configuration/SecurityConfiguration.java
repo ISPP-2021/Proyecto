@@ -39,7 +39,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			.antMatchers("/users/new").permitAll()
 			.antMatchers("/admin/**").hasAnyAuthority("admin")
 			.antMatchers(HttpMethod.POST, "/users/login").permitAll()
-			//.anyRequest().authenticated()
+			.anyRequest().authenticated()
 			.and()
 				.formLogin()
 				/*.loginPage("/login")*/
@@ -53,7 +53,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			// se sirve desde esta misma página.
 			http.csrf().ignoringAntMatchers("/h2-console/**","/**");
 			http.headers().frameOptions().sameOrigin();
-			//http.addFilterAfter(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+			http.addFilterAfter(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
 				
 	}
 
