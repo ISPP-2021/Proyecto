@@ -102,13 +102,13 @@ public class BusinessServiceTest {
 	@Test
 	void BusinessFindByAddress() {
 		Collection<Business> b = businessService.findBusinessByAddress("address_1");
-		Assertions.assertTrue(b.size() == 3);
+		Assertions.assertTrue(b.size() == 4);
 	}
 
 	@Test
 	void BusinessFindByType() {
 		Collection<Business> b = businessService.findBusinessByType(BusinessType.HAIRDRESSER);
-		Assertions.assertTrue(b.size() == 1);
+		Assertions.assertTrue(b.size() == 2);
 	}
 
 }
