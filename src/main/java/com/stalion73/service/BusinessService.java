@@ -94,5 +94,4 @@ public class BusinessService {
         Business business = this.businessRepository.findBusinessBySupplierId(supplierId);
         return business;
     }
-
 }
