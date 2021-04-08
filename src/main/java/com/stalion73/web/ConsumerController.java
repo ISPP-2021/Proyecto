@@ -184,7 +184,6 @@ public class ConsumerController{
 				.withDetail("The provided ID doesn't exist"));
 	}
   
-
 	// -------------AUGUSTO'S BAD&IMPROVABLE CODE------------
 
 	@GetMapping("/profile")
