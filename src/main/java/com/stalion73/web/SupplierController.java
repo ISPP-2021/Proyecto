@@ -11,6 +11,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -82,7 +84,6 @@ public class SupplierController {
     public ResponseEntity<?> one(@PathVariable("id") Integer id) {
         SupplierController.setup();
         Optional<Supplier> supplier = this.supplierService.findById(id);
-        Business business = this.businessService.findBusinessBySupplierId(supplier.get().getId());
         HttpHeaders headers = new HttpHeaders();
         if (!supplier.isPresent()) {
             return ResponseEntity
@@ -93,7 +94,8 @@ public class SupplierController {
                     .withTitle("Ineffected ID")
                     .withDetail("The provided ID doesn't exist"));
         }else{
-            headers.add("business_id", toJSON(business.getId().toString()));
+            //Esto en el header porque?
+            //headers.add("business_id", toJSON(business.getId().toString()));
             return ResponseEntity
                 .status(HttpStatus.OK) 
                 .headers(headers) 
@@ -167,9 +169,8 @@ public class SupplierController {
 		SupplierController.setup();
 		Optional<Supplier> supplier = this.supplierService.findById(id);
 		if(supplier.isPresent()){
-            Business spBusiness = this.businessService.findBusinessBySupplierId(id);
-            this.businessService.delete(spBusiness);
-            this.supplierService.deleteById(id);
+            this.supplierService.deleteBusinessBySupplierId(id);
+            this.supplierService.delete(supplier.get());
 			return ResponseEntity.noContent().build();
 		}else{
             return ResponseEntity

@@ -10,6 +10,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -37,9 +38,10 @@ public class Business extends BaseEntity {
 	@Column(name = "automated")
 	private Boolean automatedAccept;
 
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "supplier_id", referencedColumnName = "id")
-	private Supplier supplier;
+	@ManyToOne()
+    @JoinColumn(name ="supplier_id")
+    @JsonIgnore
+    private Supplier supplier;
 
 	@OneToMany(orphanRemoval = true, mappedBy = "business", fetch = FetchType.LAZY)
 	private Set<Servise> servises;

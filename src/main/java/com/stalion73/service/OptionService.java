@@ -34,7 +34,7 @@ public class OptionService {
 
     @Transactional
     public void delete(Option option) {
-        int id = businessRepository.findBusinessBySupplierId(option.getId()).getId();
+        int id = businessRepository.findBusinessByOptionId(option.getId()).getId();
         businessRepository.deleteById(id);
         optionRepository.delete(option);
     }

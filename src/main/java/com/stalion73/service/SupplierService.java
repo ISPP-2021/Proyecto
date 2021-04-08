@@ -33,6 +33,11 @@ public class SupplierService {
       return supplierRepository.findById(id);
     }
 
+    @Transactional(readOnly = true)
+    public void deleteById(Integer id){
+        supplierRepository.deleteById(id);
+    }
+
     @Transactional
     public Supplier findSupplierByUsername(String username){
         return this.supplierRepository.findSupplierByUsername(username);
@@ -43,16 +48,28 @@ public class SupplierService {
         supplierRepository.save(supplier);
     }
 
-    @Transactional
-    public void deleteById(Integer id){
+    
+    //Que sentido tiene este metodo? solo borra negocios no borra supplier
+    //Modificado por rodri
+    /*public void deleteById(Integer id){
         int newId = businessRepository.findBusinessBySupplierId(id).getId();
         businessRepository.deleteById(newId);
+
+    }*/
+    
+    public void deleteBusinessBySupplierId(Integer id){
+        businessRepository.findBusinessBySupplierId(id).stream()
+                                                        .forEach(business -> {
+                                                        businessRepository.deleteById(business.getId());
+                                                        });
     }
 
     @Transactional
     public void delete(Supplier supplier) {
-        int id = businessRepository.findBusinessBySupplierId(supplier.getId()).getId();
-        businessRepository.deleteById(id);
+        businessRepository.findBusinessBySupplierId(supplier.getId()).stream()
+                                        .forEach(business -> {
+                                         businessRepository.deleteById(business.getId());
+                                         });
         supplierRepository.delete(supplier);
     }
 
