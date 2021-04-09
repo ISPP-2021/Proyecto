@@ -122,8 +122,8 @@ public class UserController {
         	HttpHeaders headers = new HttpHeaders();
 		    Supplier user = this.supplierService.findSupplierByUsername((String)contextHolder.getContext()
 												.getAuthentication().getPrincipal());
-			Business business = this.businessService.findBusinessBySupplierId(user.getId());
-			headers.add("business_id", toJSON(business.getId().toString()));
+			//Business business = this.businessService.findBusinessBySupplierId(user.getId());
+			//headers.add("business_id", toJSON(business.getId().toString()));
 			return ResponseEntity.status(HttpStatus.OK).headers(headers).body(user);
 		}
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers)
@@ -132,8 +132,8 @@ public class UserController {
 									.withDetail("The provided authority was not the possible expected values"));
 	}
 
-	@RequestMapping(value = "/signup", method = RequestMethod.POST, produces = "application/json")
-	public ResponseEntity<?> signUp(@Valid @RequestBody Consumer consumer,
+	@RequestMapping(value = "/signup/consumers", method = RequestMethod.POST, produces = "application/json")
+	public ResponseEntity<?> signUpConsumer(@Valid @RequestBody Consumer consumer,
 									BindingResult bindingResult){
 
 		BindingErrorsResponse errors = new BindingErrorsResponse();
@@ -165,6 +165,44 @@ public class UserController {
                     .status(HttpStatus.CREATED)
                     .headers(headers)
                     .body(consumer);
+		}
+
+	}
+
+	@RequestMapping(value = "/signup/suppliers", method = RequestMethod.POST, produces = "application/json")
+	public ResponseEntity<?> signUpSupplier(@Valid @RequestBody Supplier supplier,
+									BindingResult bindingResult){
+
+		BindingErrorsResponse errors = new BindingErrorsResponse();
+		HttpHeaders headers = new HttpHeaders();
+		if (bindingResult.hasErrors() || ( supplier == null)) {
+            errors.addAllErrors(bindingResult);
+            headers.add("errors", errors.toJSON());
+            return ResponseEntity
+				.status(HttpStatus.BAD_REQUEST)
+				.headers(headers)
+				.body(Problem.create()
+					.withTitle("Validation error")
+					.withDetail("The provided user was not successfuly validated"));
+		}else{
+			//String token = getJWTToken(user)
+			//user.setToken(token)
+			User user = supplier.getUser();
+			Set<Authorities> authorities = new HashSet<>();
+			Authorities auth = new Authorities();
+			auth.setAuthority("owner"); 
+			auth.setUser(user);
+			authorities.add(auth);
+			user.setAuthorities(authorities);
+			supplier.setUser(user);
+			this.supplierService.save(supplier);
+			this.userService.saveUser(user);
+			this.authoritiesService.saveAuthorities(auth);
+			return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .headers(headers)
+                    .body(supplier);
+
 		}
 
 	}
