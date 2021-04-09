@@ -185,26 +185,5 @@ public class ConsumerController{
 	}
   
 
-	// -------------AUGUSTO'S BAD&IMPROVABLE CODE------------
-
-	@GetMapping("/profile")
-	public ResponseEntity<?> profile(SecurityContextHolder contextHolder){
-
-		String username = (String) contextHolder.getContext().getAuthentication().getPrincipal();
-		Consumer consumer = this.consumerService.findConsumerByUsername(username);
-		if(consumer!=null){
-		
-		return ResponseEntity
-				.status(HttpStatus.OK) 
-				.headers(headers) 
-				.body(consumer);
-		}else {
-			return ResponseEntity
-				.status(HttpStatus.NOT_FOUND)
-				.headers(headers).body("Sorry");
-		}
-	}
-
-	// ---------------AUGUSTO'S BAD&IMPROVABLE CODE---------------
 
 }

@@ -182,26 +182,6 @@ public class SupplierController {
         }
 	}
 
-    // -------------AUGUSTO'S CODE------------
-
-	@RequestMapping(value = "/profile", method = RequestMethod.GET,produces = "application/json")
-	public ResponseEntity<?> profile(SecurityContextHolder contextHolder){
-
-		String username = (String) contextHolder.getContext().getAuthentication().getPrincipal();
-		Supplier supplier = this.supplierService.findSupplierByUsername(username);
-		if(supplier!=null){
-		
-		return ResponseEntity
-				.status(HttpStatus.OK)
-				.headers(headers) 
-				.body(supplier);
-		}else {
-			return ResponseEntity
-				.status(HttpStatus.NOT_FOUND)
-				.headers(headers).body("Sorry");
-		}
-	}
-
     public String toJSON(String s) {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
