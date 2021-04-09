@@ -5,6 +5,7 @@ import com.stalion73.model.Authorities;
 import com.stalion73.model.Consumer;
 import com.stalion73.model.Supplier;
 import com.stalion73.model.User;
+import com.stalion73.repository.ConsumerRepository;
 import com.stalion73.model.Business;
 import com.stalion73.service.ConsumerService;
 import com.stalion73.service.SupplierService;
@@ -17,6 +18,8 @@ import java.util.stream.Collectors;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
+import java.util.Set;
+import java.util.HashSet;
 
 import javax.validation.Valid;
 
@@ -40,6 +43,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.http.HttpStatus;
 
 @RestController
@@ -122,16 +126,19 @@ public class UserController {
 			headers.add("business_id", toJSON(business.getId().toString()));
 			return ResponseEntity.status(HttpStatus.OK).headers(headers).body(user);
 		}
-		return ResponseEntity.status(HttpStatus.OK).headers(headers).body("user");
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers)
+							 .body(Problem.create()
+							 		.withTitle("Missing appropiated authority")
+									.withDetail("The provided authority was not the possible expected values"));
 	}
 
 	@RequestMapping(value = "/signup", method = RequestMethod.POST, produces = "application/json")
-	public ResponseEntity<?> signUp(@Valid @RequestBody User user,
+	public ResponseEntity<?> signUp(@Valid @RequestBody Consumer consumer,
 									BindingResult bindingResult){
 
 		BindingErrorsResponse errors = new BindingErrorsResponse();
 		HttpHeaders headers = new HttpHeaders();
-		if (bindingResult.hasErrors() || ( user== null)) {
+		if (bindingResult.hasErrors() || ( consumer== null)) {
             errors.addAllErrors(bindingResult);
             headers.add("errors", errors.toJSON());
             return ResponseEntity
@@ -141,17 +148,23 @@ public class UserController {
 					.withTitle("Validation error")
 					.withDetail("The provided user was not successfuly validated"));
 		}else{
-			//String token = getJWTToken(user);
-			//user.setToken(token);
-			this.userService.saveUser(user);
-			List<Authorities> authorities = new ArrayList<>(user.getAuthorities());
-			Authorities auth = authorities.get(0);
+			//String token = getJWTToken(user)
+			//user.setToken(token)
+			User user = consumer.getUser();
+			Set<Authorities> authorities = new HashSet<>();
+			Authorities auth = new Authorities();
+			auth.setAuthority("user");
 			auth.setUser(user);
-			this.authoritiesService.saveAuthorities(auth);
+			authorities.add(auth);
+			user.setAuthorities(authorities);
+			consumer.setUser(user);
+			this.consumerService.save(consumer);
+			String userName = user.getUsername();
+			consumer = this.consumerService.findConsumerByUsername(userName);
 			return ResponseEntity
                     .status(HttpStatus.CREATED)
                     .headers(headers)
-                    .body(user);
+                    .body(consumer);
 		}
 
 	}
