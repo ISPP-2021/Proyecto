@@ -122,9 +122,14 @@ public class UserController {
         	HttpHeaders headers = new HttpHeaders();
 		    Supplier user = this.supplierService.findSupplierByUsername((String)contextHolder.getContext()
 												.getAuthentication().getPrincipal());
-			//Business business = this.businessService.findBusinessBySupplierId(user.getId());
-			//headers.add("business_id", toJSON(business.getId().toString()));
-			return ResponseEntity.status(HttpStatus.OK).headers(headers).body(user);
+
+			Optional<Business> business = this.businessService.findBusinessBySupplierId(user.getId());
+			if(business.isPresent()){
+				return ResponseEntity.status(HttpStatus.OK).headers(headers).body(business.get());
+			}
+			if(!business.isPresent()){
+				return ResponseEntity.status(HttpStatus.OK).headers(headers).body(user);
+			}
 		}
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers)
 							 .body(Problem.create()
