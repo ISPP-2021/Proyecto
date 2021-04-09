@@ -124,17 +124,4 @@ public class Business extends BaseEntity {
         }
     }
 
-	@Override
-	public String toString() {
-		return "address:" + address + "," + "\n" + 
-				"automatedAccept:" + automatedAccept + "," + "\n" + 
-				"businessType:" + businessType + "," + "\n" +
-				"name:" + name + "," + "\n" + 
-				"option:" + option + "," + "\n" +
-				"servises:" + servises + "," + "\n" + 
-				"supplier:" + supplier;
-	}
-
-	
-
 }

@@ -82,7 +82,7 @@ public class SupplierController {
     public ResponseEntity<?> one(@PathVariable("id") Integer id) {
         SupplierController.setup();
         Optional<Supplier> supplier = this.supplierService.findById(id);
-        Business business = this.businessService.findBusinessBySupplierId(supplier.get().getId());
+        Business business = this.businessService.findBusinessBySupplierId(supplier.get().getId()).get();
         HttpHeaders headers = new HttpHeaders();
         if (!supplier.isPresent()) {
             return ResponseEntity
@@ -167,7 +167,7 @@ public class SupplierController {
 		SupplierController.setup();
 		Optional<Supplier> supplier = this.supplierService.findById(id);
 		if(supplier.isPresent()){
-            Business spBusiness = this.businessService.findBusinessBySupplierId(id);
+            Business spBusiness = this.businessService.findBusinessBySupplierId(id).get();
             this.businessService.delete(spBusiness);
             this.supplierService.deleteById(id);
 			return ResponseEntity.noContent().build();
