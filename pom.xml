@@ -151,7 +151,12 @@
             <artifactId>spring-boot-devtools</artifactId>
             <optional>true</optional>
         </dependency>
-    </dependencies>
+        <dependency>
+            <groupId>com.stripe</groupId>
+            <artifactId>stripe-java</artifactId>
+            <version>15.4.0</version>
+        </dependency>
+</dependencies>
     <build>
         <plugins>
             <plugin>
