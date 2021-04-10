@@ -2,6 +2,7 @@ package com.stalion73.repository;
 
 import java.util.Collection;
 
+import com.stalion73.model.BaseEntity;
 import com.stalion73.model.Business;
 import com.stalion73.model.BusinessType;
 
@@ -21,7 +22,10 @@ public interface BusinessRepository extends CrudRepository<Business, Integer> {
 	@Query("SELECT DISTINCT business FROM Business business WHERE business.businessType LIKE :businessType")
 	Collection<Business> findBusinessByType(@Param("businessType") BusinessType businessType);
 
-	@Query("SELECT b FROM Business b WHERE b.supplier.id =  :supplierId")
-	Business findBusinessBySupplierId(@Param("supplierId")Integer supplierId);
+	@Query("SELECT DISTINCT b FROM Business b WHERE b.supplier.id = :supplierId")
+	Collection<Business> findBusinessBySupplierId(@Param("supplierId")Integer supplierId);
+
+	@Query("SELECT b FROM Business b WHERE b.option.id =: optionId")
+    Business findBusinessByOptionId(@Param("optionID")Integer optionId);
 
 }

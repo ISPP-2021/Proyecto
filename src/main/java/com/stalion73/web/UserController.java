@@ -16,6 +16,7 @@ import com.stalion73.service.AuthoritiesService;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
@@ -109,7 +110,6 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.OK).headers(headers).body(user.get());
 	}
 
-	// Need negative flow
 	@RequestMapping(value = "/profile", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<?> profile(SecurityContextHolder contextHolder) {
 		String authority = contextHolder.getContext().getAuthentication().getAuthorities().iterator().next().getAuthority();
@@ -124,11 +124,11 @@ public class UserController {
 		    Supplier user = this.supplierService.findSupplierByUsername((String)contextHolder.getContext()
 												.getAuthentication().getPrincipal()).get();
 
-			Optional<Business> business = this.businessService.findBusinessBySupplierId(user.getId());
-			if(business.isPresent()){
-				return ResponseEntity.status(HttpStatus.OK).headers(headers).body(business.get());
+			Collection<Business> business = this.businessService.findBusinessBySupplierId(user.getId());
+			if(business.isEmpty()){
+				return ResponseEntity.status(HttpStatus.OK).headers(headers).body(business);
 			}
-			if(!business.isPresent()){
+			if(!business.isEmpty()){
 				return ResponseEntity.status(HttpStatus.OK).headers(headers).body(user);
 			}
 		}
