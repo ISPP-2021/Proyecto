@@ -34,8 +34,8 @@ public class SupplierService {
     }
 
     @Transactional
-    public Supplier findSupplierByUsername(String username){
-        return this.supplierRepository.findSupplierByUsername(username);
+    public Optional<Supplier> findSupplierByUsername(String username){
+        return Optional.ofNullable(this.supplierRepository.findSupplierByUsername(username));
     }
 
     @Transactional

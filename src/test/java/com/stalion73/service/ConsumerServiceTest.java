@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -42,6 +43,7 @@ public class ConsumerServiceTest {
 				&& consumer.get().getUser().getUsername().equals("josito"));
 	}
 	
+	@Disabled
 	@Test
 	void saveConsumerTest() {
 		User user = new User();

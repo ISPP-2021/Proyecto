@@ -90,9 +90,8 @@ public class BusinessService {
 	}
 
     @Transactional
-    public Business findBusinessBySupplierId(Integer supplierId) {
-        Business business = this.businessRepository.findBusinessBySupplierId(supplierId);
-        return business;
+    public Optional<Business> findBusinessBySupplierId(Integer supplierId) {
+        return Optional.ofNullable(this.businessRepository.findBusinessBySupplierId(supplierId));
     }
 
 }

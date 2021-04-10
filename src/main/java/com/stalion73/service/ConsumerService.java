@@ -2,13 +2,17 @@ package com.stalion73.service;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.stereotype.Service;
 
+import com.stalion73.model.Authorities;
 import com.stalion73.model.Consumer;
+import com.stalion73.model.User;
 import com.stalion73.repository.ConsumerRepository;
 
 
@@ -18,10 +22,18 @@ public class ConsumerService {
 
     ConsumerRepository consumerRepository;
 
+    UserService userService;
+
+    AuthoritiesService authoritiesService;
+
     
     @Autowired
-    public ConsumerService(ConsumerRepository consumerRepository){
+    public ConsumerService(ConsumerRepository consumerRepository,
+                        UserService userService,
+                        AuthoritiesService authoritiesService){
         this.consumerRepository = consumerRepository;
+        this.userService = userService;
+        this.authoritiesService = authoritiesService;
     }
     
     @Transactional(readOnly = true)
@@ -30,8 +42,8 @@ public class ConsumerService {
     }
 
     @Transactional
-    public Consumer findConsumerByUsername(String username){
-        return this.consumerRepository.findConsumerByUsername(username);
+    public Optional<Consumer> findConsumerByUsername(String username){
+        return Optional.ofNullable(this.consumerRepository.findConsumerByUsername(username));
     }
     
     @Transactional(readOnly = true)
@@ -42,6 +54,11 @@ public class ConsumerService {
     @Transactional
     public void save(Consumer consumer){
         consumerRepository.save(consumer);
+        User user = consumer.getUser();
+		userService.saveUser(user);
+        List<Authorities> authorities = new ArrayList<>(user.getAuthorities());
+        Authorities auth = authorities.get(0);
+		authoritiesService.saveAuthorities(auth);
     }
 
     @Transactional

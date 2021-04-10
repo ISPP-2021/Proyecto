@@ -135,7 +135,7 @@ public class BookingController {
         }else{
             String username = (String)contextHolder
             .getContext().getAuthentication().getPrincipal();
-           Consumer consumer = this.consumerService.findConsumerByUsername(username);
+            Consumer consumer = this.consumerService.findConsumerByUsername(username).get();
             booking.setConsumer(consumer);
             Servise servise = this.serviseService.findById(serviseId).get();
             booking.setService(servise);

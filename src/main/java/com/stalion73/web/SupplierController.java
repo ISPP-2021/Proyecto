@@ -82,7 +82,7 @@ public class SupplierController {
     public ResponseEntity<?> one(@PathVariable("id") Integer id) {
         SupplierController.setup();
         Optional<Supplier> supplier = this.supplierService.findById(id);
-        Business business = this.businessService.findBusinessBySupplierId(supplier.get().getId());
+        Business business = this.businessService.findBusinessBySupplierId(supplier.get().getId()).get();
         HttpHeaders headers = new HttpHeaders();
         if (!supplier.isPresent()) {
             return ResponseEntity
@@ -167,7 +167,7 @@ public class SupplierController {
 		SupplierController.setup();
 		Optional<Supplier> supplier = this.supplierService.findById(id);
 		if(supplier.isPresent()){
-            Business spBusiness = this.businessService.findBusinessBySupplierId(id);
+            Business spBusiness = this.businessService.findBusinessBySupplierId(id).get();
             this.businessService.delete(spBusiness);
             this.supplierService.deleteById(id);
 			return ResponseEntity.noContent().build();
@@ -180,26 +180,6 @@ public class SupplierController {
                         .withTitle("Ineffected ID")
                         .withDetail("The provided ID doesn't exist"));
         }
-	}
-
-    // -------------AUGUSTO'S CODE------------
-
-	@RequestMapping(value = "/profile", method = RequestMethod.GET,produces = "application/json")
-	public ResponseEntity<?> profile(SecurityContextHolder contextHolder){
-
-		String username = (String) contextHolder.getContext().getAuthentication().getPrincipal();
-		Supplier supplier = this.supplierService.findSupplierByUsername(username);
-		if(supplier!=null){
-		
-		return ResponseEntity
-				.status(HttpStatus.OK)
-				.headers(headers) 
-				.body(supplier);
-		}else {
-			return ResponseEntity
-				.status(HttpStatus.NOT_FOUND)
-				.headers(headers).body("Sorry");
-		}
 	}
 
     public String toJSON(String s) {
