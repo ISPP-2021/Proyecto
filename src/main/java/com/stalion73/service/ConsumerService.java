@@ -42,8 +42,8 @@ public class ConsumerService {
     }
 
     @Transactional
-    public Consumer findConsumerByUsername(String username){
-        return this.consumerRepository.findConsumerByUsername(username);
+    public Optional<Consumer> findConsumerByUsername(String username){
+        return Optional.ofNullable(this.consumerRepository.findConsumerByUsername(username));
     }
     
     @Transactional(readOnly = true)

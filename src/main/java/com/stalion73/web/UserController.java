@@ -116,13 +116,13 @@ public class UserController {
 		if(authority.equals("user")){
 			Consumer user = this.consumerService
 				.findConsumerByUsername((String)contextHolder.getContext()
-												.getAuthentication().getPrincipal());
+												.getAuthentication().getPrincipal()).get();
 		
 			return ResponseEntity.status(HttpStatus.OK).headers(headers).body(user);
 		} else if(authority.equals("owner")) {
         	HttpHeaders headers = new HttpHeaders();
 		    Supplier user = this.supplierService.findSupplierByUsername((String)contextHolder.getContext()
-												.getAuthentication().getPrincipal());
+												.getAuthentication().getPrincipal()).get();
 
 			Collection<Business> business = this.businessService.findBusinessBySupplierId(user.getId());
 			if(business.isEmpty()){
@@ -157,6 +157,15 @@ public class UserController {
 			//String token = getJWTToken(user)
 			//user.setToken(token)
 			User user = consumer.getUser();
+			String username = user.getUsername();
+			if(this.consumerService.findConsumerByUsername(username).isPresent()){
+				return ResponseEntity
+				.status(HttpStatus.BAD_REQUEST)
+				.headers(headers)
+				.body(Problem.create()
+					.withTitle("Already existing user")
+					.withDetail("I wasn't possible to create an user because of username replication on the data."));
+			}
 			Set<Authorities> authorities = new HashSet<>();
 			Authorities auth = new Authorities();
 			auth.setAuthority("user");
@@ -166,7 +175,7 @@ public class UserController {
 			consumer.setUser(user);
 			this.consumerService.save(consumer);
 			String userName = user.getUsername();
-			consumer = this.consumerService.findConsumerByUsername(userName);
+			consumer = this.consumerService.findConsumerByUsername(userName).get();
 			return ResponseEntity
                     .status(HttpStatus.CREATED)
                     .headers(headers)
@@ -194,6 +203,15 @@ public class UserController {
 			//String token = getJWTToken(user)
 			//user.setToken(token)
 			User user = supplier.getUser();
+			String username = user.getUsername();
+			if(this.supplierService.findSupplierByUsername(username).isPresent()){
+				return ResponseEntity
+				.status(HttpStatus.BAD_REQUEST)
+				.headers(headers)
+				.body(Problem.create()
+					.withTitle("Already existing user")
+					.withDetail("I wasn't possible to create an user because of username replication on the data."));
+			}
 			Set<Authorities> authorities = new HashSet<>();
 			Authorities auth = new Authorities();
 			auth.setAuthority("owner"); 
