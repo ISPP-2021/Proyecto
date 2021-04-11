@@ -93,5 +93,4 @@ public class BusinessService {
     public Collection<Business> findBusinessBySupplierId(Integer supplierId) {
         return this.businessRepository.findBusinessBySupplierId(supplierId);
     }
-
 }

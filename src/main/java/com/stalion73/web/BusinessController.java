@@ -8,9 +8,11 @@ import java.util.Optional;
 
 import javax.validation.Valid;
 
+import com.stalion73.service.BookingService;
 import com.stalion73.service.BusinessService;
 import com.stalion73.service.ServiseService;
 import com.stalion73.service.SupplierService;
+import com.stalion73.model.Booking;
 import com.stalion73.model.Business;
 import com.stalion73.model.Servise;
 import com.stalion73.model.Option;
@@ -45,6 +47,9 @@ public class BusinessController {
     @Autowired
     private final ServiseService serviseService;
 
+    @Autowired
+    private final BookingService bookingService;
+
     private final static HttpHeaders headers = new HttpHeaders();
 
     // public static void setup() {
@@ -52,11 +57,13 @@ public class BusinessController {
     // }
 
     public BusinessController(BusinessService businessService, SupplierService supplierService
-    , ServiseService serviseService) {
+    , ServiseService serviseService, BookingService bookingService) {
         this.businessService = businessService;
         this.supplierService = supplierService;
         this.serviseService = serviseService;
+        this.bookingService = bookingService;
     }
+
     @RequestMapping(value = "", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<?> all() {
         // BusinessController.setup();
@@ -187,6 +194,22 @@ public class BusinessController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE).headers(headers)
                     .body(Problem.create().withTitle("Ineffected ID").withDetail("The provided ID doesn't exist"));
+        }
+    }
+
+    @RequestMapping(value = "/booking/{idBooking}", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<?> businessByBooking(@PathVariable("idBooking") Integer id) {
+        // BusinessController.setup();
+        Optional<Booking> booking = this.bookingService.findById(id);
+       
+        if (!booking.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE).headers(headers)
+                    .body(Problem.create().withTitle("Ineffected ID").withDetail("The provided ID doesn't exist"));
+        } else {
+            Servise servise = booking.get().getServise();
+            Business business = servise.getBusiness();
+            return ResponseEntity.status(HttpStatus.OK).headers(headers).body(business);
         }
     }
 
