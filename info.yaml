@@ -1,0 +1,36 @@
+project:
+  name: 'BiCo Backend'
+  owner: 'afternoon'
+  teamId: '12'
+  identities:
+    github:
+      url: 'https://github.com/ISPP-2021/Proyecto.git'
+    heroku:
+      url: 'https://bico-despliegue2.herokuapp.com/'
+    travis:
+      url: 'https://travis-ci.com/github/ISPP-2021/Proyecto'
+  members:
+    member1:
+      name: 'Antonio Javier'
+      surname: 'Fernandez Dominguez' 
+      githubUsername: 'antferdom'
+    member2:
+      name: 'Rodrigo Alejandro'
+      surname: 'Garcia Casasola' 
+      githubUsername: 'rodgarcas'
+    member3:
+      name: 'Jose Carlos'
+      surname: 'Gonzalez Garcia' 
+      githubUsername: 'josgongar12'
+    member4:
+      name: 'Augusto'
+      surname: 'Martinez Barcia' 
+      githubUsername: 'augmb'
+    member5:
+      name: 'Marcos'
+      surname: 'Rodriguez Osorio' 
+      githubUsername: 'marrodoso'
+    member6:
+      name: 'Daniel'
+      surname: 'San Jose Garcia' 
+      githubUsername: 'dansangar2'
