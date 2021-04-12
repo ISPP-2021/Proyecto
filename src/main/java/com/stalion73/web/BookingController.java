@@ -117,10 +117,11 @@ public class BookingController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.POST, produces = "application/json")
-    public ResponseEntity<?> create(@Valid @RequestBody Booking booking,SecurityContextHolder contextHolder,
+    public ResponseEntity<?> create(@Valid @RequestBody Booking booking,
                                             BindingResult bindingResult,
                                             @PathVariable("id")Integer serviseId, 
-                                            UriComponentsBuilder ucBuilder) {
+                                            UriComponentsBuilder ucBuilder,
+                                            SecurityContextHolder contextHolder) {
         BookingController.setup();
         BindingErrorsResponse errors = new BindingErrorsResponse();
         if (bindingResult.hasErrors() || (booking == null)) {

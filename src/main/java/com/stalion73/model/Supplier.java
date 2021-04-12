@@ -1,6 +1,7 @@
 package com.stalion73.model;
 
 import java.util.Set;
+import java.util.HashSet;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,14 +20,24 @@ public class Supplier extends Person{
 
 
     @OneToMany(orphanRemoval = true, mappedBy = "supplier", fetch = FetchType.LAZY)
-    private Set<Business> Business;
+    private Set<Business> business;
 
     public Set<Business> getBusiness() {
-        return Business;
+        return business;
     }
 
     public void setBusiness(Set<Business> business) {
-        Business = business;
+        business = business;
+    }
+
+    public void addBusiness(Business bus){
+        if(this.business == null){
+            this.business = new HashSet<>();
+            this.business.add(bus);
+            setBusiness(business);
+        }else{
+            this.business.add(bus);
+        }
     }
 
 
