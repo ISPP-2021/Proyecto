@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collection;
 import java.util.Set;
 import java.util.Optional;
+import java.util.HashSet;
 
 import javax.validation.Valid;
 
@@ -12,6 +13,7 @@ import com.stalion73.service.BookingService;
 import com.stalion73.service.BusinessService;
 import com.stalion73.service.ServiseService;
 import com.stalion73.service.SupplierService;
+import com.stalion73.service.OptionService;
 import com.stalion73.model.Booking;
 import com.stalion73.model.Business;
 import com.stalion73.model.Servise;
@@ -24,6 +26,7 @@ import org.springframework.hateoas.mediatype.problem.Problem;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -50,6 +53,9 @@ public class BusinessController {
     @Autowired
     private final BookingService bookingService;
 
+    @Autowired
+    private final OptionService optionService;
+
     private final static HttpHeaders headers = new HttpHeaders();
 
     // public static void setup() {
@@ -57,11 +63,12 @@ public class BusinessController {
     // }
 
     public BusinessController(BusinessService businessService, SupplierService supplierService
-    , ServiseService serviseService, BookingService bookingService) {
+    , ServiseService serviseService, BookingService bookingService, OptionService optionService) {
         this.businessService = businessService;
         this.supplierService = supplierService;
         this.serviseService = serviseService;
         this.bookingService = bookingService;
+        this.optionService = optionService;
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET, produces = "application/json")
@@ -89,8 +96,10 @@ public class BusinessController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST, produces = "application/json")
-    public ResponseEntity<?> create(@Valid @RequestBody Business business, BindingResult bindingResult,
-            UriComponentsBuilder ucBuilder) {
+    public ResponseEntity<?> create(@Valid @RequestBody Business business,
+            BindingResult bindingResult,
+            UriComponentsBuilder ucBuilder,
+            SecurityContextHolder contextHolder) {
         // BusinessController.setup();
         BindingErrorsResponse errors = new BindingErrorsResponse();
         if (bindingResult.hasErrors() || (business == null)) {
@@ -99,7 +108,23 @@ public class BusinessController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers).body(Problem.create()
                     .withTitle("Validation error").withDetail("The provided consumer was not successfuly validated"));
         } else {
+            String username = (String)contextHolder
+                        .getContext().getAuthentication().getPrincipal();
+            Supplier supplier = this.supplierService.findSupplierByUsername(username).get();
+            supplier.addBusiness(business);
+            business.setSupplier(supplier);
+            Set<Servise> servises = business.getServices();
+            Option option = business.getOption();
+            //this.supplierService.save(supplier);
+            this.optionService.save(option);
             this.businessService.save(business);
+            servises.stream()
+            .map(servise -> {
+                servise.setBussiness(business);
+                return servise;
+            })
+            .forEach(x -> this.serviseService.save(x));
+            this.supplierService.save(supplier);
             headers.setLocation(ucBuilder.path("/business").buildAndExpand(business.getId()).toUri());
             return ResponseEntity.status(HttpStatus.CREATED).headers(headers).body(business);
         }
