@@ -62,11 +62,6 @@ public class BookingController {
 
     private final static HttpHeaders headers = new HttpHeaders();
 
-
-    public  static void setup(){
-        // headers.setAccessControlAllowOrigin("*");
-    }
-
     public BookingController(BookingService bookingService,
                         ConsumerService consumerService,
                         ServiseService serviseService, BookingModelAssembler assembler){
@@ -78,7 +73,6 @@ public class BookingController {
 
     @GetMapping
     public ResponseEntity<?> all() {
-        BookingController.setup();
         List<EntityModel<Booking>> bookings = this.bookingService.findAll().stream()
                         .map(assembler::toModel)
                         .collect(Collectors.toList());
@@ -97,7 +91,6 @@ public class BookingController {
     
     @GetMapping("/{id}")
     public ResponseEntity<?> one(@PathVariable("id") Integer id) {
-        BookingController.setup();
         Optional<Booking> booking = bookingService.findById((id));
         if(booking.isPresent()){
             return ResponseEntity
@@ -122,7 +115,6 @@ public class BookingController {
                                             @PathVariable("id")Integer serviseId, 
                                             UriComponentsBuilder ucBuilder,
                                             SecurityContextHolder contextHolder) {
-        BookingController.setup();
         BindingErrorsResponse errors = new BindingErrorsResponse();
         if (bindingResult.hasErrors() || (booking == null)) {
             errors.addAllErrors(bindingResult);
@@ -152,7 +144,6 @@ public class BookingController {
 	public ResponseEntity<?> update(@PathVariable("id") Integer id, 
                                             @RequestBody @Valid Booking newBooking, 
                                             BindingResult bindingResult){
-        BookingController.setup();
 		BindingErrorsResponse errors = new BindingErrorsResponse();
 		if(bindingResult.hasErrors() || (newBooking == null)){
             errors.addAllErrors(bindingResult);
@@ -178,31 +169,73 @@ public class BookingController {
 	}
 
 
+    // negative flow haven't been considered -> addition
+    // security context -> let interact only with the bookings of the executor actor
     @DeleteMapping("/{id}/cancel")
-    public ResponseEntity<?> cancel(@PathVariable Integer id) {
-        BookingController.setup();
-        Booking booking = bookingService.findById(id).get();
-        if (booking.getStatus() == Status.IN_PROGRESS) {
-            booking.setStatus(Status.CANCELLED);
-            this.bookingService.save(booking);
-            return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .headers(headers)
-                    .body(assembler.toModel(booking));
-        }else{
-            return ResponseEntity
-                .status(HttpStatus.METHOD_NOT_ALLOWED) 
+    public ResponseEntity<?> cancel(@PathVariable Integer id, SecurityContextHolder contextHolder) {
+        String authority = contextHolder.getContext().getAuthentication().getAuthorities().iterator().next().getAuthority();
+		if(authority.equals("user")){
+			Consumer consumer = this.consumerService
+            .findConsumerByUsername((String)contextHolder.getContext()
+												.getAuthentication().getPrincipal()).get();
+            Optional<Booking> b = this.bookingService.findById(id);
+            if(b.isPresent()){
+                Booking booking = b.get();
+                Servise servise = booking.getServise();
+                if(booking.getConsumer().getId().equals(consumer.getId())){
+                    Status state = booking.getStatus();
+                    if(state == Status.IN_PROGRESS){
+                        booking.setStatus(Status.CANCELLED);
+                        consumer.addBooking(booking);
+                        servise.addBooking(booking);
+                        booking.setConsumer(consumer);
+                        booking.setService(servise);
+                        this.bookingService.save(booking);
+                        this.serviseService.save(servise);
+                        this.consumerService.save(consumer);
+                        return ResponseEntity
+                            .status(HttpStatus.OK)
+                            .headers(headers)
+                            .body(assembler.toModel(booking));
+                    }else{
+                        return ResponseEntity
+                        .status(HttpStatus.METHOD_NOT_ALLOWED) 
+                        .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) 
+                        .headers(headers)
+                        .body(Problem.create()
+                            .withTitle("Method not allowed") 
+                            .withDetail("You can't cancel a booking that is in the " + booking.getStatus() + " status"));
+                    }
+                }
+                return ResponseEntity
+                .status(HttpStatus.FORBIDDEN) 
                 .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) 
                 .headers(headers)
                 .body(Problem.create()
-                    .withTitle("Method not allowed") 
-                    .withDetail("You can't cancel a booking that is in the " + booking.getStatus() + " status"));
+                    .withTitle("Not owned") 
+                    .withDetail("The request booking is not up to your provided credentials."));
+
+            }
+            return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST) 
+                .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) 
+                .headers(headers)
+                .body(Problem.create()
+                    .withTitle("non-existent") 
+                    .withDetail("The request booking not exist."));
         }
+
+            return ResponseEntity
+                .status(HttpStatus.FORBIDDEN) 
+                .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) 
+                .headers(headers)
+                .body(Problem.create()
+                    .withTitle("You shall not pass") 
+                    .withDetail("The request wasn't expecting the provied credentials."));
     }
 
     @PutMapping("/{id}/complete")
     public ResponseEntity<?> complete(@PathVariable Integer id) {
-        BookingController.setup();
         Booking booking = this.bookingService.findById(id).get();        
         if (booking.getStatus() == Status.IN_PROGRESS) {
             booking.setStatus(Status.COMPLETED);
@@ -233,7 +266,6 @@ public class BookingController {
 
     @DeleteMapping("/{id}")
 	ResponseEntity<?> delete(@PathVariable Integer id) {
-        BookingController.setup();
         Optional<Booking> booking = this.bookingService.findById(id);
 		if(booking.isPresent()){
             this.bookingService.deleteById(id);

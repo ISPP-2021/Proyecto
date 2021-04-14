@@ -26,7 +26,7 @@ public class BookingModelAssembler implements RepresentationModelAssembler<Booki
 
     // Conditional links based on state of the order
     if (booking.getStatus() == Status.IN_PROGRESS) {
-      bookingModel.add(linkTo(methodOn(BookingController.class).cancel(booking.getId())).withRel("cancel"));
+      //bookingModel.add(linkTo(methodOn(BookingController.class).cancel(booking.getId())).withRel("cancel"));
       bookingModel.add(linkTo(methodOn(BookingController.class).complete(booking.getId())).withRel("complete"));
     }
 

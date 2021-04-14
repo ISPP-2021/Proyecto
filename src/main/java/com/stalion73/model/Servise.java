@@ -1,6 +1,7 @@
 package com.stalion73.model;
 
 import java.util.Set;
+import java.util.HashSet;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -121,4 +122,14 @@ public class Servise extends BaseEntity {
 	public void setBookings(Set<Booking> bookings) {
 		this.bookings = bookings;
 	}
+
+	public void addBooking(Booking booking){
+        if(this.bookings == null){
+            this.bookings = new HashSet<>();
+            this.bookings.add(booking);
+            setBookings(bookings);
+        }else{
+            this.bookings.add(booking);
+        }
+    }
 }
