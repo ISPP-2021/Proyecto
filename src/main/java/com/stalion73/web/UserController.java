@@ -5,7 +5,6 @@ import com.stalion73.model.Authorities;
 import com.stalion73.model.Consumer;
 import com.stalion73.model.Supplier;
 import com.stalion73.model.User;
-import com.stalion73.repository.ConsumerRepository;
 import com.stalion73.model.Business;
 import com.stalion73.service.ConsumerService;
 import com.stalion73.service.SupplierService;

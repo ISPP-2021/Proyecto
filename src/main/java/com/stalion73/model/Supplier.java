@@ -5,9 +5,6 @@ import java.util.HashSet;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 
 import javax.persistence.Table;
@@ -27,7 +24,7 @@ public class Supplier extends Person{
     }
 
     public void setBusiness(Set<Business> business) {
-        business = business;
+        this.business = business;
     }
 
     public void addBusiness(Business bus){

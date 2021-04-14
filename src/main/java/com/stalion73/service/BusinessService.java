@@ -1,10 +1,8 @@
 package com.stalion73.service;
 
-import static org.junit.Assert.assertNull;
 
 import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
 
 import org.springframework.transaction.annotation.Transactional;
 

@@ -1,6 +1,5 @@
 package com.stalion73.web;
 
-import com.stalion73.model.Business;
 import com.stalion73.model.Option;
 import com.stalion73.service.OptionService;
 import org.springframework.beans.factory.annotation.Autowired;
