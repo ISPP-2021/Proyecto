@@ -125,7 +125,7 @@ public class UserController {
 
 			Collection<Business> business = this.businessService.findBusinessBySupplierId(user.getId());
 			if(business.isEmpty()){
-				return ResponseEntity.status(HttpStatus.OK).headers(headers).body(business);
+				return ResponseEntity.status(HttpStatus.OK).headers(headers).body(user);
 			}
 			if(!business.isEmpty()){
 				return ResponseEntity.status(HttpStatus.OK).headers(headers).body(user);

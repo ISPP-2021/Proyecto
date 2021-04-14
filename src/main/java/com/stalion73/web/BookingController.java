@@ -113,32 +113,62 @@ public class BookingController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.POST, produces = "application/json")
-    public ResponseEntity<?> create(@Valid @RequestBody Booking booking,
-                                            BindingResult bindingResult,
-                                            @PathVariable("id")Integer serviseId, 
-                                            UriComponentsBuilder ucBuilder,
-                                            SecurityContextHolder contextHolder) {
+    public ResponseEntity<?> create(@Valid @RequestBody Booking booking,BindingResult bindingResult,
+                @PathVariable("id")Integer id) {
         BindingErrorsResponse errors = new BindingErrorsResponse();
-        if (bindingResult.hasErrors() || (booking == null)) {
-            errors.addAllErrors(bindingResult);
-            headers.add("errors", errors.toJSON());
-            return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
+        String authority = SecurityContextHolder.getContext().getAuthentication().getAuthorities().iterator().next().getAuthority();
+        if(authority.equals("user")){
+            if (bindingResult.hasErrors() || (booking == null)) {
+                errors.addAllErrors(bindingResult);
+                headers.add("errors", errors.toJSON());
+                return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .headers(headers)
+                    .body(Problem.create()
+                        .withTitle("Validation error")
+                        .withDetail("The provided booking was not successfuly validated"));
+            }else{
+                String username = (String)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+                Consumer consumer = this.consumerService.findConsumerByUsername(username).get();
+                booking.setConsumer(consumer);
+                Optional<Servise> s = this.serviseService.findById(id);
+                if(s.isPresent()){
+                    Servise servise = s.get();
+                    Status initState = Status.IN_PROGRESS;
+                    booking.setStatus(initState);
+                    booking.setConsumer(consumer);
+                    booking.setService(servise);
+
+                    Calendar calendar;
+                    Date emisionDate;
+                    calendar = Calendar.getInstance();
+                    emisionDate = calendar.getTime();
+                    booking.setEmisionDate(emisionDate);
+                    booking.setService(servise);
+                    this.bookingService.save(booking);
+                    this.serviseService.save(servise);
+                    this.consumerService.save(consumer);
+
+                    return new ResponseEntity<Booking>(booking, headers, HttpStatus.OK);
+                }
+                return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST) 
+                .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) 
                 .headers(headers)
                 .body(Problem.create()
-                    .withTitle("Validation error")
-                    .withDetail("The provided booking was not successfuly validated"));
-        }else{
-            String username = (String)contextHolder
-            .getContext().getAuthentication().getPrincipal();
-            Consumer consumer = this.consumerService.findConsumerByUsername(username).get();
-            booking.setConsumer(consumer);
-            Servise servise = this.serviseService.findById(serviseId).get();
-            booking.setService(servise);
-            this.bookingService.save(booking);
-            headers.setLocation(ucBuilder.path("/bookings" + booking.getId()).buildAndExpand(booking.getId()).toUri());
-            return ResponseEntity.status(HttpStatus.CREATED).headers(headers).body(booking);
+                    .withTitle("non-existent") 
+                    .withDetail("Cannot book the requested service, because does not exist."));
+            }
         }
+        return ResponseEntity
+        .status(HttpStatus.FORBIDDEN) 
+        .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) 
+        .headers(headers)
+        .body(Problem.create()
+            .withTitle("You shall not pass") 
+            .withDetail("The request wasn't expecting the provied credentials."));
+
+           
     }
 
     @RequestMapping(value = "/{id_servise}/{id_consumer}", method = RequestMethod.POST, produces = "application/json")
