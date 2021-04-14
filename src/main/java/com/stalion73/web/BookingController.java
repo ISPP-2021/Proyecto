@@ -5,6 +5,8 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.mediatype.problem.Problem;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Optional;
@@ -14,8 +16,11 @@ import javax.validation.Valid;
 import com.stalion73.service.BookingService;
 import com.stalion73.service.ConsumerService;
 import com.stalion73.service.ServiseService;
+import com.stalion73.service.SupplierService;
 import com.stalion73.model.Booking;
 import com.stalion73.model.Consumer;
+import com.stalion73.model.Business;
+import com.stalion73.model.Supplier;
 import com.stalion73.model.Servise;
 import com.stalion73.model.Status;
 import com.stalion73.model.modelAssembler.BookingModelAssembler;
@@ -51,16 +56,21 @@ public class BookingController {
     private final ConsumerService consumerService;
 
     @Autowired
+    private final SupplierService supplierService;
+
+    @Autowired
     private final BookingModelAssembler assembler;
 
     private final static HttpHeaders headers = new HttpHeaders();
 
     public BookingController(BookingService bookingService,
                         ConsumerService consumerService,
-                        ServiseService serviseService, BookingModelAssembler assembler){
+                        ServiseService serviseService, SupplierService supplierService,
+                         BookingModelAssembler assembler){
         this.bookingService = bookingService;
         this.serviseService = serviseService;
         this.consumerService = consumerService;
+        this.supplierService = supplierService;
         this.assembler = assembler;
     }
 
@@ -113,11 +123,11 @@ public class BookingController {
             errors.addAllErrors(bindingResult);
             headers.add("errors", errors.toJSON());
             return ResponseEntity
-				.status(HttpStatus.BAD_REQUEST)
-				.headers(headers)
-				.body(Problem.create()
-					.withTitle("Validation error")
-					.withDetail("The provided booking was not successfuly validated"));
+                .status(HttpStatus.BAD_REQUEST)
+                .headers(headers)
+                .body(Problem.create()
+                    .withTitle("Validation error")
+                    .withDetail("The provided booking was not successfuly validated"));
         }else{
             String username = (String)contextHolder
             .getContext().getAuthentication().getPrincipal();
@@ -131,23 +141,88 @@ public class BookingController {
         }
     }
 
+    @RequestMapping(value = "/{id_servise}/{id_consumer}", method = RequestMethod.POST, produces = "application/json")
+    public ResponseEntity<?> createFor(@Valid @RequestBody Booking booking, BindingResult bindingResult, 
+                @PathVariable("id_servise")Integer id_servise, @PathVariable("id_consumer") Integer id_consumer) {
+        BindingErrorsResponse errors = new BindingErrorsResponse();
+        String authority = SecurityContextHolder.getContext().getAuthentication().getAuthorities().iterator().next().getAuthority();
+        if(authority.equals("owner")){
+            Supplier supplier = this.supplierService
+            .findSupplierByUsername((String)SecurityContextHolder.getContext()
+                                                .getAuthentication().getPrincipal()).get();
+            Optional<Business> business = supplier.getBusiness().stream()
+                                    .filter(x -> x.getServices().stream()
+                                                    .filter(y -> y.getId().equals(id_servise))
+                                                    .findAny().isPresent())
+                                    .findAny();
+            if(business.isPresent()){
+                Optional<Consumer> c = this.consumerService.findById(id_consumer);
+                if(c.isPresent()){
+                    Consumer consumer = c.get();
+                    Servise servise = this.serviseService.findById(id_servise).get();
+                    Status initState = Status.IN_PROGRESS;
+                    booking.setStatus(initState);
+                    booking.setConsumer(consumer);
+                    booking.setService(servise);
+
+                    Calendar calendar;
+                    Date emisionDate;
+                    calendar = Calendar.getInstance();
+                    emisionDate = calendar.getTime();
+                    booking.setEmisionDate(emisionDate);
+                    
+                    servise.addBooking(booking);
+                    consumer.addBooking(booking);
+                    this.bookingService.save(booking);
+                    this.serviseService.save(servise);
+                    this.consumerService.save(consumer);
+
+                    return new ResponseEntity<Booking>(booking, headers, HttpStatus.OK);
+                }
+                return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST) 
+                .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) 
+                .headers(headers)
+                .body(Problem.create()
+                    .withTitle("non-existent") 
+                    .withDetail("The requested consumer does not exist."));
+            }
+            return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST) 
+                .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) 
+                .headers(headers)
+                .body(Problem.create()
+                    .withTitle("Not owned") 
+                    .withDetail("The provided servise isn't contained on yours services."));
+            
+        }
+        return ResponseEntity
+        .status(HttpStatus.FORBIDDEN) 
+        .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) 
+        .headers(headers)
+        .body(Problem.create()
+            .withTitle("You shall not pass") 
+            .withDetail("The request wasn't expecting the provied credentials."));
+
+        
+    }
     
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = "application/json")
-	public ResponseEntity<?> update(@PathVariable("id") Integer id, 
+    public ResponseEntity<?> update(@PathVariable("id") Integer id, 
                                             @RequestBody @Valid Booking newBooking, 
                                             BindingResult bindingResult){
-		BindingErrorsResponse errors = new BindingErrorsResponse();
-		if(bindingResult.hasErrors() || (newBooking == null)){
+        BindingErrorsResponse errors = new BindingErrorsResponse();
+        if(bindingResult.hasErrors() || (newBooking == null)){
             errors.addAllErrors(bindingResult);
             headers.add("errors", errors.toJSON());
             return ResponseEntity
-				.status(HttpStatus.BAD_REQUEST)
-				.headers(headers)
-				.body(Problem.create()
-					.withTitle("Validation error")
-					.withDetail("The provided booking was not successfuly validated"));
-		}else if(!this.bookingService.findById(id).isPresent()){
+                .status(HttpStatus.BAD_REQUEST)
+                .headers(headers)
+                .body(Problem.create()
+                    .withTitle("Validation error")
+                    .withDetail("The provided booking was not successfuly validated"));
+        }else if(!this.bookingService.findById(id).isPresent()){
             return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
@@ -155,11 +230,11 @@ public class BookingController {
                 .body(Problem.create()
                     .withTitle("Ineffected ID")
                     .withDetail("The provided ID doesn't exist"));
-		}else{
+        }else{
             this.bookingService.update(id, newBooking);
-		    return new ResponseEntity<Booking>(newBooking, headers, HttpStatus.NO_CONTENT);
+            return new ResponseEntity<Booking>(newBooking, headers, HttpStatus.NO_CONTENT);
         }
-	}
+    }
 
 
     // negative flow haven't been considered -> addition
@@ -167,10 +242,10 @@ public class BookingController {
     @DeleteMapping("/{id}/cancel")
     public ResponseEntity<?> cancel(@PathVariable Integer id, SecurityContextHolder contextHolder) {
         String authority = contextHolder.getContext().getAuthentication().getAuthorities().iterator().next().getAuthority();
-		if(authority.equals("user")){
-			Consumer consumer = this.consumerService
+        if(authority.equals("user")){
+            Consumer consumer = this.consumerService
             .findConsumerByUsername((String)contextHolder.getContext()
-												.getAuthentication().getPrincipal()).get();
+                                                .getAuthentication().getPrincipal()).get();
             Optional<Booking> b = this.bookingService.findById(id);
             if(b.isPresent()){
                 Booking booking = b.get();
@@ -258,12 +333,12 @@ public class BookingController {
     }
 
     @DeleteMapping("/{id}")
-	ResponseEntity<?> delete(@PathVariable Integer id) {
+    ResponseEntity<?> delete(@PathVariable Integer id) {
         Optional<Booking> booking = this.bookingService.findById(id);
-		if(booking.isPresent()){
+        if(booking.isPresent()){
             this.bookingService.deleteById(id);
-			return ResponseEntity.noContent().build();
-		}else{
+            return ResponseEntity.noContent().build();
+        }else{
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
@@ -272,6 +347,6 @@ public class BookingController {
                         .withTitle("Ineffected ID")
                         .withDetail("The provided ID doesn't exist"));
         }
-	}
+    }
 
 }
