@@ -1,5 +1,12 @@
 package com.stalion73.web;
 
+import com.stalion73.model.Servise;
+import com.stalion73.model.Business;
+import com.stalion73.model.Supplier;
+import com.stalion73.service.ServiseService;
+import com.stalion73.service.BusinessService;
+import com.stalion73.service.SupplierService;
+
 import java.util.Collection;
 import java.util.Optional;
 
@@ -20,9 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import com.stalion73.model.Servise;
-import com.stalion73.service.ServiseService;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -32,19 +37,23 @@ public class ServiseController {
 	@Autowired
 	private final ServiseService serviseService;
 
+	@Autowired
+	private final BusinessService businessService;
+
+	@Autowired
+	private final SupplierService supplierService;
+
 	private final static HttpHeaders headers = new HttpHeaders();
 
-	public  static void setup(){
-        headers.setAccessControlAllowOrigin("*");
-    }
-
-	public ServiseController(ServiseService serviseService) {
+	public ServiseController(ServiseService serviseService, BusinessService businessService,
+				SupplierService supplierService) {
 		this.serviseService = serviseService;
+		this.businessService = businessService;
+		this.supplierService = supplierService;
 	}
 
 	@RequestMapping(value = "", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<Collection<Servise>> all() {
-		ServiseController.setup();
 		Collection<Servise> servises = this.serviseService.findAll();
 		if (servises.isEmpty()) {
 			return new ResponseEntity<Collection<Servise>>(headers, HttpStatus.NOT_FOUND);
@@ -56,7 +65,6 @@ public class ServiseController {
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<?> one(@PathVariable("id") Integer id) {
-		ServiseController.setup();
 		Optional<Servise> servise = this.serviseService.findById(id);
 		if (!servise.isPresent()) {
 			return ResponseEntity
@@ -70,33 +78,70 @@ public class ServiseController {
 		return new ResponseEntity<Servise>(servise.get(), headers, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "", method = RequestMethod.POST, produces = "application/json")
-	public ResponseEntity<?> create(@Valid @RequestBody Servise servise, 
-												BindingResult bindingResult,
-												UriComponentsBuilder ucBuilder) {
-		ServiseController.setup();
+	@RequestMapping(value = "/{id}", method = RequestMethod.POST, produces = "application/json")
+	public ResponseEntity<?> create(@PathVariable("id") Integer id,
+									@Valid @RequestBody Servise servise, 
+									BindingResult bindingResult,
+									UriComponentsBuilder ucBuilder,
+									SecurityContextHolder contextHolder) {
 		BindingErrorsResponse errors = new BindingErrorsResponse();
-		if (bindingResult.hasErrors() || (servise == null)) {
-			errors.addAllErrors(bindingResult);
-            headers.add("errors", errors.toJSON());
-            return ResponseEntity
-				.status(HttpStatus.BAD_REQUEST)
-				.headers(headers)
-				.body(Problem.create()
-					.withTitle("Validation error")
-					.withDetail("The provided servise was not successfuly validated"));
-		}else{
-			this.serviseService.save(servise);
-			headers.setLocation(ucBuilder.path("/servises" + servise.getId()).buildAndExpand(servise.getId()).toUri());
-			return new ResponseEntity<Servise>(servise, headers, HttpStatus.CREATED);
+		String authority = contextHolder.getContext().getAuthentication().getAuthorities().iterator().next()
+										.getAuthority();
+		if(authority.equals("owner")){
+			Supplier supplier = this.supplierService.findSupplierByUsername((String)contextHolder.getContext()
+												.getAuthentication().getPrincipal()).get();
+			if (bindingResult.hasErrors() || (servise == null)) {
+				errors.addAllErrors(bindingResult);
+				headers.add("errors", errors.toJSON());
+				return ResponseEntity
+					.status(HttpStatus.BAD_REQUEST)
+					.headers(headers)
+					.body(Problem.create()
+						.withTitle("Validation error")
+						.withDetail("The provided servise was not successfuly validated"));
+			}else{
+				Optional<Business> b = this.businessService.findById(id);
+				if(b.isPresent()){
+					Business business = b.get();
+					if(business.getSupplier().getId().equals(supplier.getId())){
+						servise.setBussiness(business);
+						business.addServise(servise);
+						this.businessService.save(business);
+						this.serviseService.save(servise);
+						headers.setLocation(ucBuilder.path("/servises/" + servise.getId()).buildAndExpand(servise.getId()).toUri());
+						return new ResponseEntity<Servise>(servise, headers, HttpStatus.CREATED);
+					}else{
+						return ResponseEntity
+						.status(HttpStatus.FORBIDDEN) 
+						.header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) 
+						.headers(headers)
+						.body(Problem.create()
+							.withTitle("Not owned") 
+							.withDetail("The request servise is not up to your provided credentials."));
+					}
+				}
+				return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST) 
+                .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) 
+                .headers(headers)
+                .body(Problem.create()
+                    .withTitle("non-existent") 
+                    .withDetail("The request business not exist."));
+			}
 		}
+		return ResponseEntity
+                .status(HttpStatus.FORBIDDEN) 
+                .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) 
+                .headers(headers)
+                .body(Problem.create()
+                    .withTitle("You shall not pass") 
+                    .withDetail("The request wasn't expecting the provied credentials."));
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = "application/json")
 	public ResponseEntity<?> update(@PathVariable("id") Integer id, 
 												@RequestBody @Valid Servise newServise,
 												BindingResult bindingResult) {
-		ServiseController.setup();				
 		BindingErrorsResponse errors = new BindingErrorsResponse();
 		if (bindingResult.hasErrors() || (newServise == null)) {
 			errors.addAllErrors(bindingResult);
@@ -127,7 +172,6 @@ public class ServiseController {
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "application/json")
 	public ResponseEntity<?> delete(@PathVariable("id") Integer id) {
-        ServiseController.setup();
         Optional<Servise> servise = this.serviseService.findById(id);
 		if(servise.isPresent()){
             this.serviseService.deleteById(id);
