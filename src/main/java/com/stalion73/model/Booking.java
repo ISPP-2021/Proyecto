@@ -29,12 +29,12 @@ public class Booking extends BaseEntity {
 
     
     @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     @Column(name = "book")
     private Date bookDate;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     @Column(name = "emision")
     private Date emisionDate;
 

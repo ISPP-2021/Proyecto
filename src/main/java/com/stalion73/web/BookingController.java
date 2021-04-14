@@ -5,6 +5,8 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.mediatype.problem.Problem;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Optional;
@@ -141,13 +143,12 @@ public class BookingController {
 
     @RequestMapping(value = "/{id_servise}/{id_consumer}", method = RequestMethod.POST, produces = "application/json")
     public ResponseEntity<?> createFor(@Valid @RequestBody Booking booking, BindingResult bindingResult, 
-                @PathVariable("id_servise")Integer id_servise, @PathVariable("id_consumer") Integer id_consumer,
-                SecurityContextHolder contextHolder) {
+                @PathVariable("id_servise")Integer id_servise, @PathVariable("id_consumer") Integer id_consumer) {
         BindingErrorsResponse errors = new BindingErrorsResponse();
-        String authority = contextHolder.getContext().getAuthentication().getAuthorities().iterator().next().getAuthority();
+        String authority = SecurityContextHolder.getContext().getAuthentication().getAuthorities().iterator().next().getAuthority();
         if(authority.equals("owner")){
             Supplier supplier = this.supplierService
-            .findSupplierByUsername((String)contextHolder.getContext()
+            .findSupplierByUsername((String)SecurityContextHolder.getContext()
                                                 .getAuthentication().getPrincipal()).get();
             Optional<Business> business = supplier.getBusiness().stream()
                                     .filter(x -> x.getServices().stream()
@@ -163,6 +164,13 @@ public class BookingController {
                     booking.setStatus(initState);
                     booking.setConsumer(consumer);
                     booking.setService(servise);
+
+                    Calendar calendar;
+                    Date emisionDate;
+                    calendar = Calendar.getInstance();
+                    emisionDate = calendar.getTime();
+                    booking.setEmisionDate(emisionDate);
+                    
                     servise.addBooking(booking);
                     consumer.addBooking(booking);
                     this.bookingService.save(booking);
