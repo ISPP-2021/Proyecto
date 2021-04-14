@@ -3,7 +3,6 @@ package com.stalion73.repository;
 import java.util.Collection;
 
 import com.stalion73.model.Booking;
-import com.stalion73.model.Business;
 import com.stalion73.model.Status;
 
 import org.springframework.data.jpa.repository.Query;

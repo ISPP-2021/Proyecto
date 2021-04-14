@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collection;
 import java.util.Set;
 import java.util.Optional;
-import java.util.HashSet;
 
 import javax.validation.Valid;
 
@@ -19,7 +18,6 @@ import com.stalion73.model.Business;
 import com.stalion73.model.Servise;
 import com.stalion73.model.Option;
 import com.stalion73.model.Supplier;
-import com.stalion73.model.BusinessType;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.hateoas.mediatype.problem.Problem;

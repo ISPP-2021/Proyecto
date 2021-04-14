@@ -11,8 +11,6 @@ import java.util.Date;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.stalion73.model.Booking;
-import com.stalion73.model.Business;
-import com.stalion73.model.BusinessType;
 import com.stalion73.model.Servise;
 import com.stalion73.model.Status;
 

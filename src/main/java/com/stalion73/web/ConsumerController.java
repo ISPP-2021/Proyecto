@@ -1,7 +1,6 @@
 package com.stalion73.web;
 
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -9,10 +8,7 @@ import javax.validation.Valid;
 
 import com.stalion73.service.ConsumerService;
 import com.stalion73.model.Consumer;
-import com.stalion73.model.User;
 import com.stalion73.model.modelAssembler.ConsumerModelAssembler;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.mediatype.problem.Problem;
@@ -20,7 +16,6 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -34,8 +29,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+
 
 @CrossOrigin(origins = "*")
 @RestController

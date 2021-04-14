@@ -1,14 +1,9 @@
 package com.stalion73.web;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.mediatype.problem.Problem;
-
-
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,7 +18,6 @@ import com.stalion73.model.Booking;
 import com.stalion73.model.Consumer;
 import com.stalion73.model.Servise;
 import com.stalion73.model.Status;
-import com.stalion73.model.User;
 import com.stalion73.model.modelAssembler.BookingModelAssembler;
 
 import org.springframework.http.HttpHeaders;
@@ -39,7 +33,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 

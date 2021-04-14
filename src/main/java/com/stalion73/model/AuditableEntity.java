@@ -1,6 +1,5 @@
 package com.stalion73.model;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import javax.persistence.EntityListeners;

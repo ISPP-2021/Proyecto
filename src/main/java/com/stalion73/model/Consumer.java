@@ -3,7 +3,6 @@ package com.stalion73.model;
 import java.util.Set;
 import java.util.HashSet;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
