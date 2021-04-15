@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -28,6 +29,7 @@ import com.stalion73.model.modelAssembler.BookingModelAssembler;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -270,11 +272,11 @@ public class BookingController {
     // negative flow haven't been considered -> addition
     // security context -> let interact only with the bookings of the executor actor
     @DeleteMapping("/{id}/cancel")
-    public ResponseEntity<?> cancel(@PathVariable Integer id, SecurityContextHolder contextHolder) {
-        String authority = contextHolder.getContext().getAuthentication().getAuthorities().iterator().next().getAuthority();
+    public ResponseEntity<?> cancel(@PathVariable Integer id) {
+        String authority = SecurityContextHolder.getContext().getAuthentication().getAuthorities().iterator().next().getAuthority();
         if(authority.equals("user")){
             Consumer consumer = this.consumerService
-            .findConsumerByUsername((String)contextHolder.getContext()
+            .findConsumerByUsername((String)SecurityContextHolder.getContext()
                                                 .getAuthentication().getPrincipal()).get();
             Optional<Booking> b = this.bookingService.findById(id);
             if(b.isPresent()){
@@ -322,8 +324,51 @@ public class BookingController {
                     .withTitle("non-existent") 
                     .withDetail("The request booking not exist."));
         }
-
-            return ResponseEntity
+        if(authority.equals("owner")){
+            Supplier supplier = this.supplierService
+                    .findSupplierByUsername((String)SecurityContextHolder.getContext()
+                                                .getAuthentication().getPrincipal()).get();
+            Optional<Booking> b = this.supplierService.findBookingOnSupplier(supplier, id);
+            if(b.isPresent()){
+                Booking booking = b.get();
+                Status state = booking.getStatus();
+                if(state == Status.IN_PROGRESS){
+                    Consumer consumer = booking.getConsumer();
+                    Servise servise = booking.getServise();
+                    booking.setStatus(Status.REJECTED);
+                    consumer.addBooking(booking);
+                    servise.addBooking(booking);
+                    booking.setConsumer(consumer);
+                    booking.setService(servise);
+                    this.bookingService.save(booking);
+                    this.serviseService.save(servise);
+                    this.consumerService.save(consumer);
+                    return ResponseEntity
+                        .status(HttpStatus.OK)
+                        .headers(headers)
+                        .body(assembler.toModel(booking));
+                }else{
+                    return ResponseEntity
+                    .status(HttpStatus.METHOD_NOT_ALLOWED) 
+                    .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) 
+                    .headers(headers)
+                    .body(Problem.create()
+                        .withTitle("Method not allowed") 
+                        .withDetail("You can't cancel a booking that is in the " + booking.getStatus() + " status"));
+                }
+            }else{
+                return ResponseEntity
+                .status(HttpStatus.FORBIDDEN) 
+                .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) 
+                .headers(headers)
+                .body(Problem.create()
+                    .withTitle("Not owned") 
+                    .withDetail("The request booking is not up to your provided credentials.")); 
+            }
+                                    
+                                                                    
+        }
+        return ResponseEntity
                 .status(HttpStatus.FORBIDDEN) 
                 .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) 
                 .headers(headers)
