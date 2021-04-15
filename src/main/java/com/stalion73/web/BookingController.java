@@ -335,7 +335,7 @@ public class BookingController {
                 if(state == Status.IN_PROGRESS){
                     Consumer consumer = booking.getConsumer();
                     Servise servise = booking.getServise();
-                    booking.setStatus(Status.CANCELLED);
+                    booking.setStatus(Status.REJECTED);
                     consumer.addBooking(booking);
                     servise.addBooking(booking);
                     booking.setConsumer(consumer);
