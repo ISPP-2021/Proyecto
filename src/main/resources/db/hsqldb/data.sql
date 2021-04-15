@@ -111,13 +111,13 @@ VALUES (2,'Rodrigo','Garcia','45600000A', 'cosas@gmail.com', 'rodri');
 INSERT INTO suppliers(id, name, lastname, dni, email, username)
 VALUES (3,'Antonio','Garcia','00032400H', 'cosas@gmail.com', 'antonio');
 
-INSERT INTO options(id, automated_Accept, limit_Automated, default_Deposit, deposit_Time_Limit)
+INSERT INTO options(id, automated_Accept, gas, default_Deposit, deposit_Time_Limit)
 VALUES (1,true,3,0.7,5);
-INSERT INTO options(id, automated_Accept, limit_Automated, default_Deposit, deposit_Time_Limit)
+INSERT INTO options(id, automated_Accept, gas, default_Deposit, deposit_Time_Limit)
 VALUES (2,true,3,0.7,5);
-INSERT INTO options(id, automated_Accept, limit_Automated, default_Deposit, deposit_Time_Limit)
+INSERT INTO options(id, automated_Accept, gas, default_Deposit, deposit_Time_Limit)
 VALUES (3,false,3,0.7,5);
-INSERT INTO options(id, automated_Accept, limit_Automated, default_Deposit, deposit_Time_Limit)
+INSERT INTO options(id, automated_Accept, gas, default_Deposit, deposit_Time_Limit)
 VALUES (4,false,3,0.7,5);
 
 INSERT INTO business(id, supplier_id, option_id, name, address, type, automated)
