@@ -18,12 +18,14 @@ import com.stalion73.service.BookingService;
 import com.stalion73.service.ConsumerService;
 import com.stalion73.service.ServiseService;
 import com.stalion73.service.SupplierService;
+import com.stalion73.service.OptionService;
 import com.stalion73.model.Booking;
 import com.stalion73.model.Consumer;
 import com.stalion73.model.Business;
 import com.stalion73.model.Supplier;
 import com.stalion73.model.Servise;
 import com.stalion73.model.Status;
+import com.stalion73.model.Option;
 import com.stalion73.model.modelAssembler.BookingModelAssembler;
 
 import org.springframework.http.HttpHeaders;
@@ -61,18 +63,21 @@ public class BookingController {
     private final SupplierService supplierService;
 
     @Autowired
+    private final OptionService optionService;
+
+    @Autowired
     private final BookingModelAssembler assembler;
 
     private final static HttpHeaders headers = new HttpHeaders();
 
-    public BookingController(BookingService bookingService,
-                        ConsumerService consumerService,
+    public BookingController(BookingService bookingService,ConsumerService consumerService,
                         ServiseService serviseService, SupplierService supplierService,
-                         BookingModelAssembler assembler){
+                         OptionService optionService, BookingModelAssembler assembler){
         this.bookingService = bookingService;
         this.serviseService = serviseService;
         this.consumerService = consumerService;
         this.supplierService = supplierService;
+        this.optionService = optionService;
         this.assembler = assembler;
     }
 
@@ -136,6 +141,30 @@ public class BookingController {
                 Optional<Servise> s = this.serviseService.findById(id);
                 if(s.isPresent()){
                     Servise servise = s.get();
+                    Option options = servise.getBusiness().getOption();
+                    if(options.isAutomatedAccept()){
+                        Integer gas = options.getGas();
+                        if(gas > 0){
+                            Status status = Status.COMPLETED;
+                            options.subGasUnit();
+                            booking.setStatus(status);
+                            booking.setConsumer(consumer);
+                            booking.setService(servise);
+   
+                            Calendar calendar;
+                            Date emisionDate;
+                            calendar = Calendar.getInstance();
+                            emisionDate = calendar.getTime();
+                            booking.setEmisionDate(emisionDate);
+                            booking.setService(servise);
+                            this.bookingService.save(booking);
+                            this.serviseService.save(servise);
+                            this.consumerService.save(consumer);
+                            this.optionService.save(options);
+
+                            return new ResponseEntity<Booking>(booking, headers, HttpStatus.OK);
+                        }
+                    }
                     Status initState = Status.IN_PROGRESS;
                     booking.setStatus(initState);
                     booking.setConsumer(consumer);

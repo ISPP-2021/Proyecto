@@ -50,8 +50,8 @@ public class OptionService {
                     .map(option-> {
                         Boolean automatedAccept = newOption.isAutomatedAccept() == false ? option.isAutomatedAccept() : newOption.isAutomatedAccept();
                         option.setAutomatedAccept(automatedAccept);
-                        Integer limitAutomated = newOption.getLimitAutomated() == 0 ? option.getLimitAutomated(): newOption.getLimitAutomated();
-                        option.setLimitAutomated(limitAutomated);
+                        Integer gas = newOption.getGas() == 0 ? option.getGas(): newOption.getGas();
+                        option.setGas(gas);
                         Double defaultDeposit = newOption.getDefaultDeposit() == 0.0 ? option.getDefaultDeposit(): newOption.getDefaultDeposit();
                         option.setDefaultDeposit(defaultDeposit);
                         Integer depositTimeLimit = newOption.getDepositTimeLimit() == 0 ? option.getDepositTimeLimit(): newOption.getDepositTimeLimit();
