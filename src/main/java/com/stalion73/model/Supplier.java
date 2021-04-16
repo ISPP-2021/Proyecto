@@ -8,7 +8,7 @@ import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 
 import javax.persistence.Table;
-
+import javax.validation.constraints.NotEmpty;
 
 
 @Entity
@@ -16,8 +16,15 @@ import javax.persistence.Table;
 public class Supplier extends Person{
 
 
+    private enum SubscriptionType{
+        FREE, PREMIUM
+    }
+
     @OneToMany(orphanRemoval = true, mappedBy = "supplier", fetch = FetchType.LAZY)
     private Set<Business> business;
+
+    @NotEmpty
+    private SubscriptionType subscription = SubscriptionType.FREE;
 
     public Set<Business> getBusiness() {
         return business;
@@ -37,5 +44,11 @@ public class Supplier extends Person{
         }
     }
 
+    public SubscriptionType getSubscription() {
+        return subscription;
+    }
 
+    public void setSubscription(SubscriptionType subscription) {
+        this.subscription = subscription;
+    }
 }
