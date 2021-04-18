@@ -29,7 +29,7 @@ public class Servise extends BaseEntity {
 	@NotBlank
 	@Length(max = 255)
 	private String description;
-	@Positive
+	@PositiveOrZero
 	private Double price;
 	@PositiveOrZero
 	private Integer duration;
