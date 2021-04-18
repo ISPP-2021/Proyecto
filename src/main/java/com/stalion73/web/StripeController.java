@@ -11,6 +11,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.stripe.Stripe;
+
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,14 +47,16 @@ public class StripeController {
     }
 
     @PostMapping("/create-checkout-session")
-    public ResponseEntity<Map<String, Object>> checkout(@RequestParam("price_id") String price_id){
+    public ResponseEntity<Map<String, Object>> checkout(@RequestBody String price_id){
+        Stripe.apiKey="sk_test_51IeGm1A32JKQZm0ztexmoajNRqjPuSxawtIfVhuBY2iu6AcCFAd1ilkWRSg6rUNFyTZ2TPcJSQATc8aC8gep7FW600iew5bfrA";
+        System.out.println(price_id);
         HttpHeaders headers = new HttpHeaders();
         SessionCreateParams params = new SessionCreateParams.Builder()
-                .setSuccessUrl("https://bico-despliegue2.netlify.app")
+                .setSuccessUrl("https://bico-ds2.netlify.app")
                 .setCancelUrl("https://bico-despliegue2.netlify.app")
                 .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
                 .setMode(SessionCreateParams.Mode.SUBSCRIPTION)
-                .addLineItem(new SessionCreateParams.LineItem.Builder().setPrice(price_id).build())
+                .addLineItem(new SessionCreateParams.LineItem.Builder().setQuantity(1L).setPrice(price_id).build())
                 .build();
         try {
             Session session = Session.create(params);

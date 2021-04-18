@@ -16,14 +16,14 @@ import javax.validation.constraints.NotEmpty;
 public class Supplier extends Person{
 
 
-    private enum SubscriptionType{
+    public enum SubscriptionType{
         FREE, PREMIUM
     }
 
     @OneToMany(orphanRemoval = true, mappedBy = "supplier", fetch = FetchType.LAZY)
     private Set<Business> business;
 
-    @NotEmpty
+    
     private SubscriptionType subscription = SubscriptionType.FREE;
 
     public Set<Business> getBusiness() {

@@ -67,6 +67,10 @@ public class SupplierService {
 
     @Transactional
     public void save(Supplier supplier){
+        if(supplier.getSubscription()==null){
+            
+            supplier.setSubscription(Supplier.SubscriptionType.FREE);
+        }
         supplierRepository.save(supplier);
     }
 
