@@ -99,22 +99,51 @@ public class BusinessController {
         } else {
             String username = (String)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             Supplier supplier = this.supplierService.findSupplierByUsername(username).get();
-            supplier.addBusiness(business);
-            business.setSupplier(supplier);
-            Set<Servise> servises = business.getServices();
-            Option option = business.getOption();
-            //this.supplierService.save(supplier);
-            this.optionService.save(option);
-            this.businessService.save(business);
-            servises.stream()
-            .map(servise -> {
-                servise.setBussiness(business);
-                return servise;
-            })
-            .forEach(x -> this.serviseService.save(x));
-            this.supplierService.save(supplier);
-            headers.setLocation(ucBuilder.path("/business").buildAndExpand(business.getId()).toUri());
-            return ResponseEntity.status(HttpStatus.CREATED).headers(headers).body(business);
+            
+            if(supplier.getSubscription()==Supplier.SubscriptionType.PREMIUM){
+
+                supplier.addBusiness(business);
+                business.setSupplier(supplier);
+                Set<Servise> servises = business.getServices();
+                Option option = business.getOption();
+                //this.supplierService.save(supplier);
+                this.optionService.save(option);
+                this.businessService.save(business);
+                servises.stream()
+                .map(servise -> {
+                    servise.setBussiness(business);
+                    return servise;
+                })
+                .forEach(x -> this.serviseService.save(x));
+                this.supplierService.save(supplier);
+                headers.setLocation(ucBuilder.path("/business").buildAndExpand(business.getId()).toUri());
+                return ResponseEntity.status(HttpStatus.CREATED).headers(headers).body(business);
+            }else {
+
+                if(supplier.getBusiness().size()>=1){
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers)
+                            .body(Problem.create().withTitle("Subscription Error")
+                                .withDetail("A Free user can not create more than one bussiness"));
+                }else {
+                    supplier.addBusiness(business);
+                    business.setSupplier(supplier);
+                    Set<Servise> servises = business.getServices();
+                    Option option = business.getOption();
+                    //this.supplierService.save(supplier);
+                    this.optionService.save(option);
+                    this.businessService.save(business);
+                    servises.stream()
+                    .map(servise -> {
+                        servise.setBussiness(business);
+                        return servise;
+                    })
+                    .forEach(x -> this.serviseService.save(x));
+                    this.supplierService.save(supplier);
+                    headers.setLocation(ucBuilder.path("/business").buildAndExpand(business.getId()).toUri());
+                    return ResponseEntity.status(HttpStatus.CREATED).headers(headers).body(business);
+                }
+
+            }
         }
     }
 

@@ -9,7 +9,7 @@ public class PaymentIntentDto {
     private String description;
     private int amount;
     private Currency currency;
-
+    //private String price;
 
     public String getDescription() {
         return description;
@@ -34,4 +34,12 @@ public class PaymentIntentDto {
     public void setCurrency(Currency currency) {
         this.currency = currency;
     }
+
+    /*public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }*/
 }
