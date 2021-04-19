@@ -43,7 +43,7 @@ public class SupplierServiceTest {
 		Optional<Supplier> supplier = this.supplierService.findById(1);
 		Assertions.assertTrue(supplier.get().getName().equals("Augusto")
 				&& supplier.get().getLastname().equals("Garcia") && supplier.get().getDni().equals("00000000A")
-				&& supplier.get().getEmail().equals("cosas@gmail.com")
+				&& supplier.get().getEmail().equals("cosas4@gmail.com")
 				&& supplier.get().getUser().getUsername().equals("aug"));
 	}
 
@@ -52,7 +52,7 @@ public class SupplierServiceTest {
 		Optional<Supplier> supplier = this.supplierService.findSupplierByUsername("rodri");
 		Assertions.assertTrue(supplier.get().getName().equals("Rodrigo")
 				&& supplier.get().getLastname().equals("Garcia") && supplier.get().getDni().equals("45600000A")
-				&& supplier.get().getEmail().equals("cosas@gmail.com"));
+				&& supplier.get().getEmail().equals("cosas5@gmail.com"));
 	}
 
 //	@Test
