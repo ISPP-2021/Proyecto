@@ -82,13 +82,12 @@ public class ServiseController {
 	public ResponseEntity<?> create(@PathVariable("id") Integer id,
 									@Valid @RequestBody Servise servise, 
 									BindingResult bindingResult,
-									UriComponentsBuilder ucBuilder,
-									SecurityContextHolder contextHolder) {
+									UriComponentsBuilder ucBuilder) {
 		BindingErrorsResponse errors = new BindingErrorsResponse();
-		String authority = contextHolder.getContext().getAuthentication().getAuthorities().iterator().next()
+		String authority = SecurityContextHolder.getContext().getAuthentication().getAuthorities().iterator().next()
 										.getAuthority();
 		if(authority.equals("owner")){
-			Supplier supplier = this.supplierService.findSupplierByUsername((String)contextHolder.getContext()
+			Supplier supplier = this.supplierService.findSupplierByUsername((String)SecurityContextHolder.getContext()
 												.getAuthentication().getPrincipal()).get();
 			if (bindingResult.hasErrors() || (servise == null)) {
 				errors.addAllErrors(bindingResult);

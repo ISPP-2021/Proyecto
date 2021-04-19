@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Optional;
-import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -31,7 +30,6 @@ import com.stalion73.model.modelAssembler.BookingModelAssembler;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -43,7 +41,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequestMapping("/bookings")
@@ -205,7 +202,18 @@ public class BookingController {
     @RequestMapping(value = "/{id_servise}/{id_consumer}", method = RequestMethod.POST, produces = "application/json")
     public ResponseEntity<?> createFor(@Valid @RequestBody Booking booking, BindingResult bindingResult, 
                 @PathVariable("id_servise")Integer id_servise, @PathVariable("id_consumer") Integer id_consumer) {
+        
         BindingErrorsResponse errors = new BindingErrorsResponse();
+        if (bindingResult.hasErrors() || (booking == null)) {
+            errors.addAllErrors(bindingResult);
+            headers.add("errors", errors.toJSON());
+            return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .headers(headers)
+                .body(Problem.create()
+                    .withTitle("Validation error")
+                    .withDetail("The provided booking was not successfuly validated"));
+        }
         String authority = SecurityContextHolder.getContext().getAuthentication().getAuthorities().iterator().next().getAuthority();
         if(authority.equals("owner")){
             Supplier supplier = this.supplierService
