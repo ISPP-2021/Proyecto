@@ -9,7 +9,10 @@ import com.stalion73.service.SupplierService;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Event;
+import com.stripe.model.EventData;
+import com.stripe.model.EventDataObjectDeserializer;
 import com.stripe.model.PaymentIntent;
+import com.stripe.model.StripeObject;
 import com.stripe.model.checkout.Session;
 import com.stripe.net.Webhook;
 import com.stripe.param.checkout.SessionCreateParams;
@@ -20,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import com.stripe.Stripe;
+import java.util.Optional;
 
 
 import java.util.HashMap;
@@ -64,7 +68,7 @@ public class StripeController {
         HttpHeaders headers = new HttpHeaders();
         SessionCreateParams params = new SessionCreateParams.Builder()
                 .setSuccessUrl("https://bico-ds2.netlify.app")
-                .setCancelUrl("https://bico-despliegue2.netlify.app")
+                .setCancelUrl("https://bico-ds2.netlify.app")
                 .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
                 .setClientReferenceId(usuario)
                 .setMode(SessionCreateParams.Mode.SUBSCRIPTION)
@@ -86,7 +90,6 @@ public class StripeController {
 
     @PostMapping("/subscription")
     public ResponseEntity<String> webhook(@RequestHeader("Stripe-Signature") String sigHeader,@RequestBody String body){
-        System.out.println("body.get(");
         String payload = body;
         String endpointSecret = "whsec_dxRQdnYqUrgppdF8qUQE4dga3u2bWxSJ";
         System.out.println(sigHeader);
@@ -107,17 +110,24 @@ public class StripeController {
             case "checkout.session.completed":
             
             
-
-            JsonObject evento =  JsonParser.parseString(event.getObject()).getAsJsonObject();
-            System.out.println(evento);
-            // String reference_id = evento.get("data").getAsJsonObject()
-            //                             .get("object").getAsJsonObject()
-            //                             .get("client_reference_id").getAsString();
-            // System.out.println(reference_id);
+            EventDataObjectDeserializer deserializer = event.getDataObjectDeserializer();
             
-            // String username = (String)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            // Supplier supplier = this.supplierService.findSupplierByUsername(username).get();
-            // supplier.setSubscription(Supplier.SubscriptionType.PREMIUM);
+            if(deserializer.getObject().isPresent()){
+                Session session = (Session) event.getData().getObject();
+                if(session.getAmountTotal()==999){
+                    Supplier supplier = this.supplierService
+                                            .findSupplierByUsername(session.getClientReferenceId()).get();
+                     supplier.setSubscription(Supplier.SubscriptionType.PREMIUM);
+                     this.supplierService.save(supplier);
+                    
+                } else {
+                    Supplier supplier = this.supplierService
+                                            .findSupplierByUsername(session.getClientReferenceId()).get();
+                     supplier.setSubscription(Supplier.SubscriptionType.FREE);
+                     this.supplierService.save(supplier);
+                }
+
+            }
             break;
             case "invoice.paid":
               // Continue to provision the subscription as payments continue to be made.
