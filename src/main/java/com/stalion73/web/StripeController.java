@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import com.stripe.Stripe;
 
@@ -49,12 +50,14 @@ public class StripeController {
     @PostMapping("/create-checkout-session")
     public ResponseEntity<Map<String, Object>> checkout(@RequestBody String price_id){
         Stripe.apiKey="sk_test_51IeGm1A32JKQZm0ztexmoajNRqjPuSxawtIfVhuBY2iu6AcCFAd1ilkWRSg6rUNFyTZ2TPcJSQATc8aC8gep7FW600iew5bfrA";
-        System.out.println(price_id);
+        String usuario = (String)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        System.out.println(usuario);
         HttpHeaders headers = new HttpHeaders();
         SessionCreateParams params = new SessionCreateParams.Builder()
                 .setSuccessUrl("https://bico-ds2.netlify.app")
                 .setCancelUrl("https://bico-despliegue2.netlify.app")
                 .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
+                .setCustomer(usuario)
                 .setMode(SessionCreateParams.Mode.SUBSCRIPTION)
                 .addLineItem(new SessionCreateParams.LineItem.Builder().setQuantity(1L).setPrice(price_id).build())
                 .build();
@@ -71,4 +74,8 @@ public class StripeController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers).body(responseData);
         }
     }
+
+    // @PostMapping("subscription")
+    // public ResponseEntity<> webhook
+
 }
