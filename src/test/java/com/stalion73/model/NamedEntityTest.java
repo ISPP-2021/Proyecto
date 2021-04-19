@@ -50,7 +50,7 @@ public class NamedEntityTest {
 		assertThat(violation.getPropertyPath().toString()).isEqualTo("name");
 		assertThat(violation.getMessage()).isEqualTo("size must be between 3 and 50");
 	}
-
+	//prueba codacy
 
 
 }
