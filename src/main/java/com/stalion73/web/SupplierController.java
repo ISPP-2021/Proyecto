@@ -3,11 +3,6 @@ package com.stalion73.web;
 
 import org.springframework.validation.BindingResult;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.util.Collection;
 import java.util.Optional;
 
@@ -42,11 +37,6 @@ public class SupplierController {
 
     private final static HttpHeaders headers = new HttpHeaders();
 
-
-    public  static void setup(){
-        // headers.setAccessControlAllowOrigin("*");
-   	}
-
     public SupplierController(SupplierService supplierService, BusinessService businessService){
         this.supplierService = supplierService;
         this.businessService = businessService;
@@ -54,7 +44,6 @@ public class SupplierController {
 
     @RequestMapping(value = "", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<?> all() {
-        SupplierController.setup();
         Collection<Supplier> suppliers = this.supplierService.findAll();
         if (suppliers.isEmpty()) {
             return ResponseEntity
@@ -72,7 +61,6 @@ public class SupplierController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<?> one(@PathVariable("id") Integer id) {
-        SupplierController.setup();
         Optional<Supplier> supplier = this.supplierService.findById(id);
         HttpHeaders headers = new HttpHeaders();
         if (!supplier.isPresent()) {
@@ -84,8 +72,6 @@ public class SupplierController {
                     .withTitle("Ineffected ID")
                     .withDetail("The provided ID doesn't exist"));
         }else{
-            //Esto en el header porque?
-            //headers.add("business_id", toJSON(business.getId().toString()));
             return ResponseEntity
                 .status(HttpStatus.OK) 
                 .headers(headers) 
@@ -97,8 +83,6 @@ public class SupplierController {
     public ResponseEntity<?> create(@Valid @RequestBody Supplier supplier,
                                             BindingResult bindingResult, 
                                             UriComponentsBuilder ucBuilder) {
-
-        SupplierController.setup();                                        
         BindingErrorsResponse errors = new BindingErrorsResponse();
         HttpHeaders headers = new HttpHeaders();
         if (bindingResult.hasErrors() || ( supplier== null)) {
@@ -125,7 +109,6 @@ public class SupplierController {
                                             @RequestBody @Valid Supplier newSupplier, 
                                             BindingResult bindingResult){
 
-        SupplierController.setup();
 		BindingErrorsResponse errors = new BindingErrorsResponse();                                        
         if(bindingResult.hasErrors() || (newSupplier == null)){
             errors.addAllErrors(bindingResult);
@@ -156,7 +139,6 @@ public class SupplierController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "application/json")
 	public ResponseEntity<?> delete(@PathVariable("id") Integer id){
-		SupplierController.setup();
 		Optional<Supplier> supplier = this.supplierService.findById(id);
 		if(supplier.isPresent()){
             this.supplierService.deleteBusinessBySupplierId(id);
@@ -171,18 +153,6 @@ public class SupplierController {
                         .withTitle("Ineffected ID")
                         .withDetail("The provided ID doesn't exist"));
         }
-	}
-
-    public String toJSON(String s) {
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
-		String json = "";
-		try {
-			json = mapper.writeValueAsString(s);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
-		return json;
 	}
     
 }
