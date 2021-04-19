@@ -1,10 +1,17 @@
 package com.stalion73.web;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.stalion73.http.PaymentIntentDto;
+import com.stalion73.model.Supplier;
 import com.stalion73.service.PaymentService;
+import com.stalion73.service.SupplierService;
+import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
+import com.stripe.model.Event;
 import com.stripe.model.PaymentIntent;
 import com.stripe.model.checkout.Session;
+import com.stripe.net.Webhook;
 import com.stripe.param.checkout.SessionCreateParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -23,6 +30,8 @@ import java.util.Map;
 @CrossOrigin(origins = "*")
 public class StripeController {
 
+    @Autowired
+    private SupplierService supplierService;
     @Autowired
     PaymentService paymentService;
 
@@ -57,7 +66,7 @@ public class StripeController {
                 .setSuccessUrl("https://bico-ds2.netlify.app")
                 .setCancelUrl("https://bico-despliegue2.netlify.app")
                 .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
-                .setCustomer(usuario)
+                .setClientReferenceId(usuario)
                 .setMode(SessionCreateParams.Mode.SUBSCRIPTION)
                 .addLineItem(new SessionCreateParams.LineItem.Builder().setQuantity(1L).setPrice(price_id).build())
                 .build();
@@ -75,7 +84,57 @@ public class StripeController {
         }
     }
 
-    // @PostMapping("subscription")
-    // public ResponseEntity<> webhook
+    @PostMapping("/subscription")
+    public ResponseEntity<String> webhook(@RequestHeader("Stripe-Signature") String sigHeader,@RequestBody String body){
+        System.out.println("body.get(");
+        String payload = body;
+        String endpointSecret = "whsec_dxRQdnYqUrgppdF8qUQE4dga3u2bWxSJ";
+        System.out.println(sigHeader);
+
+        Event event = null;
+
+        try {
+            event = Webhook.constructEvent(payload, sigHeader, endpointSecret);
+            System.out.println(event);
+        } catch (SignatureVerificationException e) {
+            System.out.println(e);
+            // Invalid signature
+            // response.status(400);
+            return null;
+        }
+
+        switch (event.getType()) {
+            case "checkout.session.completed":
+            
+            
+
+            JsonObject evento =  JsonParser.parseString(event.getObject()).getAsJsonObject();
+            System.out.println(evento);
+            // String reference_id = evento.get("data").getAsJsonObject()
+            //                             .get("object").getAsJsonObject()
+            //                             .get("client_reference_id").getAsString();
+            // System.out.println(reference_id);
+            
+            // String username = (String)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            // Supplier supplier = this.supplierService.findSupplierByUsername(username).get();
+            // supplier.setSubscription(Supplier.SubscriptionType.PREMIUM);
+            break;
+            case "invoice.paid":
+              // Continue to provision the subscription as payments continue to be made.
+              // Store the status in your database and check when a user accesses your service.
+              // This approach helps you avoid hitting rate limits.
+              break;
+            case "invoice.payment_failed":
+              // The payment failed or the customer does not have a valid payment method.
+              // The subscription becomes past_due. Notify your customer and send them to the
+              // customer portal to update their payment information.
+              break;
+            default:
+              // System.out.println("Unhandled event type: " + event.getType());
+          }
+
+        return null;
+        
+    }
 
 }
