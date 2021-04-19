@@ -56,10 +56,6 @@ public class BusinessController {
 
     private final static HttpHeaders headers = new HttpHeaders();
 
-    // public static void setup() {
-    //     headers.setAccessControlAllowOrigin("*");
-    // }
-
     public BusinessController(BusinessService businessService, SupplierService supplierService
     , ServiseService serviseService, BookingService bookingService, OptionService optionService) {
         this.businessService = businessService;
@@ -71,7 +67,6 @@ public class BusinessController {
 
     @RequestMapping(value = "", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<?> all() {
-        // BusinessController.setup();
         Collection<Business> businesses = this.businessService.findAll();
         if (businesses.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).headers(headers).body(businesses);
@@ -82,7 +77,6 @@ public class BusinessController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<?> one(@PathVariable("id") Integer id) {
-        // BusinessController.setup();
         Optional<Business> business = this.businessService.findById(id);
         if (!business.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -95,10 +89,7 @@ public class BusinessController {
 
     @RequestMapping(value = "", method = RequestMethod.POST, produces = "application/json")
     public ResponseEntity<?> create(@Valid @RequestBody Business business,
-            BindingResult bindingResult,
-            UriComponentsBuilder ucBuilder,
-            SecurityContextHolder contextHolder) {
-        // BusinessController.setup();
+            BindingResult bindingResult, UriComponentsBuilder ucBuilder) {
         BindingErrorsResponse errors = new BindingErrorsResponse();
         if (bindingResult.hasErrors() || (business == null)) {
             errors.addAllErrors(bindingResult);
@@ -106,8 +97,7 @@ public class BusinessController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers).body(Problem.create()
                     .withTitle("Validation error").withDetail("The provided consumer was not successfuly validated"));
         } else {
-            String username = (String)contextHolder
-                        .getContext().getAuthentication().getPrincipal();
+            String username = (String)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             Supplier supplier = this.supplierService.findSupplierByUsername(username).get();
             
             if(supplier.getSubscription()==Supplier.SubscriptionType.PREMIUM){
@@ -160,7 +150,6 @@ public class BusinessController {
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = "application/json")
     public ResponseEntity<?> update(@PathVariable("id") Integer id, @RequestBody @Valid Business newBusiness,
             BindingResult bindingResult) {
-        // BusinessController.setup();
         BindingErrorsResponse errors = new BindingErrorsResponse();
         if (bindingResult.hasErrors() || (newBusiness == null)) {
             errors.addAllErrors(bindingResult);
@@ -237,7 +226,6 @@ public class BusinessController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "application/json")
     public ResponseEntity<?> delete(@PathVariable("id") Integer id) {
-        // BusinessController.setup();
         Optional<Business> business = this.businessService.findById(id);
         if (business.isPresent()) {
             this.businessService.deleteById(id);
@@ -251,9 +239,7 @@ public class BusinessController {
 
     @RequestMapping(value = "/booking/{idBooking}", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<?> businessByBooking(@PathVariable("idBooking") Integer id) {
-        // BusinessController.setup();
         Optional<Booking> booking = this.bookingService.findById(id);
-       
         if (!booking.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE).headers(headers)
