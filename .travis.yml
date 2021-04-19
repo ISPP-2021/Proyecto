@@ -1,19 +1,14 @@
-
 dist: trusty
 language: java
 jdk: oraclejdk8
-env:
-  - CODACY_PROJECT_TOKEN="84ac4acee649408f956fcab54a56efd7"
 services:
   - mysql
-cache:
-  directories:
-    - "$HOME/.m2"
 before_install:
+  - mysql -e 'CREATE DATABASE stalion76;'
   - sudo apt-get install jq
   - wget -O ~/codacy-coverage-reporter-assembly-latest.jar $(curl https://api.github.com/repos/codacy/codacy-coverage-reporter/releases/latest | jq -r .assets[0].browser_download_url)
-  - mysql -e 'CREATE DATABASE stalion76;'
-script: mvn test -Dspring-boot.run.profiles=mysql-travis
+script: 
+  - mvn test -Dspring-boot.run.profiles=mysql-travis
+  - mvn jacoco:prepare-agent test install jacoco:report
 after_success:
-  - java -jar ~/codacy-coverage-reporter-assembly-latest.jar report -l Java -r target/site/jacoco/jacoco.xml
-
+    - java -jar ~/codacy-coverage-reporter-assembly-latest.jar report -l Java -r target/site/jacoco/jacoco.xml
