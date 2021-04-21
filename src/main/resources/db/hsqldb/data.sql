@@ -120,14 +120,14 @@ VALUES (3,false,3,0.7,5);
 INSERT INTO options(id, automated_Accept, gas, default_Deposit, deposit_Time_Limit)
 VALUES (4,false,3,0.7,5);
 
-INSERT INTO business(id, supplier_id, option_id, name, address, type, automated)
-VALUES (1,1,1,'Pizzeria Gus','address_1','RESTAURANT',TRUE);
-INSERT INTO business(id, supplier_id, option_id, name, address, type, automated)
-VALUES (2,2,2,'Tattoos Rodri','address_1','GENERAL',TRUE);
-INSERT INTO business(id, supplier_id, option_id, name, address, type, automated)
-VALUES (3,3,3,'Peluquería Antonio','address_1','HAIRDRESSER',TRUE);
-INSERT INTO business(id, supplier_id, option_id, name, address, type, automated)
-VALUES (4,2,4,'Peluquería Rodri','address_1','HAIRDRESSER',TRUE);
+INSERT INTO business(id, supplier_id, option_id, name, address, type, automated, openTime, closeTime)
+VALUES (1,1,1,'Pizzeria Gus','address_1','RESTAURANT',TRUE, '07:00:00', '18:00:00');
+INSERT INTO business(id, supplier_id, option_id, name, address, type, automated, openTime, closeTime)
+VALUES (2,2,2,'Tattoos Rodri','address_1','GENERAL',TRUE, '07:00:00', '18:00:00');
+INSERT INTO business(id, supplier_id, option_id, name, address, type, automated, openTime, closeTime)
+VALUES (3,3,3,'Peluquería Antonio','address_1','HAIRDRESSER',TRUE, '07:00:00', '18:00:00');
+INSERT INTO business(id, supplier_id, option_id, name, address, type, automated, openTime, closeTime)
+VALUES (4,2,4,'Peluquería Rodri','address_1','HAIRDRESSER',TRUE, '07:00:00', '18:00:00');
 
 INSERT INTO servises(id, name, description, price, duration, capacity, deposit, tax, business_id)
 VALUES (1,'Comer','Ven a comer al restaurante y disfruta',20.3,2,2,40.7,0.05,1);
