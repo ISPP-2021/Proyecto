@@ -8,6 +8,7 @@ import com.stalion73.model.Supplier;
 import com.stalion73.model.Booking;
 import com.stalion73.model.Business;
 import com.stalion73.model.Servise;
+import com.stalion73.model.SubscriptionType;
 import com.stalion73.repository.BusinessRepository;
 import com.stalion73.repository.SupplierRepository;
 
@@ -69,7 +70,7 @@ public class SupplierService {
     public void save(Supplier supplier){
         if(supplier.getSubscription()==null){
             
-            supplier.setSubscription(Supplier.SubscriptionType.FREE);
+            supplier.setSubscription(SubscriptionType.FREE);
         }
         supplierRepository.save(supplier);
     }

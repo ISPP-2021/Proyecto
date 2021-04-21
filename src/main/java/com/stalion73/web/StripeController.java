@@ -24,6 +24,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import com.stripe.Stripe;
 import java.util.Optional;
+import com.stalion73.model.SubscriptionType;
 
 
 import java.util.HashMap;
@@ -117,13 +118,13 @@ public class StripeController {
                 if(session.getAmountTotal()==999){
                     Supplier supplier = this.supplierService
                                             .findSupplierByUsername(session.getClientReferenceId()).get();
-                     supplier.setSubscription(Supplier.SubscriptionType.PREMIUM);
+                     supplier.setSubscription(SubscriptionType.PREMIUM);
                      this.supplierService.save(supplier);
                     
                 } else {
                     Supplier supplier = this.supplierService
                                             .findSupplierByUsername(session.getClientReferenceId()).get();
-                     supplier.setSubscription(Supplier.SubscriptionType.FREE);
+                     supplier.setSubscription(SubscriptionType.FREE);
                      this.supplierService.save(supplier);
                 }
 

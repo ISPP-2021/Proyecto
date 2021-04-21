@@ -104,12 +104,12 @@ INSERT INTO consumers(id, name, lastname, dni, email, username)
 VALUES (3,'Marcos','Garcia','76865443F', 'cosas3@gmail.com', 'marcos');
 
 
-INSERT INTO suppliers(id, name, lastname, dni, email, username)
-VALUES (1,'Augusto','Garcia','00000000A', 'cosas4@gmail.com', 'aug');
-INSERT INTO suppliers(id, name, lastname, dni, email, username)
-VALUES (2,'Rodrigo','Garcia','45600000A', 'cosas5@gmail.com', 'rodri');
-INSERT INTO suppliers(id, name, lastname, dni, email, username)
-VALUES (3,'Antonio','Garcia','00032400H', 'cosas6@gmail.com', 'antonio');
+INSERT INTO suppliers(id, name, lastname, dni, email, username, subscription)
+VALUES (1,'Augusto','Garcia','00000000A', 'cosas4@gmail.com', 'aug','FREE');
+INSERT INTO suppliers(id, name, lastname, dni, email, username, subscription)
+VALUES (2,'Rodrigo','Garcia','45600000A', 'cosas5@gmail.com', 'rodri', 'FREE');
+INSERT INTO suppliers(id, name, lastname, dni, email, username, subscription)
+VALUES (3,'Antonio','Garcia','00032400H', 'cosas6@gmail.com', 'antonio', 'FREE');
 
 INSERT INTO options(id, automated_Accept, gas, default_Deposit, deposit_Time_Limit)
 VALUES (1,true,3,0.7,5);

@@ -16,6 +16,7 @@ import com.stalion73.service.OptionService;
 import com.stalion73.model.Booking;
 import com.stalion73.model.Business;
 import com.stalion73.model.Servise;
+import com.stalion73.model.SubscriptionType;
 import com.stalion73.model.Option;
 import com.stalion73.model.Supplier;
 
@@ -100,7 +101,7 @@ public class BusinessController {
             String username = (String)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             Supplier supplier = this.supplierService.findSupplierByUsername(username).get();
             
-            if(supplier.getSubscription()==Supplier.SubscriptionType.PREMIUM){
+            if(supplier.getSubscription()==SubscriptionType.PREMIUM){
 
                 supplier.addBusiness(business);
                 business.setSupplier(supplier);

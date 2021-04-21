@@ -4,6 +4,8 @@ import java.util.Set;
 import java.util.HashSet;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 
@@ -14,17 +16,14 @@ import javax.validation.constraints.NotEmpty;
 @Entity
 @Table(name =" suppliers")
 public class Supplier extends Person{
-
-
-    public enum SubscriptionType{
-        FREE, PREMIUM
-    }
+    
+ 
 
     @OneToMany(orphanRemoval = true, mappedBy = "supplier", fetch = FetchType.LAZY)
     private Set<Business> business;
 
-    
-    private SubscriptionType subscription = SubscriptionType.FREE;
+    @Enumerated(EnumType.STRING)
+    private SubscriptionType subscription;
 
     public Set<Business> getBusiness() {
         return business;
