@@ -171,7 +171,7 @@
                 <artifactId>heroku-maven-plugin</artifactId>
                 <version>3.0.3</version>
                 <configuration>
-                    <appName>bico-despliegue2</appName>
+                    <appName>bico-despliegue3</appName>
                 </configuration>
             </plugin>
             <plugin>

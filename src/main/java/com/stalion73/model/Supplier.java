@@ -25,6 +25,7 @@ public class Supplier extends Person{
     @Enumerated(EnumType.STRING)
     private SubscriptionType subscription;
 
+
     public Set<Business> getBusiness() {
         return business;
     }

@@ -5,6 +5,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.mediatype.problem.Problem;
 
+import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -132,52 +133,70 @@ public class BookingController {
                         .withTitle("Validation error")
                         .withDetail("The provided booking was not successfuly validated"));
             }else{
+
                 String username = (String)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
                 Consumer consumer = this.consumerService.findConsumerByUsername(username).get();
                 booking.setConsumer(consumer);
                 Optional<Servise> s = this.serviseService.findById(id);
                 if(s.isPresent()){
+
+                    
                     Servise servise = s.get();
-                    Option options = servise.getBusiness().getOption();
-                    if(options.isAutomatedAccept()){
-                        Integer gas = options.getGas();
-                        if(gas > 0){
-                            Status status = Status.COMPLETED;
-                            options.subGasUnit();
-                            booking.setStatus(status);
-                            booking.setConsumer(consumer);
-                            booking.setService(servise);
-   
-                            Calendar calendar;
-                            Date emisionDate;
-                            calendar = Calendar.getInstance();
-                            emisionDate = calendar.getTime();
-                            booking.setEmisionDate(emisionDate);
-                            booking.setService(servise);
-                            this.bookingService.save(booking);
-                            this.serviseService.save(servise);
-                            this.consumerService.save(consumer);
-                            this.optionService.save(options);
+                    Business business = servise.getBusiness();
+                    LocalTime bookTime = LocalTime.parse(booking.getBookDate().toString().substring(11,16));
+                    
+                    if(bookTime.isAfter(business.getOpenTime()) && 
+                            bookTime.isBefore(business.getCloseTime()) ){
 
-                            return new ResponseEntity<Booking>(booking, headers, HttpStatus.OK);
-                        }
+                                Option options = servise.getBusiness().getOption();
+                                if(options.isAutomatedAccept()){
+                                    Integer gas = options.getGas();
+                                    if(gas > 0){
+                                        Status status = Status.COMPLETED;
+                                        options.subGasUnit();
+                                        booking.setStatus(status);
+                                        booking.setConsumer(consumer);
+                                        booking.setService(servise);
+               
+                                        Calendar calendar;
+                                        Date emisionDate;
+                                        calendar = Calendar.getInstance();
+                                        emisionDate = calendar.getTime();
+                                        booking.setEmisionDate(emisionDate);
+                                        booking.setService(servise);
+                                        this.bookingService.save(booking);
+                                        this.serviseService.save(servise);
+                                        this.consumerService.save(consumer);
+                                        this.optionService.save(options);
+            
+                                        return new ResponseEntity<Booking>(booking, headers, HttpStatus.OK);
+                                    }
+                                }
+                                Status initState = Status.IN_PROGRESS;
+                                booking.setStatus(initState);
+                                booking.setConsumer(consumer);
+                                booking.setService(servise);
+            
+                                Calendar calendar;
+                                Date emisionDate;
+                                calendar = Calendar.getInstance();
+                                emisionDate = calendar.getTime();
+                                booking.setEmisionDate(emisionDate);
+                                booking.setService(servise);
+                                this.bookingService.save(booking);
+                                this.serviseService.save(servise);
+                                this.consumerService.save(consumer);
+            
+                                return new ResponseEntity<Booking>(booking, headers, HttpStatus.OK);
+                    }else {
+                        return ResponseEntity
+                            .status(HttpStatus.BAD_REQUEST) 
+                            .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) 
+                            .headers(headers)
+                            .body(Problem.create()
+                                .withTitle("Bad Time") 
+                                .withDetail("Cannot book in the requested time, the bussiness seems to be closed"));        
                     }
-                    Status initState = Status.IN_PROGRESS;
-                    booking.setStatus(initState);
-                    booking.setConsumer(consumer);
-                    booking.setService(servise);
-
-                    Calendar calendar;
-                    Date emisionDate;
-                    calendar = Calendar.getInstance();
-                    emisionDate = calendar.getTime();
-                    booking.setEmisionDate(emisionDate);
-                    booking.setService(servise);
-                    this.bookingService.save(booking);
-                    this.serviseService.save(servise);
-                    this.consumerService.save(consumer);
-
-                    return new ResponseEntity<Booking>(booking, headers, HttpStatus.OK);
                 }
                 return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST) 
