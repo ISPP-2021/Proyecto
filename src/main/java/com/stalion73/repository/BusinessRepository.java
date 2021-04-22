@@ -1,9 +1,7 @@
 package com.stalion73.repository;
 
 import java.util.Collection;
-import java.util.Optional;
 
-import com.stalion73.model.BaseEntity;
 import com.stalion73.model.Business;
 import com.stalion73.model.BusinessType;
 

@@ -2,8 +2,13 @@ package com.stalion73.service;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
 
 import com.stalion73.model.Supplier;
+import com.stalion73.model.Booking;
+import com.stalion73.model.Business;
+import com.stalion73.model.Servise;
+import com.stalion73.model.SubscriptionType;
 import com.stalion73.repository.BusinessRepository;
 import com.stalion73.repository.SupplierRepository;
 
@@ -44,7 +49,29 @@ public class SupplierService {
     }
 
     @Transactional
+    public Optional<Booking> findBookingOnSupplier(Supplier supplier, Integer id){
+        Set<Business> business = supplier.getBusiness();
+        for(Business b : business){
+            Set<Servise> servises = b.getServices();
+            for(Servise s : servises){
+                Set<Booking> bookings = s.getBookings();
+                for(Booking book : bookings){
+                    if(book.getId().equals(id)){
+                        return Optional.of(book);
+                    }
+                }
+            }
+        }
+        return Optional.empty();
+
+    }
+
+    @Transactional
     public void save(Supplier supplier){
+        if(supplier.getSubscription()==null){
+            
+            supplier.setSubscription(SubscriptionType.FREE);
+        }
         supplierRepository.save(supplier);
     }
 

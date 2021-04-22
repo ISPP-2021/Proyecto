@@ -1,12 +1,12 @@
 package com.stalion73.model;
 
 import java.util.Set;
+import java.util.HashSet;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.stalion73.model.transformer.*;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -19,8 +19,6 @@ import javax.validation.constraints.PositiveOrZero;
 
 import org.hibernate.validator.constraints.Length;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 @Entity
 @Table(name = "servises")
 public class Servise extends BaseEntity {
@@ -31,7 +29,7 @@ public class Servise extends BaseEntity {
 	@NotBlank
 	@Length(max = 255)
 	private String description;
-	@Positive
+	@PositiveOrZero
 	private Double price;
 	@PositiveOrZero
 	private Integer duration;
@@ -121,4 +119,14 @@ public class Servise extends BaseEntity {
 	public void setBookings(Set<Booking> bookings) {
 		this.bookings = bookings;
 	}
+
+	public void addBooking(Booking booking){
+        if(this.bookings == null){
+            this.bookings = new HashSet<>();
+            this.bookings.add(booking);
+            setBookings(bookings);
+        }else{
+            this.bookings.add(booking);
+        }
+    }
 }

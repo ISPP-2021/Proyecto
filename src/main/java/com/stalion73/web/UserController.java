@@ -5,7 +5,6 @@ import com.stalion73.model.Authorities;
 import com.stalion73.model.Consumer;
 import com.stalion73.model.Supplier;
 import com.stalion73.model.User;
-import com.stalion73.repository.ConsumerRepository;
 import com.stalion73.model.Business;
 import com.stalion73.service.ConsumerService;
 import com.stalion73.service.SupplierService;
@@ -28,11 +27,6 @@ import javax.validation.Valid;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.mediatype.problem.Problem;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -44,7 +38,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.http.HttpStatus;
 
 @RestController
@@ -111,22 +104,22 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/profile", method = RequestMethod.GET, produces = "application/json")
-	public ResponseEntity<?> profile(SecurityContextHolder contextHolder) {
-		String authority = contextHolder.getContext().getAuthentication().getAuthorities().iterator().next().getAuthority();
+	public ResponseEntity<?> profile() {
+		String authority = SecurityContextHolder.getContext().getAuthentication().getAuthorities().iterator().next().getAuthority();
 		if(authority.equals("user")){
 			Consumer user = this.consumerService
-				.findConsumerByUsername((String)contextHolder.getContext()
+				.findConsumerByUsername((String)SecurityContextHolder.getContext()
 												.getAuthentication().getPrincipal()).get();
 		
 			return ResponseEntity.status(HttpStatus.OK).headers(headers).body(user);
 		} else if(authority.equals("owner")) {
         	HttpHeaders headers = new HttpHeaders();
-		    Supplier user = this.supplierService.findSupplierByUsername((String)contextHolder.getContext()
+		    Supplier user = this.supplierService.findSupplierByUsername((String)SecurityContextHolder.getContext()
 												.getAuthentication().getPrincipal()).get();
 
 			Collection<Business> business = this.businessService.findBusinessBySupplierId(user.getId());
 			if(business.isEmpty()){
-				return ResponseEntity.status(HttpStatus.OK).headers(headers).body(business);
+				return ResponseEntity.status(HttpStatus.OK).headers(headers).body(user);
 			}
 			if(!business.isEmpty()){
 				return ResponseEntity.status(HttpStatus.OK).headers(headers).body(user);
@@ -139,8 +132,7 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/signup/consumers", method = RequestMethod.POST, produces = "application/json")
-	public ResponseEntity<?> signUpConsumer(@Valid @RequestBody Consumer consumer,
-									BindingResult bindingResult){
+	public ResponseEntity<?> signUpConsumer(@Valid @RequestBody Consumer consumer,BindingResult bindingResult){
 
 		BindingErrorsResponse errors = new BindingErrorsResponse();
 		HttpHeaders headers = new HttpHeaders();
@@ -158,7 +150,8 @@ public class UserController {
 			//user.setToken(token)
 			User user = consumer.getUser();
 			String username = user.getUsername();
-			if(this.consumerService.findConsumerByUsername(username).isPresent()){
+			if(this.consumerService.findConsumerByUsername(username).isPresent()
+				|| this.supplierService.findSupplierByUsername(username).isPresent()){
 				return ResponseEntity
 				.status(HttpStatus.BAD_REQUEST)
 				.headers(headers)
@@ -185,8 +178,7 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/signup/suppliers", method = RequestMethod.POST, produces = "application/json")
-	public ResponseEntity<?> signUpSupplier(@Valid @RequestBody Supplier supplier,
-									BindingResult bindingResult){
+	public ResponseEntity<?> signUpSupplier(@Valid @RequestBody Supplier supplier, BindingResult bindingResult){
 
 		BindingErrorsResponse errors = new BindingErrorsResponse();
 		HttpHeaders headers = new HttpHeaders();
@@ -204,7 +196,8 @@ public class UserController {
 			//user.setToken(token)
 			User user = supplier.getUser();
 			String username = user.getUsername();
-			if(this.supplierService.findSupplierByUsername(username).isPresent()){
+			if(this.supplierService.findSupplierByUsername(username).isPresent()
+				|| this.consumerService.findConsumerByUsername(username).isPresent()){
 				return ResponseEntity
 				.status(HttpStatus.BAD_REQUEST)
 				.headers(headers)
@@ -240,18 +233,6 @@ public class UserController {
 				.signWith(SignatureAlgorithm.HS512, secretKey.getBytes()).compact();
 
 		return "Bearer " + token;
-	}
-
-	public String toJSON(String s) {
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
-		String json = "";
-		try {
-			json = mapper.writeValueAsString(s);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
-		return json;
 	}
 
 }

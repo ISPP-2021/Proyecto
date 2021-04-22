@@ -99,35 +99,35 @@ INSERT INTO authorities(id,username,authority) VALUES (47,'albasev','owner');
 INSERT INTO consumers(id, name, lastname, dni, email, username)
 VALUES (1,'Jose','Garcia','23487343A', 'cosas@gmail.com', 'josito');
 INSERT INTO consumers(id, name, lastname, dni, email, username)
-VALUES (2,'Daniel','San José','34542321D', 'cosas@gmail.com', 'dani');
+VALUES (2,'Daniel','San José','34542321D', 'cosas2@gmail.com', 'dani');
 INSERT INTO consumers(id, name, lastname, dni, email, username)
-VALUES (3,'Marcos','Garcia','76865443F', 'cosas@gmail.com', 'marcos');
+VALUES (3,'Marcos','Garcia','76865443F', 'cosas3@gmail.com', 'marcos');
 
 
-INSERT INTO suppliers(id, name, lastname, dni, email, username)
-VALUES (1,'Augusto','Garcia','00000000A', 'cosas@gmail.com', 'aug');
-INSERT INTO suppliers(id, name, lastname, dni, email, username)
-VALUES (2,'Rodrigo','Garcia','45600000A', 'cosas@gmail.com', 'rodri');
-INSERT INTO suppliers(id, name, lastname, dni, email, username)
-VALUES (3,'Antonio','Garcia','00032400H', 'cosas@gmail.com', 'antonio');
+INSERT INTO suppliers(id, name, lastname, dni, email, username, subscription)
+VALUES (1,'Augusto','Garcia','00000000A', 'cosas4@gmail.com', 'aug','FREE');
+INSERT INTO suppliers(id, name, lastname, dni, email, username, subscription)
+VALUES (2,'Rodrigo','Garcia','45600000A', 'cosas5@gmail.com', 'rodri', 'FREE');
+INSERT INTO suppliers(id, name, lastname, dni, email, username, subscription)
+VALUES (3,'Antonio','Garcia','00032400H', 'cosas6@gmail.com', 'antonio', 'FREE');
 
-INSERT INTO options(id, automated_Accept, limit_Automated, default_Deposit, deposit_Time_Limit)
+INSERT INTO options(id, automated_Accept, gas, default_Deposit, deposit_Time_Limit)
 VALUES (1,true,3,0.7,5);
-INSERT INTO options(id, automated_Accept, limit_Automated, default_Deposit, deposit_Time_Limit)
+INSERT INTO options(id, automated_Accept, gas, default_Deposit, deposit_Time_Limit)
 VALUES (2,true,3,0.7,5);
-INSERT INTO options(id, automated_Accept, limit_Automated, default_Deposit, deposit_Time_Limit)
+INSERT INTO options(id, automated_Accept, gas, default_Deposit, deposit_Time_Limit)
 VALUES (3,false,3,0.7,5);
-INSERT INTO options(id, automated_Accept, limit_Automated, default_Deposit, deposit_Time_Limit)
+INSERT INTO options(id, automated_Accept, gas, default_Deposit, deposit_Time_Limit)
 VALUES (4,false,3,0.7,5);
 
-INSERT INTO business(id, supplier_id, option_id, name, address, type, automated)
-VALUES (1,1,1,'Pizzeria Gus','address_1','RESTAURANT',TRUE);
-INSERT INTO business(id, supplier_id, option_id, name, address, type, automated)
-VALUES (2,2,2,'Tattoos Rodri','address_1','GENERAL',TRUE);
-INSERT INTO business(id, supplier_id, option_id, name, address, type, automated)
-VALUES (3,3,3,'Peluquería Antonio','address_1','HAIRDRESSER',TRUE);
-INSERT INTO business(id, supplier_id, option_id, name, address, type, automated)
-VALUES (4,2,4,'Peluquería Rodri','address_1','HAIRDRESSER',TRUE);
+INSERT INTO business(id, supplier_id, option_id, name, address, type, automated, openTime, closeTime)
+VALUES (1,1,1,'Pizzeria Gus','address_1','RESTAURANT',TRUE, '07:00:00', '18:00:00');
+INSERT INTO business(id, supplier_id, option_id, name, address, type, automated, openTime, closeTime)
+VALUES (2,2,2,'Tattoos Rodri','address_1','GENERAL',TRUE, '07:00:00', '18:00:00');
+INSERT INTO business(id, supplier_id, option_id, name, address, type, automated, openTime, closeTime)
+VALUES (3,3,3,'Peluquería Antonio','address_1','HAIRDRESSER',TRUE, '07:00:00', '18:00:00');
+INSERT INTO business(id, supplier_id, option_id, name, address, type, automated, openTime, closeTime)
+VALUES (4,2,4,'Peluquería Rodri','address_1','HAIRDRESSER',TRUE, '07:00:00', '18:00:00');
 
 INSERT INTO servises(id, name, description, price, duration, capacity, deposit, tax, business_id)
 VALUES (1,'Comer','Ven a comer al restaurante y disfruta',20.3,2,2,40.7,0.05,1);
@@ -147,10 +147,10 @@ INSERT INTO servises(id, name, description, price, duration, capacity, deposit, 
 VALUES (8,'Menú del día','Menú del día de la pizzería',20.3,2,2,40.7,0.05,1);
 
 INSERT INTO bookings(id, consumer_id, servise_id, book, emision, status) 
-        VALUES (1,1,1,'2021-01-27 22:00:00','2022-01-27 22:00:00','IN_PROGRESS');
+        VALUES (1,1,1,'2022-01-27 22:00:00','2021-01-27 22:00:00','IN_PROGRESS');
 INSERT INTO bookings(id, consumer_id, servise_id, book, emision, status) 
-        VALUES (2,2,1,'2021-01-27 22:00:00','2022-01-27 22:00:00','IN_PROGRESS');
+        VALUES (2,2,1,'2022-01-27 22:00:00','2021-01-27 22:00:00','IN_PROGRESS');
 INSERT INTO bookings(id, consumer_id, servise_id, book, emision, status) 
-        VALUES (3,3,1,'2021-01-27 22:00:00','2022-01-27 22:00:00','COMPLETED');
+        VALUES (3,3,1,'2022-01-27 22:00:00','2021-01-27 22:00:00','COMPLETED');
 INSERT INTO bookings(id, consumer_id, servise_id, book, emision, status) 
-        VALUES (4,1,2,'2021-01-27 22:00:00','2022-01-27 22:00:00','IN_PROGRESS');
+        VALUES (4,1,2,'2022-01-27 22:00:00','2021-01-27 22:00:00','IN_PROGRESS');

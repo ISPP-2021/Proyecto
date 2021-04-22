@@ -1,9 +1,8 @@
 package com.stalion73.model;
 
 import java.util.Set;
+import java.util.HashSet;
 
-
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
@@ -26,6 +25,14 @@ public class Consumer extends Person {
         this.bookings = bookings;
     }
 
-
+    public void addBooking(Booking booking){
+        if(this.bookings == null){
+            this.bookings = new HashSet<>();
+            this.bookings.add(booking);
+            setBookings(bookings);
+        }else{
+            this.bookings.add(booking);
+        }
+    }
     
 }   

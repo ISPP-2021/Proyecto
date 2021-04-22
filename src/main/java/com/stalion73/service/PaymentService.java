@@ -20,7 +20,7 @@ public class PaymentService {
 
     public PaymentIntent paymentIntent(PaymentIntentDto paymentIntentDto) throws StripeException {
         Stripe.apiKey = secretKey;
-        List<String> paymentMethodTypes = new ArrayList();
+        List<String> paymentMethodTypes = new ArrayList<String>();
         paymentMethodTypes.add("card");
         Map<String, Object> params = new HashMap<>();
         params.put("amount", paymentIntentDto.getAmount());

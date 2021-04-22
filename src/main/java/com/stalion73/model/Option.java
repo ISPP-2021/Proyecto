@@ -1,6 +1,5 @@
 package com.stalion73.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
@@ -12,7 +11,7 @@ public class Option extends BaseEntity{
 
     private boolean automatedAccept;
 
-    private Integer limitAutomated;
+    private Integer gas;
 
     @Range(max=1,min=0)
     private double defaultDeposit;
@@ -29,12 +28,12 @@ public class Option extends BaseEntity{
         this.automatedAccept = automatedAccept;
     }
 
-    public Integer getLimitAutomated() {
-        return limitAutomated;
+    public Integer getGas() {
+        return this.gas;
     }
 
-    public void setLimitAutomated(Integer limitAutomated) {
-        this.limitAutomated = limitAutomated;
+    public void setGas(Integer gas) {
+        this.gas = gas;
     }
 
     public double getDefaultDeposit() {
@@ -51,6 +50,10 @@ public class Option extends BaseEntity{
 
     public void setDepositTimeLimit(int depositTimeLimit) {
         this.depositTimeLimit = depositTimeLimit;
+    }
+
+    public void subGasUnit(){
+        this.gas -= 1;
     }
 
 }

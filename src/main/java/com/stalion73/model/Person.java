@@ -1,10 +1,10 @@
 package com.stalion73.model;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.JoinColumn;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToOne;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
@@ -26,6 +26,7 @@ public class Person extends NamedEntity {
 	@Pattern(regexp = "[0-9]{8}[A-Z]")
 	private String dni;
 	@Email
+	@Column(unique = true)
 	private String email;
 
 	@OneToOne(cascade = CascadeType.ALL)

@@ -1,5 +1,6 @@
 package com.stalion73.model;
 
+import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -34,6 +35,12 @@ public class Business extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "type")
 	private BusinessType businessType;
+
+	@Column(name= "opentime")
+	private LocalTime openTime;
+	
+	@Column(name= "closetime")
+    private LocalTime closeTime;
 
 	@Column(name = "automated")
 	private Boolean automatedAccept;
@@ -124,6 +131,22 @@ public class Business extends BaseEntity {
         }else{
             this.servises.addAll(servises);
         }
+    }
+
+	public LocalTime getOpenTime() {
+        return this.openTime;    
+    }
+
+    public void setOpenTime(LocalTime time){
+        this.openTime = time;
+    }
+
+    public LocalTime getCloseTime() {
+        return this.closeTime;    
+    }
+
+    public void setCloseTime(LocalTime time){
+        this.closeTime = time;
     }
 
 }

@@ -12,18 +12,20 @@ import com.stalion73.service.BookingService;
 import com.stalion73.service.BusinessService;
 import com.stalion73.service.ServiseService;
 import com.stalion73.service.SupplierService;
+import com.stalion73.service.OptionService;
 import com.stalion73.model.Booking;
 import com.stalion73.model.Business;
 import com.stalion73.model.Servise;
+import com.stalion73.model.SubscriptionType;
 import com.stalion73.model.Option;
 import com.stalion73.model.Supplier;
-import com.stalion73.model.BusinessType;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.hateoas.mediatype.problem.Problem;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -50,23 +52,22 @@ public class BusinessController {
     @Autowired
     private final BookingService bookingService;
 
+    @Autowired
+    private final OptionService optionService;
+
     private final static HttpHeaders headers = new HttpHeaders();
 
-    // public static void setup() {
-    //     headers.setAccessControlAllowOrigin("*");
-    // }
-
     public BusinessController(BusinessService businessService, SupplierService supplierService
-    , ServiseService serviseService, BookingService bookingService) {
+    , ServiseService serviseService, BookingService bookingService, OptionService optionService) {
         this.businessService = businessService;
         this.supplierService = supplierService;
         this.serviseService = serviseService;
         this.bookingService = bookingService;
+        this.optionService = optionService;
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<?> all() {
-        // BusinessController.setup();
         Collection<Business> businesses = this.businessService.findAll();
         if (businesses.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).headers(headers).body(businesses);
@@ -77,7 +78,6 @@ public class BusinessController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<?> one(@PathVariable("id") Integer id) {
-        // BusinessController.setup();
         Optional<Business> business = this.businessService.findById(id);
         if (!business.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -89,9 +89,8 @@ public class BusinessController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST, produces = "application/json")
-    public ResponseEntity<?> create(@Valid @RequestBody Business business, BindingResult bindingResult,
-            UriComponentsBuilder ucBuilder) {
-        // BusinessController.setup();
+    public ResponseEntity<?> create(@Valid @RequestBody Business business,
+            BindingResult bindingResult, UriComponentsBuilder ucBuilder) {
         BindingErrorsResponse errors = new BindingErrorsResponse();
         if (bindingResult.hasErrors() || (business == null)) {
             errors.addAllErrors(bindingResult);
@@ -99,16 +98,59 @@ public class BusinessController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers).body(Problem.create()
                     .withTitle("Validation error").withDetail("The provided consumer was not successfuly validated"));
         } else {
-            this.businessService.save(business);
-            headers.setLocation(ucBuilder.path("/business").buildAndExpand(business.getId()).toUri());
-            return ResponseEntity.status(HttpStatus.CREATED).headers(headers).body(business);
+            String username = (String)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            Supplier supplier = this.supplierService.findSupplierByUsername(username).get();
+            
+            if(supplier.getSubscription()==SubscriptionType.PREMIUM){
+
+                supplier.addBusiness(business);
+                business.setSupplier(supplier);
+                Set<Servise> servises = business.getServices();
+                Option option = business.getOption();
+                //this.supplierService.save(supplier);
+                this.optionService.save(option);
+                this.businessService.save(business);
+                servises.stream()
+                .map(servise -> {
+                    servise.setBussiness(business);
+                    return servise;
+                })
+                .forEach(x -> this.serviseService.save(x));
+                this.supplierService.save(supplier);
+                headers.setLocation(ucBuilder.path("/business").buildAndExpand(business.getId()).toUri());
+                return ResponseEntity.status(HttpStatus.CREATED).headers(headers).body(business);
+            }else {
+
+                if(supplier.getBusiness().size()>=1){
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers)
+                            .body(Problem.create().withTitle("Subscription Error")
+                                .withDetail("A Free user can not create more than one bussiness"));
+                }else {
+                    supplier.addBusiness(business);
+                    business.setSupplier(supplier);
+                    Set<Servise> servises = business.getServices();
+                    Option option = business.getOption();
+                    //this.supplierService.save(supplier);
+                    this.optionService.save(option);
+                    this.businessService.save(business);
+                    servises.stream()
+                    .map(servise -> {
+                        servise.setBussiness(business);
+                        return servise;
+                    })
+                    .forEach(x -> this.serviseService.save(x));
+                    this.supplierService.save(supplier);
+                    headers.setLocation(ucBuilder.path("/business").buildAndExpand(business.getId()).toUri());
+                    return ResponseEntity.status(HttpStatus.CREATED).headers(headers).body(business);
+                }
+
+            }
         }
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = "application/json")
     public ResponseEntity<?> update(@PathVariable("id") Integer id, @RequestBody @Valid Business newBusiness,
             BindingResult bindingResult) {
-        // BusinessController.setup();
         BindingErrorsResponse errors = new BindingErrorsResponse();
         if (bindingResult.hasErrors() || (newBusiness == null)) {
             errors.addAllErrors(bindingResult);
@@ -185,7 +227,6 @@ public class BusinessController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "application/json")
     public ResponseEntity<?> delete(@PathVariable("id") Integer id) {
-        // BusinessController.setup();
         Optional<Business> business = this.businessService.findById(id);
         if (business.isPresent()) {
             this.businessService.deleteById(id);
@@ -199,9 +240,7 @@ public class BusinessController {
 
     @RequestMapping(value = "/booking/{idBooking}", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<?> businessByBooking(@PathVariable("idBooking") Integer id) {
-        // BusinessController.setup();
         Optional<Booking> booking = this.bookingService.findById(id);
-       
         if (!booking.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE).headers(headers)
