@@ -1,6 +1,7 @@
 package com.stalion73.web;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -23,7 +24,8 @@ import static org.hamcrest.Matchers.*;
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.get;
 
-
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
@@ -46,6 +48,9 @@ public class ServiseControllerTests {
     private Integer id;
     private Servise servise;
     private RequestSpecification specification;
+
+    private final static HttpHeaders headers = new HttpHeaders();
+
   
     @Value("${server.port}")
     private int portNumber;
@@ -65,16 +70,42 @@ public class ServiseControllerTests {
         .then()
         .statusCode(200)
         .extract().body().as(User.class);
+
         
-       given()
-        .basePath("/servises")
-        .port(8080)
-        .contentType("application/json")
-        .header("Authorization", usr.getToken())
-        .when()
-        .get()
-        .then()
-        .statusCode(200);
+        headers.add("Authorization", usr.getToken());
+       
+        List<Servise> servises = new ArrayList<>();
+        servises = given()
+            .basePath("/servises")
+            .port(8080)
+            .contentType("application/json")
+            .headers(headers)
+            .when()
+            .get()
+            .then()
+            .statusCode(200)
+            .extract().body().as(servises.getClass());
+
+            given()
+                .basePath("/servises/1")
+                .port(8080)
+                .contentType("application/json")
+                .headers(headers)
+                .when()
+                .get().prettyPrint();
+
+            given()
+                .basePath("/servises/1")
+                .port(8080)
+                .contentType("application/json")
+                .headers(headers)
+                .when()
+                .get()
+                .then()
+                .statusCode(200)
+                .extract().body();
+              
+             
 
        //get("/servises?id=1").then().statusCode(200);
 

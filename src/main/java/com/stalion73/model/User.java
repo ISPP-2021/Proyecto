@@ -8,6 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 
@@ -27,6 +29,7 @@ public class User{
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
 	@NotAudited
+	@JsonIgnore
 	private Set<Authorities> authorities;
 
 	public String getUsername() {
