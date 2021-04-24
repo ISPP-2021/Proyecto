@@ -3,7 +3,7 @@ package com.stalion73.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.Assertions;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,17 +30,20 @@ public class ServiseServiceTest {
 	@Test
 	void findAllServiseTest() {
 		List<Servise> servises = (List<Servise>) this.serviseService.findAll();
-		Assertions.assertTrue(!servises.isEmpty() && servises.size() == count);
+		Assertions.assertThat(servises.isEmpty()).isFalse();
+		Assertions.assertThat(servises.size()).isEqualTo(count);
 	}
 
 	@Test
 	void findServiseByIdTest() {
 		Optional<Servise> servise = this.serviseService.findById(1);
-		Assertions.assertTrue(servise.get().getName().equals("Comer")
-				&& servise.get().getDescription().equals("Ven a comer al restaurante y disfruta")
-				&& servise.get().getPrice() == 20.3 && servise.get().getDuration() == 2
-				&& servise.get().getCapacity() == 2 && servise.get().getDeposit() == 40.7
-				&& servise.get().getTax() == 0.05);
+		Assertions.assertThat(servise.get().getName()).isEqualTo("Comer");
+		Assertions.assertThat(servise.get().getDescription()).isEqualTo("Ven a comer al restaurante y disfruta");
+		Assertions.assertThat(servise.get().getPrice()).isEqualTo(20.3);
+		Assertions.assertThat(servise.get().getDuration()).isEqualTo(2);
+		Assertions.assertThat(servise.get().getCapacity()).isEqualTo(2);
+		Assertions.assertThat(servise.get().getDeposit()).isEqualTo(40.7);
+		Assertions.assertThat(servise.get().getTax()).isEqualTo(0.05);
 	}
 
 	@Test
@@ -58,10 +61,13 @@ public class ServiseServiceTest {
 		servise.setTax(0.5);
 		servise.setBussiness(business);
 		this.serviseService.save(servise);
-		Assertions.assertTrue(
-				servise.getName().equals("Servicio") && servise.getDescription().equals("Esto es un servicio")
-						&& servise.getPrice() == 2.5 && servise.getDuration() == 10 && servise.getCapacity() == 10
-						&& servise.getDeposit() == 1.5 && servise.getTax() == 0.5);
+		Assertions.assertThat(servise.getName()).isEqualTo("Servicio");
+		Assertions.assertThat(servise.getDescription()).isEqualTo("Esto es un servicio");
+		Assertions.assertThat(servise.getPrice()).isEqualTo(2.5);
+		Assertions.assertThat(servise.getDuration()).isEqualTo(10);
+		Assertions.assertThat(servise.getCapacity()).isEqualTo(10);
+		Assertions.assertThat(servise.getDeposit()).isEqualTo(1.5);
+		Assertions.assertThat(servise.getTax()).isEqualTo(0.5);
 	}
 
 	@Test
@@ -69,7 +75,7 @@ public class ServiseServiceTest {
 		Servise servise = this.serviseService.findById(1).get();
 		this.serviseService.deleteById(servise.getId());
 		List<Servise> servises = (List<Servise>) this.serviseService.findAll();
-		Assertions.assertTrue(servises.size() == count - 1);
+		Assertions.assertThat(servises.size()).isEqualTo(count - 1);
 	}
 
 	@Test
@@ -77,7 +83,7 @@ public class ServiseServiceTest {
 		Servise servise = this.serviseService.findById(2).get();
 		this.serviseService.delete(servise);
 		List<Servise> servises = (List<Servise>) this.serviseService.findAll();
-		Assertions.assertTrue(servises.size() == count - 1);
+		Assertions.assertThat(servises.size()).isEqualTo(count - 1);
 	}
 
 }

@@ -1,6 +1,6 @@
 package com.stalion73.service;
 
-import org.junit.jupiter.api.Assertions;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -28,8 +28,8 @@ public class AuthoritiesServiceTest {
 		authorities.setAuthority("user");
 		authorities.setUser(user);
 		this.authoritiesService.saveAuthorities(authorities);
-		Assertions.assertTrue(
-				authorities.getUser().getUsername().equals("josito") && authorities.getAuthority().equals("user"));
+		Assertions.assertThat(authorities.getUser().getUsername()).isEqualTo("josito");
+		Assertions.assertThat(authorities.getAuthority()).isEqualTo("user");
 	}
 
 	@Test
@@ -41,8 +41,8 @@ public class AuthoritiesServiceTest {
 		authorities.setAuthority("owner");
 		authorities.setUser(user);
 		this.authoritiesService.saveAuthorities("aug", "owner");
-		Assertions.assertTrue(
-				authorities.getUser().getUsername().equals("aug") && authorities.getAuthority().equals("owner"));
+		Assertions.assertThat(authorities.getUser().getUsername()).isEqualTo("aug");
+		Assertions.assertThat(authorities.getAuthority()).isEqualTo("owner");
 	}
 
 }

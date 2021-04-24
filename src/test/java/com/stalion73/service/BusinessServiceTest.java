@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.Assertions;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,16 +33,17 @@ public class BusinessServiceTest {
 	@Test
 	void findAllBusinessTest() {
 		List<Business> business = (List<Business>) this.businessService.findAll();
-		Assertions.assertTrue(!business.isEmpty() && business.size() == count);
+		Assertions.assertThat(business.isEmpty()).isFalse();
+		Assertions.assertThat(business.size()).isEqualTo(count);
 	}
 
 	@Test
 	void findBusinessByIdTest() {
 		Optional<Business> business = this.businessService.findById(1);
-		Assertions.assertTrue(
-				business.get().getName().equals("Pizzeria Gus") && business.get().getAddress().equals("address_1")
-						&& business.get().getBusinessType().equals(BusinessType.RESTAURANT)
-						&& business.get().getAutomatedAccept().equals(true));
+		Assertions.assertThat(business.get().getName()).isEqualTo("Pizzeria Gus");
+		Assertions.assertThat(business.get().getAddress()).isEqualTo("address_1");
+		Assertions.assertThat(business.get().getBusinessType()).isEqualTo(BusinessType.RESTAURANT);
+		Assertions.assertThat(business.get().getAutomatedAccept()).isEqualTo(true);
 	}
 
 	@Test
@@ -60,9 +61,10 @@ public class BusinessServiceTest {
 		business.setSupplier(supplier);
 		business.setOption(option);
 		this.businessService.save(business);
-		Assertions.assertTrue(business.getName().equals("Negocio") && business.getAddress().equals("Calle Calle")
-				&& business.getBusinessType().equals(BusinessType.RESTAURANT)
-				&& business.getAutomatedAccept().equals(true));
+		Assertions.assertThat(business.getName()).isEqualTo("Negocio");
+		Assertions.assertThat(business.getAddress()).isEqualTo("Calle Calle");
+		Assertions.assertThat(business.getBusinessType()).isEqualTo(BusinessType.RESTAURANT);
+		Assertions.assertThat(business.getAutomatedAccept()).isEqualTo(true);
 	}
 
 	@Test
@@ -70,7 +72,7 @@ public class BusinessServiceTest {
 		Business business = this.businessService.findById(1).get();
 		this.businessService.deleteById(business.getId());
 		List<Business> businessList = (List<Business>) this.businessService.findAll();
-		Assertions.assertTrue(businessList.size() == count - 1);
+		Assertions.assertThat(businessList.size()).isEqualTo(count - 1);
 	}
 
 	@Test
@@ -78,31 +80,31 @@ public class BusinessServiceTest {
 		Business business = this.businessService.findById(2).get();
 		this.businessService.delete(business);
 		List<Business> businessList = (List<Business>) this.businessService.findAll();
-		Assertions.assertTrue(businessList.size() == count - 1);
+		Assertions.assertThat(businessList.size()).isEqualTo(count - 1);
 	}
 
 	@Test
 	void findBusinessByNameTest() {
 		Collection<Business> b = businessService.findBusinessByName("Pizzeria Gus");
-		Assertions.assertTrue(b.size() == 1);
+		Assertions.assertThat(b.size()).isEqualTo(1);
 	}
 
 	@Test
 	void findBusinessByAddressTest() {
 		Collection<Business> b = businessService.findBusinessByAddress("address_1");
-		Assertions.assertTrue(b.size() == 4);
+		Assertions.assertThat(b.size()).isEqualTo(4);
 	}
 
 	@Test
 	void findBusinessByTypeTest() {
 		Collection<Business> b = businessService.findBusinessByType(BusinessType.HAIRDRESSER);
-		Assertions.assertTrue(b.size() == 2);
+		Assertions.assertThat(b.size()).isEqualTo(2);
 	}
 
 	@Test
 	void findBusinessBySupplierId() {
 		Collection<Business> b = businessService.findBusinessBySupplierId(2);
-		Assertions.assertTrue(b.size() == 2);
+		Assertions.assertThat(b.size()).isEqualTo(2);
 	}
 
 }

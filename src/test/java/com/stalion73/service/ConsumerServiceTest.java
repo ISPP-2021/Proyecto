@@ -3,7 +3,7 @@ package com.stalion73.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.Assertions;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,22 +29,27 @@ public class ConsumerServiceTest {
 	@Test
 	void findAllConsumersTest() {
 		List<Consumer> consumers = (List<Consumer>) this.consumerService.findAll();
-		Assertions.assertTrue(!consumers.isEmpty() && consumers.size() == count);
+		Assertions.assertThat(consumers.isEmpty()).isFalse();
+		Assertions.assertThat(consumers.size()).isEqualTo(count);
 	}
 
 	@Test
 	void findConsumerByIdTest() {
 		Optional<Consumer> consumer = this.consumerService.findById(1);
-		Assertions.assertTrue(consumer.get().getName().equals("Jose") && consumer.get().getLastname().equals("Garcia")
-				&& consumer.get().getDni().equals("23487343A") && consumer.get().getEmail().equals("cosas@gmail.com")
-				&& consumer.get().getUser().getUsername().equals("josito"));
+		Assertions.assertThat(consumer.get().getName()).isEqualTo("Jose");
+		Assertions.assertThat(consumer.get().getLastname()).isEqualTo("Garcia");
+		Assertions.assertThat(consumer.get().getDni()).isEqualTo("23487343A");
+		Assertions.assertThat(consumer.get().getEmail()).isEqualTo("cosas@gmail.com");
+		Assertions.assertThat(consumer.get().getUser().getUsername()).isEqualTo("josito");
 	}
 
 	@Test
 	void findConsumerByUsernameTest() {
 		Optional<Consumer> consumer = consumerService.findConsumerByUsername("josito");
-		Assertions.assertTrue(consumer.get().getName().equals("Jose") && consumer.get().getLastname().equals("Garcia")
-				&& consumer.get().getDni().equals("23487343A") && consumer.get().getEmail().equals("cosas@gmail.com"));
+		Assertions.assertThat(consumer.get().getName()).isEqualTo("Jose");
+		Assertions.assertThat(consumer.get().getLastname()).isEqualTo("Garcia");
+		Assertions.assertThat(consumer.get().getDni()).isEqualTo("23487343A");
+		Assertions.assertThat(consumer.get().getEmail()).isEqualTo("cosas@gmail.com");
 	}
 
 //	@Test
@@ -57,7 +62,7 @@ public class ConsumerServiceTest {
 		Consumer consumer = this.consumerService.findById(1).get();
 		this.consumerService.deleteById(consumer.getId());
 		List<Consumer> consumers = (List<Consumer>) this.consumerService.findAll();
-		Assertions.assertTrue(consumers.size() == count - 1);
+		Assertions.assertThat(consumers.size()).isEqualTo(count - 1);
 	}
 
 	@Test
@@ -65,7 +70,7 @@ public class ConsumerServiceTest {
 		Consumer consumer = this.consumerService.findById(2).get();
 		this.consumerService.delete(consumer);
 		List<Consumer> consumers = (List<Consumer>) this.consumerService.findAll();
-		Assertions.assertTrue(consumers.size() == count - 1);
+		Assertions.assertThat(consumers.size()).isEqualTo(count - 1);
 	}
 
 }

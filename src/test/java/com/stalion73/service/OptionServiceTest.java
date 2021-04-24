@@ -3,7 +3,7 @@ package com.stalion73.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.Assertions;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,14 +29,14 @@ public class OptionServiceTest {
 	@Test
 	void findAllOptionsTest() {
 		List<Option> options = (List<Option>) this.optionService.findAll();
-		Assertions.assertTrue(!options.isEmpty() && options.size() == count);
+		Assertions.assertThat(options.isEmpty()).isFalse();
 	}
 
 	@Test
 	void findOptionByIdTest() {
 		Optional<Option> option = this.optionService.findById(1);
-		Assertions.assertTrue(option.get().getGas() == 3 && option.get().getDefaultDeposit() == 0.7
-				&& option.get().getDepositTimeLimit() == 5);
+		Assertions.assertThat(option.get().getGas()).isEqualTo(3);
+		Assertions.assertThat(option.get().getDefaultDeposit()).isEqualTo(0.7);
 	}
 
 	@Test
@@ -49,8 +49,9 @@ public class OptionServiceTest {
 		option.setDepositTimeLimit(4);
 		this.optionService.save(option);
 		Optional<Option> options = this.optionService.findById(5);
-		Assertions.assertTrue(options.get().getGas() == 2 && options.get().getDefaultDeposit() == 0.6
-				&& options.get().getDepositTimeLimit() == 4);
+		Assertions.assertThat(options.get().getGas()).isEqualTo(2);
+		Assertions.assertThat(options.get().getDefaultDeposit()).isEqualTo(0.6);
+		Assertions.assertThat(options.get().getDepositTimeLimit()).isEqualTo(4);
 	}
 
 }
