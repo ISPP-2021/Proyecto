@@ -46,6 +46,12 @@ public class UserService {
 		user.setEnabled(true);
 		userRepository.save(user);
 	}
+
+	@Transactional
+	public void logOut(User user) throws DataAccessException {
+		user.setEnabled(false);
+		userRepository.save(user);
+	}
 	
 	@Transactional(readOnly = true)
 	public Optional<User> findUser(String username) {

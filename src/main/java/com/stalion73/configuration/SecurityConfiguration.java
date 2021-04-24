@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 
 import com.stalion73.security.JWTAuthorizationFilter;
 /*
@@ -57,7 +58,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			http.csrf().ignoringAntMatchers("/h2-console/**","/**");
 			http.headers().frameOptions().sameOrigin();
 			http.addFilterAfter(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
-				
+			http.sessionManagement().maximumSessions(1);	
 	}
 
 	@Override

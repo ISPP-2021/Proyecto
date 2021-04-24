@@ -25,7 +25,7 @@ public class User{
 
 	String token;
 	
-	boolean enabled;
+	Boolean enabled;
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
 	@NotAudited
@@ -33,7 +33,7 @@ public class User{
 	private Set<Authorities> authorities;
 
 	public String getUsername() {
-		return username;
+		return this.username;
 	}
 
 	public void setUsername(String username) {
@@ -41,23 +41,23 @@ public class User{
 	}
 
 	public String getPassword() {
-		return password;
+		return this.password;
 	}
 
 	public void setPassword(String password) {
 		this.password = password;
 	}
 
-	public boolean isEnabled() {
-		return enabled;
+	public Boolean isEnabled() {
+		return this.enabled;
 	}
 
-	public void setEnabled(boolean enabled) {
+	public void setEnabled(Boolean enabled) {
 		this.enabled = enabled;
 	}
 
 	public String getToken(){
-		return token;
+		return this.token;
 	}
 	
 	public void setToken(String token){
@@ -65,7 +65,7 @@ public class User{
 	}
 
 	public Set<Authorities> getAuthorities() {
-		return authorities;
+		return this.authorities;
 	}
 
 	public void setAuthorities(Set<Authorities> authorities) {
