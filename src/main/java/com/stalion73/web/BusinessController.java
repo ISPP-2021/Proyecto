@@ -82,7 +82,9 @@ public class BusinessController {
         if (!business.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE).headers(headers)
-                    .body(Problem.create().withTitle("Ineffected ID").withDetail("The provided ID doesn't exist"));
+                    .body(Problem.create()
+                            .withTitle("Negocio incorrecto")
+                            .withDetail("El negocio no existe."));
         } else {
             return ResponseEntity.status(HttpStatus.OK).headers(headers).body(business.get());
         }
@@ -96,7 +98,8 @@ public class BusinessController {
             errors.addAllErrors(bindingResult);
             headers.add("errors", errors.toJSON());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers).body(Problem.create()
-                    .withTitle("Validation error").withDetail("The provided consumer was not successfuly validated"));
+                    .withTitle("Error de validación")
+                    .withDetail("El negocio no se ha podido validar correctamente."));
         } else {
             String username = (String)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             Supplier supplier = this.supplierService.findSupplierByUsername(username).get();
@@ -123,8 +126,9 @@ public class BusinessController {
 
                 if(supplier.getBusiness().size()>=1){
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers)
-                            .body(Problem.create().withTitle("Subscription Error")
-                                .withDetail("A Free user can not create more than one bussiness"));
+                            .body(Problem.create()
+                                    .withTitle("Error de negocios permitidos")
+                                .withDetail("Los suscriptores gratuitos no pueden crear más de un negocio."));
                 }else {
                     supplier.addBusiness(business);
                     business.setSupplier(supplier);
@@ -156,11 +160,14 @@ public class BusinessController {
             errors.addAllErrors(bindingResult);
             headers.add("errors", errors.toJSON());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers).body(Problem.create()
-                    .withTitle("Validation error").withDetail("The provided consumer was not successfuly validated"));
+                    .withTitle("Error de validación")
+                    .withDetail("El negocio no se ha podido validar correctamente."));
         } else if (!this.businessService.findById(id).isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE).headers(headers)
-                    .body(Problem.create().withTitle("Ineffected ID").withDetail("The provided ID doesn't exist"));
+                    .body(Problem.create()
+                            .withTitle("Negocio incorrecto")
+                            .withDetail("El negocio no existe."));
         } else {
             // business(name, address, businessType, automatedAccept, Supplier, Servises)
             Business updatedBusiness = this.businessService.findById(id).map(business -> {
@@ -234,7 +241,9 @@ public class BusinessController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE).headers(headers)
-                    .body(Problem.create().withTitle("Ineffected ID").withDetail("The provided ID doesn't exist"));
+                    .body(Problem.create()
+                            .withTitle("Negocio incorrecto")
+                            .withDetail("El negocio no existe."));
         }
     }
 
@@ -244,7 +253,9 @@ public class BusinessController {
         if (!booking.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE).headers(headers)
-                    .body(Problem.create().withTitle("Ineffected ID").withDetail("The provided ID doesn't exist"));
+                    .body(Problem.create()
+                            .withTitle("Negocio incorrecto")
+                            .withDetail("El negocio no existe."));
         } else {
             Servise servise = booking.get().getServise();
             Business business = servise.getBusiness();
