@@ -69,8 +69,8 @@ public class SupplierController {
                 .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
                 .headers(headers)
                 .body(Problem.create()
-                    .withTitle("Ineffected ID")
-                    .withDetail("The provided ID doesn't exist"));
+                        .withTitle("Propietario incorrecto")
+                        .withDetail("El propietario no existe."));
         }else{
             return ResponseEntity
                 .status(HttpStatus.OK) 
@@ -92,8 +92,8 @@ public class SupplierController {
 				.status(HttpStatus.BAD_REQUEST)
 				.headers(headers)
 				.body(Problem.create()
-					.withTitle("Validation error")
-					.withDetail("The provided consumer was not successfuly validated"));
+                        .withTitle("Error de validación")
+                        .withDetail("El propietario no se ha podido validar correctamente."));
         }else{
             this.supplierService.save(supplier);
             headers.setLocation(ucBuilder.path("/business").buildAndExpand(supplier.getId()).toUri());
@@ -117,16 +117,16 @@ public class SupplierController {
                 .status(HttpStatus.BAD_REQUEST)
                 .headers(headers)
                 .body(Problem.create()
-                    .withTitle("Validation error")
-                    .withDetail("The provided consumer was not successfuly validated"));
+                        .withTitle("Datos incorrectos")
+                        .withDetail("Algunos datos son incorrectos. Revisalos."));
         }else if(!this.supplierService.findById(id).isPresent()){
             return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
                 .headers(headers)
                 .body(Problem.create()
-                    .withTitle("Ineffected ID")
-                    .withDetail("The provided ID doesn't exist"));
+                        .withTitle("Propietario incorrecto")
+                        .withDetail("El propietario no existe."));
         }else{
     
             this.supplierService.update(id, newSupplier);
@@ -150,8 +150,8 @@ public class SupplierController {
                     .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
                     .headers(headers)
                     .body(Problem.create()
-                        .withTitle("Ineffected ID")
-                        .withDetail("The provided ID doesn't exist"));
+                            .withTitle("Proveedor incorrecto")
+                            .withDetail("El proveedor no existe."));
         }
 	}
     

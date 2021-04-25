@@ -111,8 +111,8 @@ public class BookingController {
                 .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
                 .headers(headers)
                 .body(Problem.create()
-                    .withTitle("Ineffected ID")
-                    .withDetail("The provided ID doesn't exist"));
+                        .withTitle("Reserva incorrecta")
+                        .withDetail("La reserva no existe."));
         }
         
     }
@@ -130,8 +130,8 @@ public class BookingController {
                     .status(HttpStatus.BAD_REQUEST)
                     .headers(headers)
                     .body(Problem.create()
-                        .withTitle("Validation error")
-                        .withDetail("The provided booking was not successfuly validated"));
+                            .withTitle("Error de validación")
+                            .withDetail("La reserva no se ha podido validar correctamente."));
             }else{
 
                 String username = (String)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -194,8 +194,8 @@ public class BookingController {
                             .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) 
                             .headers(headers)
                             .body(Problem.create()
-                                .withTitle("Bad Time") 
-                                .withDetail("Cannot book in the requested time, the bussiness seems to be closed"));        
+                                .withTitle("Hora invalida")
+                                .withDetail("No se puede reservar a esa hora en este negocio porque está cerrado a esa hora."));
                     }
                 }
                 return ResponseEntity
@@ -203,8 +203,8 @@ public class BookingController {
                 .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) 
                 .headers(headers)
                 .body(Problem.create()
-                    .withTitle("non-existent") 
-                    .withDetail("Cannot book the requested service, because does not exist."));
+                    .withTitle("No existe")
+                    .withDetail("El servicio solicitado no existe."));
             }
         }
         return ResponseEntity
@@ -212,8 +212,8 @@ public class BookingController {
         .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) 
         .headers(headers)
         .body(Problem.create()
-            .withTitle("You shall not pass") 
-            .withDetail("The request wasn't expecting the provied credentials."));
+                .withTitle("Acceso restringido")
+                .withDetail("No tienes acceso a este contenido."));
 
            
     }
@@ -230,8 +230,8 @@ public class BookingController {
                 .status(HttpStatus.BAD_REQUEST)
                 .headers(headers)
                 .body(Problem.create()
-                    .withTitle("Validation error")
-                    .withDetail("The provided booking was not successfuly validated"));
+                        .withTitle("Error de validación")
+                        .withDetail("La reserva no se ha podido validar correctamente."));
         }
         String authority = SecurityContextHolder.getContext().getAuthentication().getAuthorities().iterator().next().getAuthority();
         if(authority.equals("owner")){
@@ -272,16 +272,16 @@ public class BookingController {
                 .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) 
                 .headers(headers)
                 .body(Problem.create()
-                    .withTitle("non-existent") 
-                    .withDetail("The requested consumer does not exist."));
+                        .withTitle("No existe")
+                        .withDetail("El cliente solicitado no existe."));
             }
             return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST) 
                 .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) 
                 .headers(headers)
                 .body(Problem.create()
-                    .withTitle("Not owned") 
-                    .withDetail("The provided servise isn't contained on yours services."));
+                    .withTitle("Servicio innaccesible")
+                    .withDetail("Este servicio no está en la lista de servicios disponibles."));
             
         }
         return ResponseEntity
@@ -289,8 +289,8 @@ public class BookingController {
         .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) 
         .headers(headers)
         .body(Problem.create()
-            .withTitle("You shall not pass") 
-            .withDetail("The request wasn't expecting the provied credentials."));
+                .withTitle("Error de validación")
+                .withDetail("La reserva no se ha podido validar correctamente."));
 
         
     }
@@ -308,16 +308,16 @@ public class BookingController {
                 .status(HttpStatus.BAD_REQUEST)
                 .headers(headers)
                 .body(Problem.create()
-                    .withTitle("Validation error")
-                    .withDetail("The provided booking was not successfuly validated"));
+                        .withTitle("Error de validación")
+                        .withDetail("La reserva no se ha podido validar correctamente."));
         }else if(!this.bookingService.findById(id).isPresent()){
             return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
                 .headers(headers)
                 .body(Problem.create()
-                    .withTitle("Ineffected ID")
-                    .withDetail("The provided ID doesn't exist"));
+                        .withTitle("Reserva incorrecta")
+                        .withDetail("La reserva no existe."));
         }else{
             this.bookingService.update(id, newBooking);
             return new ResponseEntity<Booking>(newBooking, headers, HttpStatus.NO_CONTENT);
@@ -359,8 +359,8 @@ public class BookingController {
                         .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) 
                         .headers(headers)
                         .body(Problem.create()
-                            .withTitle("Method not allowed") 
-                            .withDetail("You can't cancel a booking that is in the " + booking.getStatus() + " status"));
+                                .withTitle("Cancelación no permitida")
+                                .withDetail("No puedes cancelar la reserva por que está en el estatus " + booking.getStatus()));
                     }
                 }
                 return ResponseEntity
@@ -368,8 +368,8 @@ public class BookingController {
                 .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) 
                 .headers(headers)
                 .body(Problem.create()
-                    .withTitle("Not owned") 
-                    .withDetail("The request booking is not up to your provided credentials."));
+                        .withTitle("Servicio innaccesible")
+                        .withDetail("Este servicio no está en la lista de servicios disponibles."));
 
             }
             return ResponseEntity
@@ -377,8 +377,8 @@ public class BookingController {
                 .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) 
                 .headers(headers)
                 .body(Problem.create()
-                    .withTitle("non-existent") 
-                    .withDetail("The request booking not exist."));
+                        .withTitle("No existe")
+                        .withDetail("La petición de reserva solicitada no existe."));
         }
         if(authority.equals("owner")){
             Supplier supplier = this.supplierService
@@ -409,8 +409,8 @@ public class BookingController {
                     .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) 
                     .headers(headers)
                     .body(Problem.create()
-                        .withTitle("Method not allowed") 
-                        .withDetail("You can't cancel a booking that is in the " + booking.getStatus() + " status"));
+                            .withTitle("Cancelación no permitida")
+                            .withDetail("No puedes cancelar la reserva por que está en el estatus " + booking.getStatus()));
                 }
             }else{
                 return ResponseEntity
@@ -418,8 +418,8 @@ public class BookingController {
                 .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) 
                 .headers(headers)
                 .body(Problem.create()
-                    .withTitle("Not owned") 
-                    .withDetail("The request booking is not up to your provided credentials.")); 
+                        .withTitle("Servicio innaccesible")
+                        .withDetail("Este servicio no está en la lista de servicios disponibles."));
             }
                                     
                                                                     
@@ -429,8 +429,8 @@ public class BookingController {
                 .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) 
                 .headers(headers)
                 .body(Problem.create()
-                    .withTitle("You shall not pass") 
-                    .withDetail("The request wasn't expecting the provied credentials."));
+                        .withTitle("Acceso restringido")
+                        .withDetail("No tienes acceso a este contenido."));
     }
 
     @PutMapping("/{id}/complete")
@@ -449,16 +449,16 @@ public class BookingController {
                 .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) 
                 .headers(headers)
                 .body(Problem.create()
-                    .withTitle("Method not allowed") 
-                    .withDetail("You can't complete a booking that is in the " + booking.getStatus() + " status")); 
+                        .withTitle("Reserva no permitida")
+                        .withDetail("No puedes completar la reserva por que está en el estatus " + booking.getStatus()));
         }else{
             return ResponseEntity
                 .status(HttpStatus.METHOD_NOT_ALLOWED) 
                 .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) 
                 .headers(headers)
                 .body(Problem.create()
-                    .withTitle("Method not allowed") 
-                    .withDetail("You can't complete a booking that is in the " + booking.getStatus() + " status"));
+                    .withTitle("Reserva no permitida")
+                    .withDetail("No puedes completar la reserva por que está en el estatus " + booking.getStatus()));
         }
 
     }
@@ -475,8 +475,8 @@ public class BookingController {
                     .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
                     .headers(headers)
                     .body(Problem.create()
-                        .withTitle("Ineffected ID")
-                        .withDetail("The provided ID doesn't exist"));
+                            .withTitle("Reserva incorrecta")
+                            .withDetail("La reserva no existe."));
         }
     }
 
