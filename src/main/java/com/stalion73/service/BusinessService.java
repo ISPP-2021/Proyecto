@@ -11,6 +11,7 @@ import com.stalion73.repository.BusinessRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.time.LocalTime;
 
 @Service
 public class BusinessService {
@@ -55,6 +56,10 @@ public class BusinessService {
 			business.setName(name);
 			String address = newBusiness.getAddress() == null ? business.getAddress() : newBusiness.getAddress();
 			business.setAddress(address);
+			LocalTime openTime = newBusiness.getOpenTime() == null ? business.getOpenTime() : newBusiness.getOpenTime();
+			business.setOpenTime(openTime);
+			LocalTime closeTime = newBusiness.getCloseTime() == null ? business.getCloseTime() : newBusiness.getCloseTime();
+			business.setCloseTime(closeTime);
 			BusinessType type = newBusiness.getBusinessType() == null ? business.getBusinessType()
 					: newBusiness.getBusinessType();
 			business.setBusinessType(type);
