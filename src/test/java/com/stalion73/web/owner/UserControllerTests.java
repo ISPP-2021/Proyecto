@@ -1,9 +1,10 @@
-package com.stalion73.web.user;
+package com.stalion73.web.owner;
 
 import java.util.Random;
 
 import com.stalion73.model.User;
 import com.stalion73.model.Consumer;
+import com.stalion73.model.Supplier;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,9 +23,9 @@ public class UserControllerTests {
     HttpHeaders headers = new HttpHeaders();
     
     @Test
-    public void loginGood(){
+    public void login(){
         User user = new User();
-        user.setUsername("josito");
+        user.setUsername("rodri");
         user.setPassword("1234");
 
         User usr =  given()
@@ -66,30 +67,9 @@ public class UserControllerTests {
     }
 
     @Test
-    public void loginBadCredentials(){
-        User user = new User();
-        user.setUsername("josito");
-        user.setPassword("4321");
-
-        Problem p =  given()
-        .basePath("/users/login")
-        .port(8080)
-        .contentType("application/json")
-        .body(user)
-        .when()
-        .post().prettyPeek()
-        .then()
-        .statusCode(400)
-        .extract().body().as(Problem.class);
-        
-        assertEquals("Bad credentials", p.getTitle());
-        assertEquals("The provided user credentials didn't match any already existing record.", p.getDetail());
-    }
-
-    @Test
     public void logout(){
         User user = new User();
-        user.setUsername("josito");
+        user.setUsername("rodri");
         user.setPassword("1234");
 
         User usr =  given()
@@ -106,7 +86,7 @@ public class UserControllerTests {
         String token = usr.getToken();
         this.headers.add("Authorization", token);
 
-        usr = given().queryParam("username", "josito")
+        usr = given().queryParam("username", "rodri")
         .basePath("/users/logout")
         .port(8080)
         .contentType("application/json")
@@ -121,82 +101,9 @@ public class UserControllerTests {
     }
 
     @Test
-    public void logoutIneffectedId(){
-        User user = new User();
-        user.setUsername("josito");
-        user.setPassword("1234");
-
-        User usr =  given()
-        .basePath("/users/login")
-        .port(8080)
-        .contentType("application/json")
-        .body(user)
-        .when()
-        .post().prettyPeek()
-        .then()
-        .statusCode(200)
-        .extract().body().as(User.class);
-        
-        String token = usr.getToken();
-        this.headers.add("Authorization", token);
-
-        Problem p = given().queryParam("username", "non-exist")
-        .basePath("/users/logout")
-        .port(8080)
-        .contentType("application/json")
-        .headers(this.headers)
-        .when()
-        .post().prettyPeek()
-        .then()
-        .statusCode(404)
-        .extract().body().as(Problem.class);
-
-        assertEquals("Ineffected ID", p.getTitle());
-        assertEquals("The provided ID doesn't exist", p.getDetail());
-
-    }
-
-    /*
-    @Test
-    public void logoutUserNotLoggedIn(){
-        User user = new User();
-        user.setUsername("josito");
-        user.setPassword("1234");
-
-        User usr =  given()
-        .basePath("/users/login")
-        .port(8080)
-        .contentType("application/json")
-        .body(user)
-        .when()
-        .post().prettyPeek()
-        .then()
-        .statusCode(200)
-        .extract().body().as(User.class);
-        
-        String token = usr.getToken();
-        this.headers.add("Authorization", token);
-
-        Problem p = given().queryParam("username", "marcos")
-        .basePath("/users/logout")
-        .port(8080)
-        .contentType("application/json")
-        .headers(headers)
-        .when()
-        .post().prettyPeek()
-        .then()
-        .statusCode(403)
-        .extract().body().as(Problem.class);
-
-        assertEquals("User Not logged in", p.getTitle());
-        assertEquals("Impossible to logout an user that isn't currently logged in the system", p.getDetail());
-    }
-    */
-
-    @Test
     public void profile(){
         User user = new User();
-        user.setUsername("josito");
+        user.setUsername("rodri");
         user.setPassword("1234");
 
         User usr =  given()
@@ -221,56 +128,53 @@ public class UserControllerTests {
         .when()
         .get().prettyPeek()
         .then()
-        .statusCode(200)
-        .extract().body();
+        .statusCode(200);
         
     }
 
     @Test
     public void signup(){
-        Consumer consumer = new Consumer();
+        Supplier supplier = new Supplier();
         Random rand = new Random();
-        consumer.setName("name_" + Integer.valueOf(rand.nextInt()));
-        consumer.setLastname("lastname_" + + Integer.valueOf(rand.nextInt()));
-        consumer.setDni("00000000A");
-        consumer.setEmail(Integer.valueOf(rand.nextInt()) + "@gmail.com");
+        supplier.setName("name_" + Integer.valueOf(rand.nextInt()));
+        supplier.setLastname("lastname_" + + Integer.valueOf(rand.nextInt()));
+        supplier.setDni("00000000A");
+        supplier.setEmail(Integer.valueOf(rand.nextInt()) + "@gmail.com");
         User user = new User();
         user.setUsername("new_username_" + Integer.valueOf(rand.nextInt()));
         user.setPassword("1234");
-        consumer.setUser(user);
+        supplier.setUser(user);
 
         given()
-        .basePath("/users/signup/consumers")
+        .basePath("/users/signup/suppliers")
         .port(8080)
         .contentType("application/json")
-        .body(consumer)
+        .body(supplier)
         .when()
         .post().prettyPeek()
         .then()
         .statusCode(201);
 
-        
-
     }
 
     @Test
     public void signupBindingErrors(){
-        Consumer consumer = new Consumer();
+        Supplier supplier = new Supplier();
         Random rand = new Random();
-        consumer.setName("");
-        consumer.setLastname("");
-        consumer.setDni("00000000A");
-        consumer.setEmail(Integer.valueOf(rand.nextInt()) + "@gmail.com");
+        supplier.setName("");
+        supplier.setLastname("");
+        supplier.setDni("00000000A");
+        supplier.setEmail(Integer.valueOf(rand.nextInt()) + "@gmail.com");
         User user = new User();
         user.setUsername("new_username_" + Integer.valueOf(rand.nextInt()));
         user.setPassword("1234");
-        consumer.setUser(user);
+        supplier.setUser(user);
 
         Problem p = given()
-        .basePath("/users/signup/consumers")
+        .basePath("/users/signup/suppliers")
         .port(8080)
         .contentType("application/json")
-        .body(consumer)
+        .body(supplier)
         .when()
         .post().prettyPeek()
         .then()
@@ -285,22 +189,22 @@ public class UserControllerTests {
 
     @Test
     public void signupAlreadyExistingUser(){
-        Consumer consumer = new Consumer();
+        Supplier supplier = new Supplier();
         Random rand = new Random();
-        consumer.setName("name_" + Integer.valueOf(rand.nextInt()));
-        consumer.setLastname("lastname_" + + Integer.valueOf(rand.nextInt()));
-        consumer.setDni("00000000A");
-        consumer.setEmail(Integer.valueOf(rand.nextInt()) + "@gmail.com");
+        supplier.setName("name_" + Integer.valueOf(rand.nextInt()));
+        supplier.setLastname("lastname_" + + Integer.valueOf(rand.nextInt()));
+        supplier.setDni("00000000A");
+        supplier.setEmail(Integer.valueOf(rand.nextInt()) + "@gmail.com");
         User user = new User();
-        user.setUsername("josito");
+        user.setUsername("rodri");
         user.setPassword("1234");
-        consumer.setUser(user);
+        supplier.setUser(user);
 
         Problem p = given()
-        .basePath("/users/signup/consumers")
+        .basePath("/users/signup/suppliers")
         .port(8080)
         .contentType("application/json")
-        .body(consumer)
+        .body(supplier)
         .when()
         .post().prettyPeek()
         .then()
