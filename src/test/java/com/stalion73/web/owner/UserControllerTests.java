@@ -3,6 +3,7 @@ package com.stalion73.web.owner;
 import java.util.Random;
 
 import com.stalion73.model.User;
+import com.stalion73.Stalion73Application;
 import com.stalion73.model.Consumer;
 import com.stalion73.model.Supplier;
 
@@ -13,11 +14,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static io.restassured.RestAssured.given;
 
 import org.springframework.http.HttpHeaders;
-
-
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.hateoas.mediatype.problem.Problem;
 import org.testng.annotations.Test;
 
+@ExtendWith(SpringExtension.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 public class UserControllerTests {
 
     HttpHeaders headers = new HttpHeaders();

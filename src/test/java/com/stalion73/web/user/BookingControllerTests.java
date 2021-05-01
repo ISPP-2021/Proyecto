@@ -83,7 +83,7 @@ public class BookingControllerTests {
 
     @Test
     public void one(){
-        Integer id = 1;
+        Integer id = 2;
         given().pathParam("id", id)
             .basePath("/bookings/{id}")
             .port(8080)
@@ -277,7 +277,10 @@ public class BookingControllerTests {
         Random randomGenerator = new Random();
         Integer rand =  randomGenerator.nextInt(priorSize);
 
-        given().pathParam("id", rand)
+        // Integer bookingId = priorBookings.get(rand);
+
+
+        given().pathParam("id", 4)
         .basePath("/bookings/{id}")
         .port(8080)
         .contentType("application/json")
