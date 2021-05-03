@@ -6,6 +6,7 @@ import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.mediatype.problem.Problem;
 
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -143,10 +144,9 @@ public class BookingController {
                     
                     Servise servise = s.get();
                     Business business = servise.getBusiness();
-                    LocalTime bookTime = LocalTime.parse(booking.getBookDate().toString().substring(11,16));
-                    
+                    LocalTime bookTime = LocalTime.parse(booking.getBookDate().toString().substring(11,16)+":00");
                     if(bookTime.isAfter(business.getOpenTime()) && 
-                            bookTime.isBefore(business.getCloseTime()) ){
+                            bookTime.isBefore(business.getCloseTime()) || bookTime.equals(business.getOpenTime())){
 
                                 Option options = servise.getBusiness().getOption();
                                 if(options.isAutomatedAccept()){
