@@ -38,10 +38,7 @@ import org.apache.commons.io.IOUtils;
 public class ImageController {
    
     private ImageService imageService;
-
-    private final String relativePath = "src/main/resources/static/img/";
-    private final String extension = ".jpeg";
-
+    
     @Autowired
     public ImageController(ImageService imageService){
         this.imageService = imageService;
