@@ -72,10 +72,23 @@ public class ImageController {
         HttpHeaders headers = new HttpHeaders();
         // Testing purpose
         //headers.setContentType(MediaType.IMAGE_JPEG);
+        Optional<Image> retr = this.imageService.findByName(file.getOriginalFilename());
+        if(retr.isPresent()){
+            return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
+            .headers(headers)
+            .body(Problem.create()
+                    .withTitle("Already exists.")
+                    .withDetail("The image name already match a record."));
+        }
         Image image = new Image();
+        byte[] img = this.imageService.compress(file.getBytes());
         image.setName(file.getOriginalFilename());
         image.setType(file.getContentType());
-        image.setImg(this.imageService.compress(file.getBytes()));
+        image.setDecompress(file.getBytes().length);
+        image.setCompress(img.length);
+        image.setImg(img);
 
         this.imageService.save(image);
 
