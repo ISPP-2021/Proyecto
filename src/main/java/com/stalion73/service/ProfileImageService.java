@@ -11,37 +11,36 @@ import java.util.zip.DeflaterOutputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterOutputStream;
 
-import com.stalion73.model.image.Image;
-import com.stalion73.repository.ImageRepository;
+import com.stalion73.model.image.ProfileImage;
+import com.stalion73.repository.ProfileImageRepository;
 
-import org.hibernate.action.internal.CollectionAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class ImageService {
+public class ProfileImageService {
 
-    ImageRepository imageRepository;
+    ProfileImageRepository profileImageRepository;
 
     @Autowired
-    public ImageService(ImageRepository imageRepository){
-        this.imageRepository = imageRepository;
+    public ProfileImageService(ProfileImageRepository profileImageRepository){
+        this.profileImageRepository = profileImageRepository;
     }
 
     @Transactional(readOnly = true)
-    public Optional<Image> findByName(String name){
-        return this.imageRepository.findByName(name);
+    public Optional<ProfileImage> findByName(String name){
+        return this.profileImageRepository.findByName(name);
     }
 
     @Transactional(readOnly = true)
-    public Collection<Image> findByBusiness(String business_id){
-        return this.imageRepository.findByBusiness(business_id);
+    public Optional<ProfileImage> findByUsername(String username){
+        return this.profileImageRepository.findByUsername(username);
     }
 
     @Transactional
-    public void save(Image image) {
-        this.imageRepository.save(image);
+    public void save(ProfileImage profileImage) {
+        this.profileImageRepository.save(profileImage);
     }
 
 

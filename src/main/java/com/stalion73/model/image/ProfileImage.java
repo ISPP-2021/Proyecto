@@ -1,19 +1,19 @@
 package com.stalion73.model.image;
 
-import com.stalion73.model.Business;
+import com.stalion73.model.User;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.stalion73.model.AuditableEntity;
 
 @Entity
-@Table(name = "images")
-public class Image extends AuditableEntity{
+@Table(name = "profile_images")
+public class ProfileImage extends AuditableEntity{
     
     @Column(unique = true)
     private String name;
@@ -24,9 +24,10 @@ public class Image extends AuditableEntity{
     private Integer compress;
     private Integer decompress;
 
-    @JoinColumn(name = "business_id")
-    @ManyToOne
-    private Business business;
+    @JoinColumn(name = "username")
+    @OneToOne
+    private User user;
+
 
     public String getName() {
         return name;
@@ -68,12 +69,12 @@ public class Image extends AuditableEntity{
         this.decompress = decompress;
     }
 
-    public Business getBusiness() {
-        return business;
+    public User getUser() {
+        return user;
     }
 
-    public void setBusiness(Business business) {
-        this.business = business;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     
