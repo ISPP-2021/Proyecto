@@ -4,17 +4,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
-import java.util.zip.DeflaterOutputStream;
 import java.util.zip.Inflater;
-import java.util.zip.InflaterOutputStream;
 
 import com.stalion73.model.image.Image;
 import com.stalion73.repository.ImageRepository;
 
-import org.hibernate.action.internal.CollectionAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -7,11 +7,9 @@ import java.util.zip.DataFormatException;
 import java.util.Random;
 import java.util.Set;
 
-import javax.print.attribute.standard.Media;
 
 import com.stalion73.model.image.Image;
 import com.stalion73.model.Business;
-import com.stalion73.model.Supplier;
 
 import com.stalion73.service.BusinessService;
 
@@ -19,7 +17,6 @@ import com.stalion73.service.ImageService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -34,12 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.mediatype.problem.Problem;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-
-import org.apache.commons.io.IOUtils;
 
 
 @RestController()
