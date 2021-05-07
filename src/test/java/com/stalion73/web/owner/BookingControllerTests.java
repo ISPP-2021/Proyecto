@@ -126,7 +126,7 @@ public class BookingControllerTests {
 
     @Test
     public void cancel(){
-        Integer id = 1;
+        Integer id = 2;
 
         given().pathParam("id", id)
             .basePath("/bookings/{id}/cancel")

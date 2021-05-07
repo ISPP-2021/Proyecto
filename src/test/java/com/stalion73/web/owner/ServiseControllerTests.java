@@ -49,7 +49,7 @@ public class ServiseControllerTests {
     @BeforeMethod
     public void loginToken(){
         User user = new User();
-        user.setUsername("aug");
+        user.setUsername("rodri");
         user.setPassword("1234");
 
         User usr =  given()
@@ -68,7 +68,7 @@ public class ServiseControllerTests {
 
     @AfterMethod
     public void logout(){
-        given().queryParam("username", "aug")
+        given().queryParam("username", "rodri")
         .basePath("/users/logout")
         .port(8080)
         .contentType("application/json")
@@ -84,7 +84,7 @@ public class ServiseControllerTests {
     @Test
     public void createGood(){
         servise = new Servise();
-        id = 1;
+        id = 2;
         servise.setName("name_1");
         servise.setDescription("description_1");
         given().pathParam("id", id)
@@ -103,7 +103,7 @@ public class ServiseControllerTests {
     public void createBadNotOwned(){
         servise = new Servise();
         // aug doesn't own this servise
-        id = 3;
+        id = 1;
         servise.setName("name_1");
         servise.setDescription("description_1");
         Problem p = given().pathParam("id", id)
@@ -140,10 +140,10 @@ public class ServiseControllerTests {
         Integer priorSize = priorServises.size();
         assertThat(priorSize).isGreaterThan(0);
 
-        Random randomGenerator = new Random();
-        Integer rand =  randomGenerator.nextInt(priorSize);
+        //Random randomGenerator = new Random();
+        //Integer rand =  randomGenerator.nextInt(priorSize);
 
-        given().pathParam("id", rand)
+        given().pathParam("id", 3)
         .basePath("/servises/{id}")
         .port(8080)
         .contentType("application/json")

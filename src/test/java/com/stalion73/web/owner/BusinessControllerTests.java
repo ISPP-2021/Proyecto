@@ -43,7 +43,7 @@ public class BusinessControllerTests {
     @BeforeMethod
     public void loginToken(){
         User user = new User();
-        user.setUsername("aug");
+        user.setUsername("antonio");
         user.setPassword("1234");
 
         User usr =  given()
@@ -62,7 +62,7 @@ public class BusinessControllerTests {
 
     @AfterMethod
     public void logout(){
-        given().queryParam("username", "aug")
+        given().queryParam("username", "antonio")
         .basePath("/users/logout")
         .port(8080)
         .contentType("application/json")
@@ -90,7 +90,7 @@ public class BusinessControllerTests {
     }
     @Test
     public void one(){
-        Integer id = 1;
+        Integer id = 3;
         given().pathParam("id", id)
             .basePath("/business/{id}")
             .port(8080)
@@ -165,7 +165,7 @@ public class BusinessControllerTests {
     }
 
     @Test
-    public void deleteGood(){
+    public void thisDeleteGood(){
         List<Business> priorBusiness = new ArrayList<>();
         priorBusiness = given()
         .basePath("/business")
@@ -183,7 +183,7 @@ public class BusinessControllerTests {
 
        
 
-        given().pathParam("id", 1)
+        given().pathParam("id", 3)
         .basePath("/business/{id}")
         .port(8080)
         .contentType("application/json")

@@ -109,7 +109,7 @@ VALUES (1,'Augusto','Garcia','00000000A', 'cosas4@gmail.com', 'aug','PREMIUM');
 INSERT INTO suppliers(id, name, lastname, dni, email, username, subscription)
 VALUES (2,'Rodrigo','Garcia','45600000A', 'cosas5@gmail.com', 'rodri', 'FREE');
 INSERT INTO suppliers(id, name, lastname, dni, email, username, subscription)
-VALUES (3,'Antonio','Garcia','00032400H', 'cosas6@gmail.com', 'antonio', 'FREE');
+VALUES (3,'Antonio','Garcia','00032400H', 'cosas6@gmail.com', 'antonio', 'PREMIUM');
 
 INSERT INTO options(id, automated_Accept, gas, default_Deposit, deposit_Time_Limit)
 VALUES (1,true,3,0.7,5);
