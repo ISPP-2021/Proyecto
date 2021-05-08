@@ -4,8 +4,8 @@ jdk: oraclejdk8
 services:
   - mysql
 before_install:
-  - mysql -e 'CREATE DATABASE stalion76;'
   - mvn install -DskipTests=true
+  - mysql -e 'CREATE DATABASE stalion76;'
   - sudo apt-get install jq
   - wget -O ~/codacy-coverage-reporter-assembly-latest.jar $(curl https://api.github.com/repos/codacy/codacy-coverage-reporter/releases/latest | jq -r .assets[0].browser_download_url)
 script: 
@@ -13,4 +13,4 @@ script:
   - mvn -Dtest=PersonTest test
   - mvn jacoco:prepare-agent test install jacoco:report
 after_success:
-    - java -jar ~/codacy-coverage-reporter-assembly-latest.jar report -l Java -r target/site/jacoco/jacoco.xml
+    - java -jar ~/codacy-coverage-reporter-assembly-latest.jar report -l Java -r target/site/jacoco/jacoco.x
