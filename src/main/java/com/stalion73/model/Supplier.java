@@ -1,5 +1,6 @@
 package com.stalion73.model;
 
+import java.util.Date;
 import java.util.Set;
 import java.util.HashSet;
 
@@ -25,6 +26,7 @@ public class Supplier extends Person{
     @Enumerated(EnumType.STRING)
     private SubscriptionType subscription;
 
+    private Date expiration;
 
     public Set<Business> getBusiness() {
         return business;
@@ -51,4 +53,8 @@ public class Supplier extends Person{
     public void setSubscription(SubscriptionType subscription) {
         this.subscription = subscription;
     }
+
+    public Date getExpiration(){ return this.expiration; }
+
+    public void setExpiration(Date expiration) { this.expiration = expiration; }
 }
