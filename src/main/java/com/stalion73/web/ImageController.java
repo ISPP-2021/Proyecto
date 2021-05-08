@@ -101,7 +101,7 @@ public class ImageController {
     public ResponseEntity<?> getImages(@PathVariable("business_id") Integer business_id) throws IOException, DataFormatException {
         HttpHeaders headers = new HttpHeaders();
 
-        Set<Image> comprImgs = new HashSet<>(this.imageService.findByBusiness(business_id.toString()));
+        Set<Image> comprImgs = new HashSet<>(this.imageService.findByBusiness(business_id));
         Set<Image> descompImgs = new HashSet<>();
         for(Image compress : comprImgs){
             Image img = compress;
@@ -148,8 +148,8 @@ public class ImageController {
 
 
     @PostMapping("/upload/{id}")
-    public ResponseEntity<?> uploadImageBusiness(@RequestParam("image") MultipartFile file
-    ,@PathVariable("id") Integer id) throws IOException {
+    public ResponseEntity<?> uploadImageBusiness(@RequestParam("image") MultipartFile file,
+    @PathVariable("id") Integer id) throws IOException {
         HttpHeaders headers = new HttpHeaders();
         // Testing purpose
         //headers.setContentType(MediaType.IMAGE_JPEG);
@@ -171,6 +171,15 @@ public class ImageController {
 
        return new ResponseEntity<>(image, headers, HttpStatus.OK);
 
+    
+    }
+
+    @RequestMapping(value = "/business/{business_id}" , method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteImages(@PathVariable("business_id") Integer business_id) throws IOException, DataFormatException {
+        HttpHeaders headers = new HttpHeaders();
+
+        this.imageService.deleteAllByBusiness(business_id);
+        return new ResponseEntity<>(headers, HttpStatus.NO_CONTENT);
     
     }
     

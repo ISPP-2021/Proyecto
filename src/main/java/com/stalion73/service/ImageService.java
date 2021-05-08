@@ -31,13 +31,18 @@ public class ImageService {
     }
 
     @Transactional(readOnly = true)
-    public Collection<Image> findByBusiness(String business_id){
-        return this.imageRepository.findByBusiness(business_id);
+    public Collection<Image> findByBusiness(Integer business){
+        return this.imageRepository.findByBusiness(business);
     }
 
     @Transactional
     public void save(Image image) {
         this.imageRepository.save(image);
+    }
+
+    @Transactional
+    public void deleteAllByBusiness(Integer business) {
+        this.imageRepository.deleteAllByBusiness(business);
     }
 
 

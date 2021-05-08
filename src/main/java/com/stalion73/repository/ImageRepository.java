@@ -7,6 +7,7 @@ import com.stalion73.model.image.Image;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 
@@ -15,7 +16,13 @@ public interface ImageRepository extends CrudRepository<Image, Integer> {
     //@Query("SELECT img FROM Image img WHERE img.name LIKE %:name")
     Optional<Image> findByName(@Param("name") String name);
 
-    @Query("SELECT img FROM Image img WHERE img.business.id LIKE business_id")
-    Collection<Image> findByBusiness(@Param("business_id") String business_id );
+    @Query("SELECT img FROM Image img WHERE img.business.id = :business")
+    Collection<Image> findByBusiness(@Param("business") Integer business );
+
+    @Modifying
+    @Query("delete from Image img where img.business.id = :business")
+    void deleteAllByBusiness(@Param("business") Integer business);
+    // long deleteByTitle(String title);
+
 
 }
