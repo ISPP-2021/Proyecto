@@ -9,6 +9,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.stalion73.model.AuditableEntity;
 
 @Entity
@@ -26,6 +27,7 @@ public class Image extends AuditableEntity{
 
     @JoinColumn(name = "business_id")
     @ManyToOne
+    @JsonIgnore
     private Business business;
 
     public String getName() {

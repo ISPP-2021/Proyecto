@@ -87,6 +87,15 @@ public class ImageController {
         image.setDecompress(file.getBytes().length);
         image.setCompress(img.length);
         image.setImg(img);
+     
+       // Double pot= Math.pow(1, 7);
+       
+        if(image.getCompress() > 10000000) {
+        	return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers)
+					 .body(Problem.create()
+					 		.withTitle("Imagen no valida")
+							.withDetail("La imagen pesa mas de 10  mb"));
+        }
 
         this.imageService.save(image);
 
@@ -132,6 +141,13 @@ public class ImageController {
             image.setCompress(img.length);
             image.setImg(img); 
             image.setBusiness(business);
+           // Double pot= Math.pow(10.5, 7);
+            if(image.getCompress() > 15000000) {
+            	return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers)
+    					 .body(Problem.create()
+    					 		.withTitle("Imagen no valida")
+    							.withDetail("La imagen pesa mas de 15 mb"));
+            }
 
             this.imageService.save(image);
             images.add(image);
@@ -164,6 +180,14 @@ public class ImageController {
         image.setImg(img);
         Business business = this.businessService.findById(id).get();
         image.setBusiness(business);
+        
+        if(image.getCompress() > 10000000) {
+        	return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers)
+					 .body(Problem.create()
+					 		.withTitle("Imagen no valida")
+							.withDetail("La imagen pesa mas de 10  mb"));
+        }
+
 
         this.imageService.save(image);
 

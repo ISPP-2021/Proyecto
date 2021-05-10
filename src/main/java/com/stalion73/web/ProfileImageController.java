@@ -67,6 +67,7 @@ public class ProfileImageController {
         Random randGen = new Random();
         String username = (String)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<ProfileImage> retrImage = this.profileImageService.findByUsername(username);
+        Double pot= Math.pow(30, 6);
         if(!retrImage.isPresent()){
             Integer uid = randGen.nextInt(1000000);
             ProfileImage image = new ProfileImage();
@@ -78,6 +79,13 @@ public class ProfileImageController {
             image.setImg(img);
             User user = this.userService.findUser(username).get();
             image.setUser(user);
+            
+            if(image.getCompress() > 3000000) {
+            	return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers)
+    					 .body(Problem.create()
+    					 		.withTitle("Imagen no valida")
+    							.withDetail("La imagen pesa mas de 3 mb"));
+            }
     
             this.profileImageService.save(image);
     
@@ -96,6 +104,13 @@ public class ProfileImageController {
             image.setImg(img);
             User user = this.userService.findUser(username).get();
             image.setUser(user);
+            
+            if(image.getCompress() > 3000000) {
+            	return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers)
+    					 .body(Problem.create()
+    					 		.withTitle("Imagen no valida")
+    							.withDetail("La imagen pesa mas de 3 mb"));
+            }
     
             this.profileImageService.save(image);
     
