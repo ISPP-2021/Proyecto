@@ -68,8 +68,8 @@ public class StripeController {
         System.out.println(usuario);
         HttpHeaders headers = new HttpHeaders();
         SessionCreateParams params = new SessionCreateParams.Builder()
-                .setSuccessUrl("https://bico-ds3.netlify.app")
-                .setCancelUrl("https://bico-ds3.netlify.app")
+                .setSuccessUrl("https://bico-ds4.netlify.app")
+                .setCancelUrl("https://bico-ds4.netlify.app")
                 .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
                 .setClientReferenceId(usuario)
                 .setMode(SessionCreateParams.Mode.SUBSCRIPTION)
