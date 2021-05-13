@@ -35,7 +35,7 @@ public class OptionServiceTest {
 	@Test
 	void findOptionByIdTest() {
 		Optional<Option> option = this.optionService.findById(1);
-		Assertions.assertTrue(option.get().getGas() == 3 && option.get().getDefaultDeposit() == 0.7
+		Assertions.assertTrue(option.get().getGas() == 3 && option.get().getDefaultDeposit() == 0.3
 				&& option.get().getDepositTimeLimit() == 5);
 	}
 
