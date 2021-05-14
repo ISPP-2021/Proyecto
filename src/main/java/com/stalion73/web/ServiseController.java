@@ -72,8 +72,8 @@ public class ServiseController {
                 .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
                 .headers(headers)
                 .body(Problem.create()
-                    .withTitle("Ineffected ID")
-                    .withDetail("The provided ID doesn't exist"));
+						.withTitle("Servicio incorrecto")
+						.withDetail("El servicio no existe."));
 		}
 		return new ResponseEntity<Servise>(servise.get(), headers, HttpStatus.OK);
 	}
@@ -96,8 +96,8 @@ public class ServiseController {
 					.status(HttpStatus.BAD_REQUEST)
 					.headers(headers)
 					.body(Problem.create()
-						.withTitle("Validation error")
-						.withDetail("The provided servise was not successfuly validated"));
+							.withTitle("Error de validación")
+							.withDetail("El servicio no se ha podido validar correctamente."));
 			}else{
 				Optional<Business> b = this.businessService.findById(id);
 				if(b.isPresent()){
@@ -115,8 +115,8 @@ public class ServiseController {
 						.header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) 
 						.headers(headers)
 						.body(Problem.create()
-							.withTitle("Not owned") 
-							.withDetail("The request servise is not up to your provided credentials."));
+							.withTitle("No eres propietario")
+							.withDetail("No eres el propietario de este negocio."));
 					}
 				}
 				return ResponseEntity
@@ -124,8 +124,8 @@ public class ServiseController {
                 .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) 
                 .headers(headers)
                 .body(Problem.create()
-                    .withTitle("non-existent") 
-                    .withDetail("The request business not exist."));
+                    .withTitle("No existe")
+                    .withDetail("No existe el negocio al que se hace referencia."));
 			}
 		}
 		return ResponseEntity
@@ -133,8 +133,8 @@ public class ServiseController {
                 .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) 
                 .headers(headers)
                 .body(Problem.create()
-                    .withTitle("You shall not pass") 
-                    .withDetail("The request wasn't expecting the provied credentials."));
+						.withTitle("Acceso restringido")
+						.withDetail("No tienes acceso a este contenido."));
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = "application/json")
@@ -149,15 +149,15 @@ public class ServiseController {
 				.status(HttpStatus.BAD_REQUEST)
 				.headers(headers)
 				.body(Problem.create()
-					.withTitle("Validation error")
-					.withDetail("The provided servise was not successfuly validated"));
+						.withTitle("Error de validación")
+						.withDetail("El servicio no se ha podido validar correctamente."));
 		}else if(!this.serviseService.findById(id).isPresent()){
 			return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .headers(headers)
                 .body(Problem.create()
-                    .withTitle("Ineffected ID")
-                    .withDetail("The provided ID doesn't exist"));
+						.withTitle("Servicio incorrecto")
+						.withDetail("El servicio no existe."));
 		}else{
 			this.serviseService.update(id, newServise);
 			newServise.setId(id);	
@@ -181,8 +181,8 @@ public class ServiseController {
                     .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
                     .headers(headers)
                     .body(Problem.create()
-                        .withTitle("Ineffected ID")
-                        .withDetail("The provided ID doesn't exist"));
+							.withTitle("Servicio incorrecto")
+							.withDetail("El servicio no existe."));
         }
 	}
 

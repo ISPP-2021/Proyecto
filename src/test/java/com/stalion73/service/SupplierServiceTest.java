@@ -42,8 +42,8 @@ public class SupplierServiceTest {
 	void findSupplierByIdTest() {
 		Optional<Supplier> supplier = this.supplierService.findById(1);
 		Assertions.assertTrue(supplier.get().getName().equals("Augusto")
-				&& supplier.get().getLastname().equals("Garcia") && supplier.get().getDni().equals("00000000A")
-				&& supplier.get().getEmail().equals("cosas4@gmail.com")
+				&& supplier.get().getLastname().equals("García") && supplier.get().getDni().equals("00000000A")
+				&& supplier.get().getEmail().equals("augusto@gmail.com")
 				&& supplier.get().getUser().getUsername().equals("aug"));
 	}
 
@@ -51,8 +51,8 @@ public class SupplierServiceTest {
 	void findSupplierByUsernameTest() {
 		Optional<Supplier> supplier = this.supplierService.findSupplierByUsername("rodri");
 		Assertions.assertTrue(supplier.get().getName().equals("Rodrigo")
-				&& supplier.get().getLastname().equals("Garcia") && supplier.get().getDni().equals("45600000A")
-				&& supplier.get().getEmail().equals("cosas5@gmail.com"));
+				&& supplier.get().getLastname().equals("García") && supplier.get().getDni().equals("45600000A")
+				&& supplier.get().getEmail().equals("rodrigo@gmail.com"));
 	}
 
 //	@Test
@@ -96,10 +96,10 @@ public class SupplierServiceTest {
 
 	@Test
 	void deleteBusinessBySupplierIdTest() {
-		Supplier supplier = this.supplierService.findById(2).get();
+		Supplier supplier = this.supplierService.findById(1).get();
 		this.supplierService.deleteBusinessBySupplierId(supplier.getId());
 		List<Business> business = (List<Business>) this.businessService.findAll();
-		Assertions.assertTrue(business.size() == 2);
+		Assertions.assertTrue(business.size() == 6);
 	}
 
 }

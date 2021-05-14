@@ -90,8 +90,8 @@ public class ConsumerController{
 			.header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
 			.headers(headers)
 			.body(Problem.create()
-				.withTitle("Ineffected ID")
-				.withDetail("The provided ID doesn't exist"));
+					.withTitle("Cliente incorrecto")
+					.withDetail("El cliente no existe."));
 		}else{
 			return ResponseEntity
 				.status(HttpStatus.OK) 
@@ -115,8 +115,8 @@ public class ConsumerController{
 				.status(HttpStatus.BAD_REQUEST)
 				.headers(headers)
 				.body(Problem.create()
-					.withTitle("Validation error")
-					.withDetail("The provided consumer was not successfuly validated"));
+						.withTitle("Error de validación")
+						.withDetail("El usuario no se ha podido validar correctamente."));
         }
 
         this.consumerService.save(consumer);
@@ -143,8 +143,8 @@ public class ConsumerController{
 				.status(HttpStatus.BAD_REQUEST)
 				.headers(headers)
 				.body(Problem.create()
-					.withTitle("Validation error")
-					.withDetail("The provided consumer was not successfuly validated"));
+						.withTitle("Error de validación")
+						.withDetail("El usuario no se ha podido validar correctamente."));
 
         }
 
@@ -174,8 +174,8 @@ public class ConsumerController{
 			.header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
 			.headers(headers)
 			.body(Problem.create()
-				.withTitle("Ineffected ID")
-				.withDetail("The provided ID doesn't exist"));
+					.withTitle("Cliente incorrecto")
+					.withDetail("El cliente no existe."));
 	}
   
 

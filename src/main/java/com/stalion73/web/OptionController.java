@@ -66,8 +66,8 @@ public class OptionController {
                 .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
                 .headers(headers)
                 .body(Problem.create()
-                    .withTitle("Ineffected ID")
-                    .withDetail("The provided ID doesn't exist"));
+						.withTitle("Opción incorrecta")
+						.withDetail("La opción no existe."));
         }else{
             return ResponseEntity
                 .status(HttpStatus.OK) 
@@ -91,8 +91,8 @@ public class OptionController {
 				.status(HttpStatus.BAD_REQUEST)
 				.headers(headers)
 				.body(Problem.create()
-					.withTitle("Validation error")
-					.withDetail("The provided consumer was not successfuly validated"));
+						.withTitle("Error de validación")
+						.withDetail("La opción no se ha podido validar correctamente."));
         }else{
             this.optionService.save(option);
             headers.setLocation(ucBuilder.path("/business").buildAndExpand(option.getId()).toUri());
@@ -115,16 +115,16 @@ public class OptionController {
 				.status(HttpStatus.BAD_REQUEST)
 				.headers(headers)
 				.body(Problem.create()
-					.withTitle("Validation error")
-					.withDetail("The provided consumer was not successfuly validated"));
+						.withTitle("Error de validación")
+						.withDetail("La opción no se ha podido validar correctamente."));
 		}else if(!this.optionService.findById(id).isPresent()){
 			return ResponseEntity
 				.status(HttpStatus.NOT_FOUND)
 				.header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
 				.headers(headers)
 				.body(Problem.create()
-					.withTitle("Ineffected ID")
-					.withDetail("The provided ID doesn't exist"));
+						.withTitle("Opción incorrecta")
+						.withDetail("La opción no existe."));
 		}else{
 	
 			this.optionService.update(id, newOption);
@@ -150,8 +150,8 @@ public class OptionController {
                     .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
                     .headers(headers)
                     .body(Problem.create()
-                        .withTitle("Ineffected ID")
-                        .withDetail("The provided ID doesn't exist"));
+							.withTitle("Opción incorrecta")
+							.withDetail("La opción no existe."));
         }
 	}
   

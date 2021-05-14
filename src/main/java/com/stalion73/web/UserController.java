@@ -86,8 +86,8 @@ public class UserController {
                 .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
                 .headers(headers)
                 .body(Problem.create()
-                    .withTitle("Ineffected ID")
-                    .withDetail("The provided ID doesn't exist"));
+                    .withTitle("Usuario incorrecto")
+                    .withDetail("El usuario no existe."));
         }
 		if (user.get().getPassword().equals(credentials.getPassword())) {
 			String token = getJWTToken(user.get());
@@ -99,8 +99,8 @@ public class UserController {
                 .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
                 .headers(headers)
                 .body(Problem.create()
-                    .withTitle("Bad credentials")
-                    .withDetail("The provided user credentials didn't match any already existing record."));
+                    .withTitle("Datos incorrectos")
+                    .withDetail("Algunos datos son incorrectos. Revisalos."));
 		}
 		return ResponseEntity.status(HttpStatus.OK).headers(headers).body(user.get());
 	}
@@ -168,8 +168,8 @@ public class UserController {
 		}
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers)
 							 .body(Problem.create()
-							 		.withTitle("Missing appropiated authority")
-									.withDetail("The provided authority was not the possible expected values"));
+							 		.withTitle("Acceso restringido")
+									.withDetail("No tienes acceso a este contenido."));
 	}
 
 	@RequestMapping(value = "/signup/consumers", method = RequestMethod.POST, produces = "application/json")
@@ -184,8 +184,8 @@ public class UserController {
 				.status(HttpStatus.BAD_REQUEST)
 				.headers(headers)
 				.body(Problem.create()
-					.withTitle("Validation error")
-					.withDetail("The provided user was not successfuly validated"));
+					.withTitle("Error de validación")
+					.withDetail("El usuario no se ha podido validar correctamente."));
 		}else{
 			//String token = getJWTToken(user)
 			//user.setToken(token)
@@ -197,8 +197,8 @@ public class UserController {
 				.status(HttpStatus.BAD_REQUEST)
 				.headers(headers)
 				.body(Problem.create()
-					.withTitle("Already existing user")
-					.withDetail("I wasn't possible to create an user because of username replication on the data."));
+					.withTitle("El usuario ya existe")
+					.withDetail("El nombre de usuario que usted a puesto ya existe en base de datos. Por favor, elija otro."));
 			}
 			Set<Authorities> authorities = new HashSet<>();
 			Authorities auth = new Authorities();
@@ -230,8 +230,8 @@ public class UserController {
 				.status(HttpStatus.BAD_REQUEST)
 				.headers(headers)
 				.body(Problem.create()
-					.withTitle("Validation error")
-					.withDetail("The provided user was not successfuly validated"));
+						.withTitle("Error de validación")
+						.withDetail("El usuario no se ha podido validadar correctamente."));
 		}else{
 			//String token = getJWTToken(user)
 			//user.setToken(token)
@@ -243,8 +243,8 @@ public class UserController {
 				.status(HttpStatus.BAD_REQUEST)
 				.headers(headers)
 				.body(Problem.create()
-					.withTitle("Already existing user")
-					.withDetail("I wasn't possible to create an user because of username replication on the data."));
+						.withTitle("El usuario ya existe")
+						.withDetail("El nombre de usuario que usted a puesto ya existe en base de datos. Por favor, elija otro."));
 			}
 			Set<Authorities> authorities = new HashSet<>();
 			Authorities auth = new Authorities();

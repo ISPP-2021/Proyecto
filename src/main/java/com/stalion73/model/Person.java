@@ -23,7 +23,7 @@ public class Person extends NamedEntity {
 	@NotBlank
 	@Length(max = 30)
 	private String lastname;
-	@Pattern(regexp = "[0-9]{8}[A-Z]")
+	@Pattern(regexp = "^[0-9]{8}[A-Z]$")
 	private String dni;
 	@Email
 	@Column(unique = true)

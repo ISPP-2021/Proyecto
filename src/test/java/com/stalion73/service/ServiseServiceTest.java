@@ -38,9 +38,9 @@ public class ServiseServiceTest {
 		Optional<Servise> servise = this.serviseService.findById(1);
 		Assertions.assertTrue(servise.get().getName().equals("Comer")
 				&& servise.get().getDescription().equals("Ven a comer al restaurante y disfruta")
-				&& servise.get().getPrice() == 20.3 && servise.get().getDuration() == 2
-				&& servise.get().getCapacity() == 2 && servise.get().getDeposit() == 40.7
-				&& servise.get().getTax() == 0.05);
+				&& servise.get().getPrice() == 15 && servise.get().getDuration() == 60
+				&& servise.get().getCapacity() == 5 && servise.get().getDeposit() == 3
+				&& servise.get().getTax() == 0.2);
 	}
 
 	@Test

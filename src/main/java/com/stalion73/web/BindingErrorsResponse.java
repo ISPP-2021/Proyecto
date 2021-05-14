@@ -45,11 +45,11 @@ public class BindingErrorsResponse {
     public BindingErrorsResponse(Integer pathId, Integer bodyId) {
         boolean onlyBodyIdSpecified = pathId == null && bodyId != null;
         if (onlyBodyIdSpecified) {
-            addBodyIdError(bodyId, "must not be specified");
+            addBodyIdError(bodyId, "No debe especificarse");
         }
         boolean bothIdsSpecified = pathId != null && bodyId != null;
         if (bothIdsSpecified && !pathId.equals(bodyId)) {
-            addBodyIdError(bodyId, String.format("does not match pathId: %d", pathId));
+            addBodyIdError(bodyId, String.format("No coincide pathId: %d", pathId));
         }
     }
 
@@ -93,7 +93,7 @@ public class BindingErrorsResponse {
 
 	@Override
 	public String toString() {
-		return "BindingErrorsResponse [bindingErrors=" + bindingErrors + "]";
+		return "Error: " + bindingErrors;
 	}
 
 	protected static class BindingError {
@@ -128,8 +128,8 @@ public class BindingErrorsResponse {
 
 		@Override
 		public String toString() {
-			return "BindingError [objectName=" + objectName + ", fieldName=" + fieldName + ", fieldValue=" + fieldValue
-					+ ", errorMessage=" + errorMessage + "]";
+			return "Error en: Objeto " + objectName + ", campo " + fieldName + ", valor " + fieldValue
+					+ ". Mensaje de error: " + errorMessage;
 		}
 
 	}

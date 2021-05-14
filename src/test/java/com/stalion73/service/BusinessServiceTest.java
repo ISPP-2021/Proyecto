@@ -40,7 +40,7 @@ public class BusinessServiceTest {
 	void findBusinessByIdTest() {
 		Optional<Business> business = this.businessService.findById(1);
 		Assertions.assertTrue(
-				business.get().getName().equals("Pizzeria Gus") && business.get().getAddress().equals("address_1")
+				business.get().getName().equals("Pizzería Gus") && business.get().getAddress().equals("Calle Manuel Benítez")
 						&& business.get().getBusinessType().equals(BusinessType.RESTAURANT)
 						&& business.get().getAutomatedAccept().equals(true));
 	}
@@ -83,14 +83,14 @@ public class BusinessServiceTest {
 
 	@Test
 	void findBusinessByNameTest() {
-		Collection<Business> b = businessService.findBusinessByName("Pizzeria Gus");
+		Collection<Business> b = businessService.findBusinessByName("Pizzería Gus");
 		Assertions.assertTrue(b.size() == 1);
 	}
 
 	@Test
 	void findBusinessByAddressTest() {
-		Collection<Business> b = businessService.findBusinessByAddress("address_1");
-		Assertions.assertTrue(b.size() == 4);
+		Collection<Business> b = businessService.findBusinessByAddress("Calle Manuel Benítez");
+		Assertions.assertTrue(b.size() == 1);
 	}
 
 	@Test
@@ -101,7 +101,7 @@ public class BusinessServiceTest {
 
 	@Test
 	void findBusinessBySupplierId() {
-		Collection<Business> b = businessService.findBusinessBySupplierId(2);
+		Collection<Business> b = businessService.findBusinessBySupplierId(1);
 		Assertions.assertTrue(b.size() == 2);
 	}
 

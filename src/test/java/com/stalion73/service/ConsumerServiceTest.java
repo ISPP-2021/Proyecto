@@ -35,16 +35,16 @@ public class ConsumerServiceTest {
 	@Test
 	void findConsumerByIdTest() {
 		Optional<Consumer> consumer = this.consumerService.findById(1);
-		Assertions.assertTrue(consumer.get().getName().equals("Jose") && consumer.get().getLastname().equals("Garcia")
-				&& consumer.get().getDni().equals("23487343A") && consumer.get().getEmail().equals("cosas@gmail.com")
+		Assertions.assertTrue(consumer.get().getName().equals("José") && consumer.get().getLastname().equals("García")
+				&& consumer.get().getDni().equals("23487343A") && consumer.get().getEmail().equals("josito@gmail.com")
 				&& consumer.get().getUser().getUsername().equals("josito"));
 	}
 
 	@Test
 	void findConsumerByUsernameTest() {
 		Optional<Consumer> consumer = consumerService.findConsumerByUsername("josito");
-		Assertions.assertTrue(consumer.get().getName().equals("Jose") && consumer.get().getLastname().equals("Garcia")
-				&& consumer.get().getDni().equals("23487343A") && consumer.get().getEmail().equals("cosas@gmail.com"));
+		Assertions.assertTrue(consumer.get().getName().equals("José") && consumer.get().getLastname().equals("García")
+				&& consumer.get().getDni().equals("23487343A") && consumer.get().getEmail().equals("josito@gmail.com"));
 	}
 
 //	@Test
