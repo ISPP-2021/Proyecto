@@ -21,8 +21,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.HashSet;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-
+import javax.xml.ws.Response;
 
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.mediatype.problem.Problem;
@@ -30,6 +31,7 @@ import org.springframework.hateoas.mediatype.problem.Problem;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.http.HttpHeaders;
@@ -101,6 +103,45 @@ public class UserController {
                     .withDetail("Algunos datos son incorrectos. Revisalos."));
 		}
 		return ResponseEntity.status(HttpStatus.OK).headers(headers).body(user.get());
+	}
+
+	@RequestMapping(value = "/logout", method = RequestMethod.POST, produces = "application/json")
+	public ResponseEntity<?> logout(@RequestParam Optional<String> username, HttpSession session){
+		// Will always jump inside this execution branch if cookies are present to not persist the session
+		/*if(session.isNew()){
+            session.invalidate();
+            return ResponseEntity
+			.status(HttpStatus.FORBIDDEN)
+			.header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
+			.headers(headers)
+			.body(Problem.create()
+				.withTitle("User Not logged in")
+				.withDetail("Impossible to logout an user that isn't currently logged in the system")
+			);
+        }*/
+		Optional<User> usr = this.userService.findUser(username.get());
+		if(!usr.isPresent()){
+			return ResponseEntity
+			.status(HttpStatus.NOT_FOUND)
+			.header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
+			.headers(headers)
+			.body(Problem.create()
+				.withTitle("Ineffected ID")
+				.withDetail("The provided ID doesn't exist"));
+		}
+		User user = usr.get();
+		if(user.isEnabled()){
+			user.setToken(null);
+			this.userService.logOut(user);
+			return ResponseEntity.status(HttpStatus.OK).headers(headers).body(user);
+		}
+		return ResponseEntity
+			.status(HttpStatus.FORBIDDEN)
+			.header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
+			.headers(headers)
+			.body(Problem.create()
+				.withTitle("User Not logged in")
+				.withDetail("Impossible to logout an user that isn't currently logged in the system"));
 	}
 
 	@RequestMapping(value = "/profile", method = RequestMethod.GET, produces = "application/json")
