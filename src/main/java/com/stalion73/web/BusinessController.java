@@ -3,6 +3,7 @@ package com.stalion73.web;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.Set;
 import java.util.Optional;
 
@@ -104,32 +105,11 @@ public class BusinessController {
             String username = (String)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             Supplier supplier = this.supplierService.findSupplierByUsername(username).get();
             
-            if(supplier.getSubscription()==SubscriptionType.PREMIUM){
+            if(supplier.getSubscription()==SubscriptionType.PREMIUM
+            &&!supplier.getExpiration().equals(null)){
 
-                supplier.addBusiness(business);
-                business.setSupplier(supplier);
-                Set<Servise> servises = business.getServices();
-                Option option = business.getOption();
-                //this.supplierService.save(supplier);
-                this.optionService.save(option);
-                this.businessService.save(business);
-                servises.stream()
-                .map(servise -> {
-                    servise.setBussiness(business);
-                    return servise;
-                })
-                .forEach(x -> this.serviseService.save(x));
-                this.supplierService.save(supplier);
-                headers.setLocation(ucBuilder.path("/business").buildAndExpand(business.getId()).toUri());
-                return ResponseEntity.status(HttpStatus.CREATED).headers(headers).body(business);
-            }else {
+                if(supplier.getExpiration().before(new Date())) {
 
-                if(supplier.getBusiness().size()>=1){
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers)
-                            .body(Problem.create()
-                                    .withTitle("Error de negocios permitidos")
-                                .withDetail("Los suscriptores gratuitos no pueden crear más de un negocio."));
-                }else {
                     supplier.addBusiness(business);
                     business.setSupplier(supplier);
                     Set<Servise> servises = business.getServices();
@@ -138,16 +118,37 @@ public class BusinessController {
                     this.optionService.save(option);
                     this.businessService.save(business);
                     servises.stream()
-                    .map(servise -> {
-                        servise.setBussiness(business);
-                        return servise;
-                    })
-                    .forEach(x -> this.serviseService.save(x));
+                            .map(servise -> {
+                                servise.setBussiness(business);
+                                return servise;
+                            })
+                            .forEach(x -> this.serviseService.save(x));
                     this.supplierService.save(supplier);
                     headers.setLocation(ucBuilder.path("/business").buildAndExpand(business.getId()).toUri());
                     return ResponseEntity.status(HttpStatus.CREATED).headers(headers).body(business);
                 }
+            }
+            if(supplier.getBusiness().size()>=1){
 
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers)
+                            .body(Problem.create()
+                                    .withTitle("Error de negocios permitidos")
+                                .withDetail("Los suscriptores gratuitos no pueden crear más de un negocio."));
+            }else {
+                supplier.addBusiness(business);
+                business.setSupplier(supplier);
+                Set<Servise> servises = business.getServices();
+                Option option = business.getOption();
+                //this.supplierService.save(supplier);
+                this.optionService.save(option);
+                this.businessService.save(business);
+                servises.stream().map(servise -> {
+                    servise.setBussiness(business);
+                    return servise;
+                }).forEach(x -> this.serviseService.save(x));
+                this.supplierService.save(supplier);
+                headers.setLocation(ucBuilder.path("/business").buildAndExpand(business.getId()).toUri());
+                return ResponseEntity.status(HttpStatus.CREATED).headers(headers).body(business);
             }
         }
     }

@@ -23,12 +23,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import com.stripe.Stripe;
-import java.util.Optional;
+
+import java.util.*;
+
 import com.stalion73.model.SubscriptionType;
-
-
-import java.util.HashMap;
-import java.util.Map;
+import org.thymeleaf.util.DateUtils;
 
 @RestController
 @RequestMapping("/stripe")
@@ -118,8 +117,12 @@ public class StripeController {
                     Supplier supplier = this.supplierService
                                             .findSupplierByUsername(session.getClientReferenceId()).get();
                      supplier.setSubscription(SubscriptionType.PREMIUM);
+                     Calendar calendar = Calendar.getInstance();
+                     calendar.add(Calendar.MONTH, 1);
+                     calendar.add(Calendar.SECOND, 2);
+                     supplier.setExpiration(calendar.getTime());
                      this.supplierService.save(supplier);
-                    
+
                 } else {
                     Supplier supplier = this.supplierService
                                             .findSupplierByUsername(session.getClientReferenceId()).get();
@@ -133,12 +136,27 @@ public class StripeController {
               // Continue to provision the subscription as payments continue to be made.
               // Store the status in your database and check when a user accesses your service.
               // This approach helps you avoid hitting rate limits.
-              break;
+                Session session = (Session) event.getData().getObject();
+                Supplier supplier = this.supplierService
+                        .findSupplierByUsername(session.getClientReferenceId()).get();
+                supplier.setSubscription(SubscriptionType.PREMIUM);
+                Calendar calendar = Calendar.getInstance();
+                calendar.add(Calendar.MONTH, 1);
+                calendar.add(Calendar.SECOND, 2);
+                supplier.setExpiration(calendar.getTime());
+                this.supplierService.save(supplier);
+                break;
             case "invoice.payment_failed":
               // The payment failed or the customer does not have a valid payment method.
               // The subscription becomes past_due. Notify your customer and send them to the
               // customer portal to update their payment information.
-              break;
+                session = (Session) event.getData().getObject();
+                supplier = this.supplierService
+                        .findSupplierByUsername(session.getClientReferenceId()).get();
+                supplier.setSubscription(SubscriptionType.PREMIUM);
+                supplier.setExpiration(null);
+                this.supplierService.save(supplier);
+                break;
             default:
               // System.out.println("Unhandled event type: " + event.getType());
           }
