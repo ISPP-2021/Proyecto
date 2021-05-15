@@ -224,8 +224,8 @@ public class BusinessControllerTests {
         .statusCode(404)
         .extract().body().as(Problem.class);
 
-        assertEquals("Ineffected ID", p.getTitle());
-        assertEquals("The provided ID doesn't exist", p.getDetail());
+        assertEquals("Negocio incorrecto", p.getTitle());
+        assertEquals("El negocio no existe.", p.getDetail());
     }
     
     

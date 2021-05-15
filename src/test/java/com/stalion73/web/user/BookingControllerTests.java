@@ -99,7 +99,7 @@ public class BookingControllerTests {
     public void create() throws ParseException{
         Booking booking = new Booking();
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        Date date = format.parse("2021-05-14 15:23");
+        Date date = format.parse("3000-05-14 15:23");
         booking.setBookDate(date);
         Integer id = 5;
 
@@ -119,7 +119,7 @@ public class BookingControllerTests {
     public void createAutomated() throws ParseException{
         Booking booking = new Booking();
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        Date date = format.parse("2021-05-14 15:23");
+        Date date = format.parse("3000-05-14 15:23");
         booking.setBookDate(date);
         Integer id = 1;
 
@@ -154,8 +154,8 @@ public class BookingControllerTests {
             .statusCode(400)
             .extract().body().as(Problem.class);
 
-        assertEquals("Validation error", p.getTitle());
-        assertEquals("The provided booking was not successfuly validated", p.getDetail());
+        assertEquals("Error de validación", p.getTitle());
+        assertEquals("La reserva no se ha podido validar correctamente.", p.getDetail());
 
     }
 
@@ -179,8 +179,8 @@ public class BookingControllerTests {
             .statusCode(400)
             .extract().body().as(Problem.class);
 
-        assertEquals("Bad Time", p.getTitle());
-        assertEquals("Cannot book in the requested time, the bussiness seems to be closed", p.getDetail());
+        assertEquals("Error de validación", p.getTitle());
+        assertEquals("La reserva no se ha podido validar correctamente.", p.getDetail());
     }
 
     @Test
@@ -203,13 +203,13 @@ public class BookingControllerTests {
             .statusCode(400)
             .extract().body().as(Problem.class);
 
-        assertEquals("non-existent", p.getTitle());
-        assertEquals("Cannot book the requested service, because does not exist.", p.getDetail());
+        assertEquals("Error de validación", p.getTitle());
+        assertEquals("La reserva no se ha podido validar correctamente.", p.getDetail());
     }
 
     @Test
     public void cancel(){
-        Integer id = 1;
+        Integer id = 4;
 
         given().pathParam("id", id)
             .basePath("/bookings/{id}/cancel")
@@ -223,7 +223,7 @@ public class BookingControllerTests {
 
     @Test
     public void cancelMethodNotAllowed(){
-        Integer id = 1;
+        Integer id = 16;
 
         Problem p = given().pathParam("id", id)
             .basePath("/bookings/{id}/cancel")
@@ -235,7 +235,7 @@ public class BookingControllerTests {
             .statusCode(405)
             .extract().body().as(Problem.class);
 
-        assertEquals("Method not allowed", p.getTitle());
+        assertEquals("Cancelación no permitida", p.getTitle());
 
     }
 
@@ -253,8 +253,8 @@ public class BookingControllerTests {
             .statusCode(403)
             .extract().body().as(Problem.class);
         
-        assertEquals("Not owned", p.getTitle()); 
-        assertEquals("The request booking is not up to your provided credentials.", p.getDetail());
+        assertEquals("Servicio innaccesible", p.getTitle());
+        assertEquals("Este servicio no está en la lista de servicios disponibles.", p.getDetail());
     }
 
     @Test
@@ -320,8 +320,8 @@ public class BookingControllerTests {
         .statusCode(404)
         .extract().body().as(Problem.class);
 
-        assertEquals("Ineffected ID", p.getTitle()); 
-        assertEquals("The provided ID doesn't exist", p.getDetail());
+        assertEquals("Reserva incorrecta", p.getTitle());
+        assertEquals("La reserva no existe.", p.getDetail());
         
     }
 }

@@ -105,10 +105,9 @@ public class BusinessController {
             String username = (String)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             Supplier supplier = this.supplierService.findSupplierByUsername(username).get();
             
-            if(supplier.getSubscription()==SubscriptionType.PREMIUM
-            &&!supplier.getExpiration().equals(null)){
+            if(supplier.getSubscription()==SubscriptionType.PREMIUM && supplier.getExpiration() != null){
 
-                if(supplier.getExpiration().before(new Date())) {
+                if(supplier.getExpiration().after(new Date())) {
 
                     supplier.addBusiness(business);
                     business.setSupplier(supplier);

@@ -45,7 +45,7 @@ public class BookingServiceTest {
 	@Test
 	void findBookingByStatusTest() {
 		Collection<Booking> booking = bookingService.findBookingByStatus(Status.IN_PROGRESS);
-		Assertions.assertTrue(booking.size() == 14);
+		Assertions.assertTrue(booking.size() == 13);
 	}
 
 	@Test

@@ -60,8 +60,8 @@ public class UserControllerTests {
         .statusCode(404)
         .extract().body().as(Problem.class);
         
-        assertEquals("Ineffected ID", p.getTitle());
-        assertEquals("The provided ID doesn't exist", p.getDetail());
+        assertEquals("Usuario incorrecto", p.getTitle());
+        assertEquals("El usuario no existe.", p.getDetail());
         
     }
 
@@ -82,8 +82,8 @@ public class UserControllerTests {
         .statusCode(400)
         .extract().body().as(Problem.class);
         
-        assertEquals("Bad credentials", p.getTitle());
-        assertEquals("The provided user credentials didn't match any already existing record.", p.getDetail());
+        assertEquals("Datos incorrectos", p.getTitle());
+        assertEquals("Algunos datos son incorrectos. Revisalos.", p.getDetail());
     }
 
     @Test
@@ -278,8 +278,8 @@ public class UserControllerTests {
         .extract().body().as(Problem.class);
 
 
-        assertEquals("Validation error", p.getTitle());
-        assertEquals("The provided user was not successfuly validated", p.getDetail());
+        assertEquals("Error de validación", p.getTitle());
+        assertEquals("El usuario no se ha podido validar correctamente.", p.getDetail());
  
     }
 
@@ -307,8 +307,8 @@ public class UserControllerTests {
         .statusCode(400)
         .extract().body().as(Problem.class);
 
-        assertEquals("Already existing user", p.getTitle());
-        assertEquals("I wasn't possible to create an user because of username replication on the data.", p.getDetail());
+        assertEquals("El usuario ya existe", p.getTitle());
+        assertEquals("El nombre de usuario que usted a puesto ya existe en base de datos. Por favor, elija otro.", p.getDetail());
 
 
     }

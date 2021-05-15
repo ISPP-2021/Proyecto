@@ -95,6 +95,7 @@ public class BookingControllerTests {
             .then()
             .statusCode(200);
     }
+    //Falla
     @Test
     public void createFor() throws ParseException{
         // Servise servise= new Servise();
@@ -107,7 +108,7 @@ public class BookingControllerTests {
 
         Booking booking = new Booking();
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        Date date = format.parse("2021-05-14 15:23");
+        Date date = format.parse("3000-05-14 15:23");
         booking.setBookDate(date);
 
         given()
@@ -140,7 +141,7 @@ public class BookingControllerTests {
 
     @Test
     public void cancelMethodNotAllowed(){
-        Integer id = 1;
+        Integer id = 3;
 
         Problem p = given().pathParam("id", id)
             .basePath("/bookings/{id}/cancel")
@@ -152,7 +153,7 @@ public class BookingControllerTests {
             .statusCode(405)
             .extract().body().as(Problem.class);
 
-        assertEquals("Method not allowed", p.getTitle());
+        assertEquals("Cancelación no permitida", p.getTitle());
 
     }
     @Test
@@ -169,8 +170,8 @@ public class BookingControllerTests {
             .statusCode(403)
             .extract().body().as(Problem.class);
         
-        assertEquals("Not owned", p.getTitle()); 
-        assertEquals("The request booking is not up to your provided credentials.", p.getDetail());
+        assertEquals("Servicio innaccesible", p.getTitle());
+        assertEquals("Este servicio no está en la lista de servicios disponibles.", p.getDetail());
     }
 
 }

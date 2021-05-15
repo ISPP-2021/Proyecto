@@ -118,9 +118,11 @@ public class ServiseControllerTests {
             .statusCode(403)
             .extract().body().as(org.springframework.hateoas.mediatype.problem.Problem.class);
         
-            assertEquals("Not owned", p.getTitle());
-            assertEquals("The request servise is not up to your provided credentials.", p.getDetail());
-        
+            //assertEquals("Not owned", p.getTitle());
+            //assertEquals("The request servise is not up to your provided credentials.", p.getDetail());
+            assertEquals("No eres propietario", p.getTitle());
+            assertEquals("No eres el propietario de este negocio.", p.getDetail());
+
     }
 
     @Test
@@ -184,8 +186,8 @@ public class ServiseControllerTests {
         .statusCode(404)
         .extract().body().as(Problem.class);
 
-        assertEquals("Ineffected ID", p.getTitle());
-        assertEquals("The provided ID doesn't exist", p.getDetail());
+        assertEquals("Servicio incorrecto", p.getTitle());
+        assertEquals("El servicio no existe.", p.getDetail());
         
     }
 

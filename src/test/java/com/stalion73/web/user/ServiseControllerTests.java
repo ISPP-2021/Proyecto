@@ -146,8 +146,8 @@ public class ServiseControllerTests {
             .statusCode(404)
             .extract().body().as(org.springframework.hateoas.mediatype.problem.Problem.class);
         
-        assertEquals("Ineffected ID", p.getTitle());
-        assertEquals("The provided ID doesn't exist", p.getDetail());
+        assertEquals("Servicio incorrecto", p.getTitle());
+        assertEquals("El servicio no existe.", p.getDetail());
 
         given().queryParam("username", "josito")
         .basePath("/users/logout")
