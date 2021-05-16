@@ -98,7 +98,7 @@ public class UserController {
                 .headers(headers)
                 .body(Problem.create()
                     .withTitle("Datos incorrectos")
-                    .withDetail("Algunos datos son incorrectos. Revisalos."));
+                    .withDetail("Credenciales incorrectas. Compruebe los datos introducidos."));
 		}
 		return ResponseEntity.status(HttpStatus.OK).headers(headers).body(user.get());
 	}
@@ -157,7 +157,7 @@ public class UserController {
 				.headers(headers)
 				.body(Problem.create()
 					.withTitle("El usuario ya existe")
-					.withDetail("El nombre de usuario que usted a puesto ya existe en base de datos. Por favor, elija otro."));
+					.withDetail("El nombre de usuario que usted ha puesto ya existe en base de datos. Por favor, elija otro."));
 			}
 			Set<Authorities> authorities = new HashSet<>();
 			Authorities auth = new Authorities();
@@ -203,7 +203,7 @@ public class UserController {
 				.headers(headers)
 				.body(Problem.create()
 						.withTitle("El usuario ya existe")
-						.withDetail("El nombre de usuario que usted a puesto ya existe en base de datos. Por favor, elija otro."));
+						.withDetail("El nombre de usuario que usted ha puesto ya existe en base de datos. Por favor, elija otro."));
 			}
 			Set<Authorities> authorities = new HashSet<>();
 			Authorities auth = new Authorities();
