@@ -91,7 +91,7 @@ public class StripeController {
     @PostMapping("/subscription")
     public ResponseEntity<String> webhook(@RequestHeader("Stripe-Signature") String sigHeader,@RequestBody String body){
         String payload = body;
-        String endpointSecret = "whsec_nHPLf6di6qP8zY13CwkLu85DqSDGK6B2";
+        String endpointSecret = "whsec_T7OT824Ffd6MC8rzSvGy6HdzutO6bMS7";
 
         Event event = null;
 
