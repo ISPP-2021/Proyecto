@@ -1,0 +1,25 @@
+database: postgres
+spring:  
+  thymeleaf:
+    mode: HTML
+  h2:
+    console:
+      enabled: false
+  jpa:  
+    hibernate:  
+      ddl-auto: create
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true  
+  datasource:  
+    url: "jdbc:postgresql://localhost:5432/stalion73"  
+    username: stalion76  
+    password: stalion76
+    sqlScriptEncoding: UTF-8
+    type: org.apache.tomcat.jdbc.pool.DataSource
+stripe:
+  key:
+    public: pk_test_51IeGm1A32JKQZm0zQ9rDl6vL1KuiQYaGHiszd0nJ4dUDy5AW3K9tmHjJLdbdxbsPivHTtQ5JR7uvNlo1tAP1Of6v00oarGizZJ
+    secret: sk_test_51IeGm1A32JKQZm0ztexmoajNRqjPuSxawtIfVhuBY2iu6AcCFAd1ilkWRSg6rUNFyTZ2TPcJSQATc8aC8gep7FW600iew5bfrA
