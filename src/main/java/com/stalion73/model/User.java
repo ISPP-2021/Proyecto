@@ -13,7 +13,6 @@ import org.hibernate.envers.NotAudited;
 
 
 @Entity
-@Audited
 @Table(name = "users")
 public class User{
 	@Id
