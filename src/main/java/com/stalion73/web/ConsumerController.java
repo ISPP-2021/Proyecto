@@ -165,7 +165,7 @@ public class ConsumerController{
 		ConsumerController.setup();
 		Optional<Consumer> consumer = consumerService.findByIndex(id);
 		if(consumer.isPresent()){
-			consumerService.deleteByIndex(id);
+			consumerService.delete(consumer.get());
 			return ResponseEntity.noContent().build();
 		}
 

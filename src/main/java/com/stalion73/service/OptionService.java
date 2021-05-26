@@ -29,8 +29,8 @@ public class OptionService {
 
     @Transactional
     public void save(Option option){
-        Integer size = this.optionRepository.tableSize();
-        option.setIndex(size + 1);
+		Integer index = option.getIndex() != null ? option.getIndex() : this.optionRepository.tableSize() + 1;
+		option.setIndex(index);
         optionRepository.save(option);
     }
 

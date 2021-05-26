@@ -8,6 +8,7 @@ import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
+import com.stalion73.model.Business;
 import com.stalion73.model.image.Image;
 import com.stalion73.repository.ImageRepository;
 
@@ -31,19 +32,19 @@ public class ImageService {
     }
 
     @Transactional(readOnly = true)
-    public Collection<Image> findByBusiness(Integer business){
-        return this.imageRepository.findByBusiness(business);
+    public Collection<Image> findByBusiness(Integer business_index){
+        return this.imageRepository.findByBusiness(business_index);
     }
 
     @Transactional
     public void save(Image image) {
-        Integer size = this.imageRepository.tableSize();
-        image.setIndex(size + 1);
+        Integer index = image.getIndex() != null ? image.getIndex() : this.imageRepository.tableSize() + 1;
+		image.setIndex(index);
         this.imageRepository.save(image);
     }
 
     @Transactional
-    public void deleteAllByBusiness(Integer business) {
+    public void deleteAllByBusiness(Business business) {
         this.imageRepository.deleteAllByBusiness(business);
     }
 

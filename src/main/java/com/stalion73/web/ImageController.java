@@ -106,11 +106,11 @@ public class ImageController {
     
     }
 
-    @RequestMapping(value = "/business/{business_id}" , method = RequestMethod.GET)
-    public ResponseEntity<?> getImages(@PathVariable("business_id") Integer business_id) throws IOException, DataFormatException {
+    @RequestMapping(value = "/business/{business_index}" , method = RequestMethod.GET)
+    public ResponseEntity<?> getImages(@PathVariable("business_index") Integer business_index) throws IOException, DataFormatException {
         HttpHeaders headers = new HttpHeaders();
 
-        Set<Image> comprImgs = new HashSet<>(this.imageService.findByBusiness(business_id));
+        Set<Image> comprImgs = new HashSet<>(this.imageService.findByBusiness(business_index));
         Set<Image> descompImgs = new HashSet<>();
         for(Image compress : comprImgs){
             Image img = compress;
@@ -198,11 +198,11 @@ public class ImageController {
     
     }
 
-    @RequestMapping(value = "/business/{business_id}" , method = RequestMethod.DELETE)
-    public ResponseEntity<?> deleteImages(@PathVariable("business_id") Integer business_id) throws IOException, DataFormatException {
+    @RequestMapping(value = "/business/{business_index}" , method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteImages(@PathVariable("business_index") Integer business_index) throws IOException, DataFormatException {
         HttpHeaders headers = new HttpHeaders();
 
-        this.imageService.deleteAllByBusiness(business_id);
+        this.imageService.deleteAllByBusiness(this.businessService.findByIndex(business_index).get());
         return new ResponseEntity<>(headers, HttpStatus.NO_CONTENT);
     
     }

@@ -56,8 +56,8 @@ public class ConsumerService {
 
     @Transactional
     public void save(Consumer consumer){
-        Integer size = this.consumerRepository.tableSize();
-        consumer.setIndex(size + 1);
+		Integer index = consumer.getIndex() != null ? consumer.getIndex() : this.consumerRepository.tableSize() + 1;
+		consumer.setIndex(index);
         consumerRepository.save(consumer);
         User user = consumer.getUser();
 		userService.saveUser(user);

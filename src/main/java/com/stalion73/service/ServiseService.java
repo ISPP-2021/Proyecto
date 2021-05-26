@@ -35,8 +35,8 @@ public class ServiseService {
 
     @Transactional
     public void save(Servise servise){
-        Integer size = this.serviseRepository.tableSize();
-        servise.setIndex(size + 1);
+		Integer index = servise.getIndex() != null ? servise.getIndex() : this.serviseRepository.tableSize() + 1;
+		servise.setIndex(index);
         serviseRepository.save(servise);
     }
 

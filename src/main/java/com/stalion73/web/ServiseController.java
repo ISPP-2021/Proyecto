@@ -173,7 +173,7 @@ public class ServiseController {
 	public ResponseEntity<?> delete(@PathVariable("id") Integer id) {
         Optional<Servise> servise = this.serviseService.findByIndex(id);
 		if(servise.isPresent()){
-            this.serviseService.deleteByIndex(id);
+            this.serviseService.delete(servise.get());
 			return ResponseEntity.noContent().build();
 		}else{
             return ResponseEntity

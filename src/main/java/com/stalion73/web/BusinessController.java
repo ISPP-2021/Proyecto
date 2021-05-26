@@ -236,7 +236,7 @@ public class BusinessController {
     public ResponseEntity<?> delete(@PathVariable("id") Integer id) {
         Optional<Business> business = this.businessService.findByIndex(id);
         if (business.isPresent()) {
-            this.businessService.deleteByIndex(id);
+            this.businessService.delete(business.get());
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

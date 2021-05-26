@@ -39,4 +39,6 @@ public interface BusinessRepository extends CrudRepository<Business, Integer> {
 	@Query("delete from Business b where b.index =:index")
 	void deleteByIndex(@Param("index") Integer index);
 
+	void delete(Business business);
+
 }

@@ -36,8 +36,8 @@ public class BookingService {
 
 	@Transactional
 	public void save(Booking booking) {
-		Integer size = this.bookingRepository.tableSize();
-		booking.setIndex(size + 1);
+		Integer index = booking.getIndex() != null ? booking.getIndex() : this.bookingRepository.tableSize() + 1;
+		booking.setIndex(index);
 		bookingRepository.save(booking);
 	}
 

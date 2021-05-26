@@ -35,8 +35,8 @@ public class BusinessService {
 
 	@Transactional
 	public void save(Business business) {
-		Integer size = this.businessRepository.tableSize();
-		business.setIndex(size + 1);
+		Integer index = business.getIndex() != null ? business.getIndex() : this.businessRepository.tableSize() + 1;
+		business.setIndex(index);
 		businessRepository.save(business);
 	}
 

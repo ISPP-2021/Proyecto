@@ -68,8 +68,8 @@ public class SupplierService {
 
     @Transactional
     public void save(Supplier supplier){
-        Integer size = this.supplierRepository.tableSize();
-        supplier.setIndex(size + 1);
+        Integer index = supplier.getIndex() != null ? supplier.getIndex() : this.supplierRepository.tableSize() + 1;
+		supplier.setIndex(index);
         if(supplier.getSubscription()==null){
             
             supplier.setSubscription(SubscriptionType.FREE);
