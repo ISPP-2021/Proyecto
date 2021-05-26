@@ -35,7 +35,7 @@ public class ServiseServiceTest {
 
 	@Test
 	void findServiseByIdTest() {
-		Optional<Servise> servise = this.serviseService.findById(1);
+		Optional<Servise> servise = this.serviseService.findByIndex(1);
 		Assertions.assertTrue(servise.get().getName().equals("Comer")
 				&& servise.get().getDescription().equals("Ven a comer al restaurante y disfruta")
 				&& servise.get().getPrice() == 15 && servise.get().getDuration() == 60
@@ -46,9 +46,9 @@ public class ServiseServiceTest {
 	@Test
 	void saveServiceTest() {
 		Business business = new Business();
-		business.setId(1);
+		business.setIndex(1);
 		Servise servise = new Servise();
-		servise.setId(9);
+		servise.setIndex(9);
 		servise.setName("Servicio");
 		servise.setDescription("Esto es un servicio");
 		servise.setPrice(2.5);
@@ -66,15 +66,15 @@ public class ServiseServiceTest {
 
 	@Test
 	void deleteServiseByIdTest() {
-		Servise servise = this.serviseService.findById(1).get();
-		this.serviseService.deleteById(servise.getId());
+		Servise servise = this.serviseService.findByIndex(1).get();
+		this.serviseService.deleteByIndex(servise.getIndex());
 		List<Servise> servises = (List<Servise>) this.serviseService.findAll();
 		Assertions.assertTrue(servises.size() == count - 1);
 	}
 
 	@Test
 	void deleteServiseTest() {
-		Servise servise = this.serviseService.findById(2).get();
+		Servise servise = this.serviseService.findByIndex(2).get();
 		this.serviseService.delete(servise);
 		List<Servise> servises = (List<Servise>) this.serviseService.findAll();
 		Assertions.assertTrue(servises.size() == count - 1);

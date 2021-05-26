@@ -38,7 +38,7 @@ public class BookingServiceTest {
 
 	@Test
 	void findBookingByIdTest() {
-		Optional<Booking> booking = this.bookingService.findById(1);
+		Optional<Booking> booking = this.bookingService.findByIndex(1);
 		Assertions.assertTrue(booking.get().getStatus().equals(Status.IN_PROGRESS));
 	}
 
@@ -51,11 +51,11 @@ public class BookingServiceTest {
 	@Test
 	void saveBookingTest() {
 		Consumer consumer = new Consumer();
-		consumer.setId(1);
+		consumer.setIndex(1);
 		Servise servise = new Servise();
-		servise.setId(1);
+		servise.setIndex(1);
 		Booking booking = new Booking();
-		booking.setId(5);
+		booking.setIndex(5);
 		booking.setBookDate(new GregorianCalendar(2021, 07, 07).getTime());
 		booking.setEmisionDate(new GregorianCalendar(2021, 06, 06).getTime());
 		booking.setStatus(Status.IN_PROGRESS);
@@ -69,15 +69,15 @@ public class BookingServiceTest {
 
 	@Test
 	void deleteBookingByIdTest() {
-		Booking booking = this.bookingService.findById(1).get();
-		this.bookingService.deleteById(booking.getId());
+		Booking booking = this.bookingService.findByIndex(1).get();
+		this.bookingService.deleteByIndex(booking.getIndex());
 		List<Booking> bookings = (List<Booking>) this.bookingService.findAll();
 		Assertions.assertTrue(bookings.size() == count - 1);
 	}
 
 	@Test
 	void deleteBookingTest() {
-		Booking booking = this.bookingService.findById(2).get();
+		Booking booking = this.bookingService.findByIndex(2).get();
 		this.bookingService.delete(booking);
 		List<Booking> bookings = (List<Booking>) this.bookingService.findAll();
 		Assertions.assertTrue(bookings.size() == count - 1);

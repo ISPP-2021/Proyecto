@@ -19,13 +19,13 @@ public class BookingModelAssembler implements RepresentationModelAssembler<Booki
   public EntityModel<Booking> toModel(Booking booking) {
     // Unconditional links to single-item resource and aggregate root
     EntityModel<Booking> bookingModel = EntityModel.of(booking, 
-        linkTo(methodOn(BookingController.class).one(booking.getId())).withSelfRel(),
+        linkTo(methodOn(BookingController.class).one(booking.getIndex())).withSelfRel(),
         linkTo(methodOn(BookingController.class).all()).withRel("/bookings"));
         
     // Conditional links based on state of the order
     if (booking.getStatus() == Status.IN_PROGRESS) {
-      bookingModel.add(linkTo(methodOn(BookingController.class).cancel(booking.getId())).withRel("cancel"));
-      bookingModel.add(linkTo(methodOn(BookingController.class).complete(booking.getId())).withRel("complete"));
+      bookingModel.add(linkTo(methodOn(BookingController.class).cancel(booking.getIndex())).withRel("cancel"));
+      bookingModel.add(linkTo(methodOn(BookingController.class).complete(booking.getIndex())).withRel("complete"));
     }
 
     return bookingModel;

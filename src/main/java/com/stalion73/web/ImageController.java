@@ -129,7 +129,7 @@ public class ImageController {
         //headers.setContentType(MediaType.IMAGE_JPEG);
         Random randGen = new Random();
         Set<Image> images = new HashSet<>();
-        Business business = this.businessService.findById(business_id).get();
+        Business business = this.businessService.findByIndex(business_id).get();
 
         for(MultipartFile file : Arrays.asList(files)){
             Integer uid = randGen.nextInt(1000000);
@@ -178,7 +178,7 @@ public class ImageController {
         image.setDecompress(file.getBytes().length);
         image.setCompress(img.length);
         image.setImg(img);
-        Business business = this.businessService.findById(id).get();
+        Business business = this.businessService.findByIndex(id).get();
         image.setBusiness(business);
         
         if(image.getCompress() > 10000000) {

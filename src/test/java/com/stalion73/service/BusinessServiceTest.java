@@ -38,7 +38,7 @@ public class BusinessServiceTest {
 
 	@Test
 	void findBusinessByIdTest() {
-		Optional<Business> business = this.businessService.findById(1);
+		Optional<Business> business = this.businessService.findByIndex(1);
 		Assertions.assertTrue(
 				business.get().getName().equals("Pizzería Gus") && business.get().getAddress().equals("Calle Manuel Benítez")
 						&& business.get().getBusinessType().equals(BusinessType.RESTAURANT)
@@ -48,11 +48,11 @@ public class BusinessServiceTest {
 	@Test
 	void saveBusinessTest() {
 		Supplier supplier = new Supplier();
-		supplier.setId(1);
+		supplier.setIndex(1);
 		Option option = new Option();
-		option.setId(1);
+		option.setIndex(1);
 		Business business = new Business();
-		business.setId(5);
+		business.setIndex(5);
 		business.setName("Negocio");
 		business.setAddress("Calle Calle");
 		business.setBusinessType(BusinessType.RESTAURANT);
@@ -67,15 +67,15 @@ public class BusinessServiceTest {
 
 	@Test
 	void deleteBusinessByIdTest() {
-		Business business = this.businessService.findById(1).get();
-		this.businessService.deleteById(business.getId());
+		Business business = this.businessService.findByIndex(1).get();
+		this.businessService.deleteByIndex(business.getIndex());
 		List<Business> businessList = (List<Business>) this.businessService.findAll();
 		Assertions.assertTrue(businessList.size() == count - 1);
 	}
 
 	@Test
 	void deleteBusinessTest() {
-		Business business = this.businessService.findById(2).get();
+		Business business = this.businessService.findByIndex(2).get();
 		this.businessService.delete(business);
 		List<Business> businessList = (List<Business>) this.businessService.findAll();
 		Assertions.assertTrue(businessList.size() == count - 1);
@@ -101,7 +101,7 @@ public class BusinessServiceTest {
 
 	@Test
 	void findBusinessBySupplierId() {
-		Collection<Business> b = businessService.findBusinessBySupplierId(1);
+		Collection<Business> b = businessService.findBusinessBySupplierIndex(1);
 		Assertions.assertTrue(b.size() == 2);
 	}
 

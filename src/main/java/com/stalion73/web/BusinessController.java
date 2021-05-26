@@ -79,7 +79,7 @@ public class BusinessController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<?> one(@PathVariable("id") Integer id) {
-        Optional<Business> business = this.businessService.findById(id);
+        Optional<Business> business = this.businessService.findByIndex(id);
         if (!business.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE).headers(headers)
@@ -162,7 +162,7 @@ public class BusinessController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers).body(Problem.create()
                     .withTitle("Error de validación")
                     .withDetail("El negocio no se ha podido validar correctamente."));
-        } else if (!this.businessService.findById(id).isPresent()) {
+        } else if (!this.businessService.findByIndex(id).isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE).headers(headers)
                     .body(Problem.create()
@@ -170,14 +170,14 @@ public class BusinessController {
                             .withDetail("El negocio no existe."));
         } else {
             // business(name, address, businessType, automatedAccept, Supplier, Servises)
-            Business updatedBusiness = this.businessService.findById(id).map(business -> {
+            Business updatedBusiness = this.businessService.findByIndex(id).map(business -> {
                 this.businessService.update(id, newBusiness);
                 Supplier supplier;
                 if (newBusiness.getSupplier() == null) {
                     supplier = business.getSupplier();
                 } else {
-                    this.supplierService.update(business.getId(), newBusiness.getSupplier());
-                    supplier = this.supplierService.findById(business.getId()).get();
+                    this.supplierService.update(business.getIndex(), newBusiness.getSupplier());
+                    supplier = this.supplierService.findByIndex(business.getIndex()).get();
                 }
                 business.setSupplier(supplier);
                 this.businessService.save(business);
@@ -199,7 +199,7 @@ public class BusinessController {
             headers.add("errors", errors.toJSON());
             return new ResponseEntity<Servise>(headers, HttpStatus.BAD_REQUEST);
         }
-        Business business = this.businessService.findById(id).get();
+        Business business = this.businessService.findByIndex(id).get();
         servise.setBussiness(business);
         this.serviseService.save(servise);
         business.addServise(servise);
@@ -218,7 +218,7 @@ public class BusinessController {
             headers.add("errors", errors.toJSON());
             return new ResponseEntity<Servise>(headers, HttpStatus.BAD_REQUEST);
         }
-        Business business = this.businessService.findById(id).get();
+        Business business = this.businessService.findByIndex(id).get();
 
         servises.stream()
                     .map(servise -> {
@@ -234,9 +234,9 @@ public class BusinessController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "application/json")
     public ResponseEntity<?> delete(@PathVariable("id") Integer id) {
-        Optional<Business> business = this.businessService.findById(id);
+        Optional<Business> business = this.businessService.findByIndex(id);
         if (business.isPresent()) {
-            this.businessService.deleteById(id);
+            this.businessService.deleteByIndex(id);
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -249,7 +249,7 @@ public class BusinessController {
 
     @RequestMapping(value = "/booking/{idBooking}", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<?> businessByBooking(@PathVariable("idBooking") Integer id) {
-        Optional<Booking> booking = this.bookingService.findById(id);
+        Optional<Booking> booking = this.bookingService.findByIndex(id);
         if (!booking.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE).headers(headers)

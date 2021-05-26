@@ -16,13 +16,16 @@ public interface ImageRepository extends CrudRepository<Image, Integer> {
     //@Query("SELECT img FROM Image img WHERE img.name LIKE %:name")
     Optional<Image> findByName(@Param("name") String name);
 
-    @Query("SELECT img FROM Image img WHERE img.business.id = :business")
+    @Query("SELECT img FROM Image img WHERE img.business.index =:business")
     Collection<Image> findByBusiness(@Param("business") Integer business );
 
     @Modifying
-    @Query("delete from Image img where img.business.id = :business")
+    @Query("delete from Image img where img.business.index =:business")
     void deleteAllByBusiness(@Param("business") Integer business);
     // long deleteByTitle(String title);
+
+    @Query("SELECT count(x) FROM Image x")
+    Integer tableSize();
 
 
 }

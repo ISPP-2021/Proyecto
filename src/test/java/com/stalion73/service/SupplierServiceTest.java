@@ -40,7 +40,7 @@ public class SupplierServiceTest {
 
 	@Test
 	void findSupplierByIdTest() {
-		Optional<Supplier> supplier = this.supplierService.findById(1);
+		Optional<Supplier> supplier = this.supplierService.findByIndex(1);
 		Assertions.assertTrue(supplier.get().getName().equals("Augusto")
 				&& supplier.get().getLastname().equals("García") && supplier.get().getDni().equals("00000000A")
 				&& supplier.get().getEmail().equals("augusto@gmail.com")
@@ -65,14 +65,14 @@ public class SupplierServiceTest {
 		User user = new User();
 		user.setUsername("pablito");
 		Supplier supplier = new Supplier();
-		supplier.setId(4);
+		supplier.setIndex(4);
 		supplier.setName("Pablo");
 		supplier.setLastname("Calvo");
 		supplier.setDni("12345678G");
 		supplier.setEmail("pablocalvo@gmail.com");
 		supplier.setUser(user);
 		this.supplierService.save(supplier);
-		Optional<Supplier> suppliers = this.supplierService.findById(4);
+		Optional<Supplier> suppliers = this.supplierService.findByIndex(4);
 		Assertions.assertTrue(suppliers.get().getName().equals("Pablo") && suppliers.get().getLastname().equals("Calvo")
 				&& suppliers.get().getDni().equals("12345678G")
 				&& suppliers.get().getEmail().equals("pablocalvo@gmail.com"));
@@ -80,15 +80,15 @@ public class SupplierServiceTest {
 
 	@Test
 	void deleteSupplierByIdTest() {
-		Supplier supplier = this.supplierService.findById(1).get();
-		this.supplierService.deleteById(supplier.getId());
+		Supplier supplier = this.supplierService.findByIndex(1).get();
+		this.supplierService.deleteByIndex(supplier.getIndex());
 		List<Supplier> suppliers = (List<Supplier>) this.supplierService.findAll();
 		Assertions.assertTrue(suppliers.size() == count - 1);
 	}
 
 	@Test
 	void deleteSupplierTest() {
-		Supplier supplier = this.supplierService.findById(2).get();
+		Supplier supplier = this.supplierService.findByIndex(2).get();
 		this.supplierService.delete(supplier);
 		List<Supplier> suppliers = (List<Supplier>) this.supplierService.findAll();
 		Assertions.assertTrue(suppliers.size() == count - 1);
@@ -96,8 +96,8 @@ public class SupplierServiceTest {
 
 	@Test
 	void deleteBusinessBySupplierIdTest() {
-		Supplier supplier = this.supplierService.findById(1).get();
-		this.supplierService.deleteBusinessBySupplierId(supplier.getId());
+		Supplier supplier = this.supplierService.findByIndex(1).get();
+		this.supplierService.deleteBusinessBySupplierIndex(supplier.getIndex());
 		List<Business> business = (List<Business>) this.businessService.findAll();
 		Assertions.assertTrue(business.size() == 6);
 	}

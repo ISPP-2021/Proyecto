@@ -37,6 +37,8 @@ public class ImageService {
 
     @Transactional
     public void save(Image image) {
+        Integer size = this.imageRepository.tableSize();
+        image.setIndex(size + 1);
         this.imageRepository.save(image);
     }
 

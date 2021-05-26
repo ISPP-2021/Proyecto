@@ -117,7 +117,7 @@ public class UserController {
 		    Supplier user = this.supplierService.findSupplierByUsername((String)SecurityContextHolder.getContext()
 												.getAuthentication().getPrincipal()).get();
 
-			Collection<Business> business = this.businessService.findBusinessBySupplierId(user.getId());
+			Collection<Business> business = this.businessService.findBusinessBySupplierIndex(user.getIndex());
 			if(business.isEmpty()){
 				return ResponseEntity.status(HttpStatus.OK).headers(headers).body(user);
 			}

@@ -65,7 +65,7 @@ public class ServiseController {
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<?> one(@PathVariable("id") Integer id) {
-		Optional<Servise> servise = this.serviseService.findById(id);
+		Optional<Servise> servise = this.serviseService.findByIndex(id);
 		if (!servise.isPresent()) {
 			return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
@@ -99,7 +99,7 @@ public class ServiseController {
 							.withTitle("Error de validación")
 							.withDetail("El servicio no se ha podido validar correctamente."));
 			}else{
-				Optional<Business> b = this.businessService.findById(id);
+				Optional<Business> b = this.businessService.findByIndex(id);
 				if(b.isPresent()){
 					Business business = b.get();
 					if(business.getSupplier().getId().equals(supplier.getId())){
@@ -151,7 +151,7 @@ public class ServiseController {
 				.body(Problem.create()
 						.withTitle("Error de validación")
 						.withDetail("El servicio no se ha podido validar correctamente."));
-		}else if(!this.serviseService.findById(id).isPresent()){
+		}else if(!this.serviseService.findByIndex(id).isPresent()){
 			return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .headers(headers)
@@ -160,7 +160,7 @@ public class ServiseController {
 						.withDetail("El servicio no existe."));
 		}else{
 			this.serviseService.update(id, newServise);
-			newServise.setId(id);	
+			newServise.setIndex(id);	
 			return ResponseEntity 
 					.status(HttpStatus.PARTIAL_CONTENT)
 					.headers(headers)
@@ -171,9 +171,9 @@ public class ServiseController {
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "application/json")
 	public ResponseEntity<?> delete(@PathVariable("id") Integer id) {
-        Optional<Servise> servise = this.serviseService.findById(id);
+        Optional<Servise> servise = this.serviseService.findByIndex(id);
 		if(servise.isPresent()){
-            this.serviseService.deleteById(id);
+            this.serviseService.deleteByIndex(id);
 			return ResponseEntity.noContent().build();
 		}else{
             return ResponseEntity

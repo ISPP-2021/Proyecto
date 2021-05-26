@@ -99,7 +99,7 @@ public class BookingController {
     
     @GetMapping("/{id}")
     public ResponseEntity<?> one(@PathVariable("id") Integer id) {
-        Optional<Booking> booking = bookingService.findById((id));
+        Optional<Booking> booking = bookingService.findByIndex((id));
         if(booking.isPresent()){
             return ResponseEntity
                 .status(HttpStatus.OK)
@@ -137,7 +137,7 @@ public class BookingController {
                 String username = (String)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
                 Consumer consumer = this.consumerService.findConsumerByUsername(username).get();
                 booking.setConsumer(consumer);
-                Optional<Servise> s = this.serviseService.findById(id);
+                Optional<Servise> s = this.serviseService.findByIndex(id);
                 if(s.isPresent()){
 
                     
@@ -243,10 +243,10 @@ public class BookingController {
                                                     .findAny().isPresent())
                                     .findAny();
             if(business.isPresent()){
-                Optional<Consumer> c = this.consumerService.findById(id_consumer);
+                Optional<Consumer> c = this.consumerService.findByIndex(id_consumer);
                 if(c.isPresent()){
                     Consumer consumer = c.get();
-                    Servise servise = this.serviseService.findById(id_servise).get();
+                    Servise servise = this.serviseService.findByIndex(id_servise).get();
                     Status initState = Status.IN_PROGRESS;
                     booking.setStatus(initState);
                     booking.setConsumer(consumer);
@@ -309,7 +309,7 @@ public class BookingController {
                 .body(Problem.create()
                         .withTitle("Error de validación")
                         .withDetail("La reserva no se ha podido validar correctamente."));
-        }else if(!this.bookingService.findById(id).isPresent()){
+        }else if(!this.bookingService.findByIndex(id).isPresent()){
             return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
@@ -333,7 +333,7 @@ public class BookingController {
             Consumer consumer = this.consumerService
             .findConsumerByUsername((String)SecurityContextHolder.getContext()
                                                 .getAuthentication().getPrincipal()).get();
-            Optional<Booking> b = this.bookingService.findById(id);
+            Optional<Booking> b = this.bookingService.findByIndex(id);
             if(b.isPresent()){
                 Booking booking = b.get();
                 Servise servise = booking.getServise();
@@ -434,7 +434,7 @@ public class BookingController {
 
     @PutMapping("/{id}/complete")
     public ResponseEntity<?> complete(@PathVariable Integer id) {
-        Booking booking = this.bookingService.findById(id).get();        
+        Booking booking = this.bookingService.findByIndex(id).get();        
         if (booking.getStatus() == Status.IN_PROGRESS) {
             booking.setStatus(Status.COMPLETED);
             this.bookingService.save(booking);
@@ -464,9 +464,9 @@ public class BookingController {
 
     @DeleteMapping("/{id}")
     ResponseEntity<?> delete(@PathVariable Integer id) {
-        Optional<Booking> booking = this.bookingService.findById(id);
+        Optional<Booking> booking = this.bookingService.findByIndex(id);
         if(booking.isPresent()){
-            this.bookingService.deleteById(id);
+            this.bookingService.deleteByIndex(id);
             return ResponseEntity.noContent().build();
         }else{
             return ResponseEntity

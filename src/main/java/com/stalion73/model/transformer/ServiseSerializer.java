@@ -16,7 +16,7 @@ public class ServiseSerializer extends JsonSerializer<Servise> {
 
 	@Override
 	public void serialize(Servise value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-		gen.writeString(value.getId().toString());		
+		gen.writeString(value.getIndex().toString());		
 	}
 
 }

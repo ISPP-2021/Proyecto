@@ -36,6 +36,8 @@ public class ProfileImageService {
 
     @Transactional
     public void save(ProfileImage profileImage) {
+        Integer size = this.profileImageRepository.tableSize();
+        profileImage.setIndex(size + 1);
         this.profileImageRepository.save(profileImage);
     }
 

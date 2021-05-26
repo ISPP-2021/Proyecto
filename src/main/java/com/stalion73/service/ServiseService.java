@@ -29,12 +29,14 @@ public class ServiseService {
     }
     
     @Transactional(readOnly = true)
-    public Optional<Servise> findById(Integer id){
-      return serviseRepository.findById(id);
+    public Optional<Servise> findByIndex(Integer index){
+      return serviseRepository.findByIndex(index);
     }
 
     @Transactional
     public void save(Servise servise){
+        Integer size = this.serviseRepository.tableSize();
+        servise.setIndex(size + 1);
         serviseRepository.save(servise);
     }
 
@@ -66,8 +68,8 @@ public class ServiseService {
     }
 
     @Transactional
-    public void deleteById(Integer id){
-        serviseRepository.deleteById(id);
+    public void deleteByIndex(Integer id){
+        serviseRepository.deleteByIndex(id);
     }
     
     @Transactional

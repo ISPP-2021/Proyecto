@@ -29,18 +29,20 @@ public class BusinessService {
 	}
 
 	@Transactional(readOnly = true)
-	public Optional<Business> findById(Integer id) {
-		return businessRepository.findById(id);
+	public Optional<Business> findByIndex(Integer index) {
+		return businessRepository.findByIndex(index);
 	}
 
 	@Transactional
 	public void save(Business business) {
+		Integer size = this.businessRepository.tableSize();
+		business.setIndex(size + 1);
 		businessRepository.save(business);
 	}
 
 	@Transactional
-	public void deleteById(Integer id) {
-		businessRepository.deleteById(id);
+	public void deleteByIndex(Integer index) {
+		businessRepository.deleteByIndex(index);
 	}
 
 	@Transactional
@@ -93,7 +95,7 @@ public class BusinessService {
 	}
 
     @Transactional
-    public Collection<Business> findBusinessBySupplierId(Integer supplierId) {
-        return this.businessRepository.findBusinessBySupplierId(supplierId);
+    public Collection<Business> findBusinessBySupplierIndex(Integer supplierIndex) {
+        return this.businessRepository.findBusinessBySupplierIndex(supplierIndex);
     }
 }

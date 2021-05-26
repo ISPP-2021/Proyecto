@@ -31,6 +31,8 @@ public class AuthoritiesService {
 
 	@Transactional
 	public void saveAuthorities(Authorities authorities) throws DataAccessException {
+		Integer size = this.authoritiesRepository.tableSize();
+		authorities.setIndex(size);
 		authoritiesRepository.save(authorities);
 	}
 	

@@ -30,12 +30,14 @@ public class BookingService {
 	}
 
 	@Transactional(readOnly = true)
-	public Optional<Booking> findById(Integer id) {
-		return bookingRepository.findById(id);
+	public Optional<Booking> findByIndex(Integer index) {
+		return bookingRepository.findByIndex(index);
 	}
 
 	@Transactional
 	public void save(Booking booking) {
+		Integer size = this.bookingRepository.tableSize();
+		booking.setIndex(size + 1);
 		bookingRepository.save(booking);
 	}
 
@@ -60,8 +62,8 @@ public class BookingService {
 	}
 
 	@Transactional
-	public void deleteById(Integer id) {
-		bookingRepository.deleteById(id);
+	public void deleteByIndex(Integer index) {
+		bookingRepository.deleteByIndex(index);
 	}
 
 	@Transactional

@@ -82,7 +82,7 @@ public class ConsumerController{
 	@GetMapping("/{id}")
     public ResponseEntity<?> one(@PathVariable Integer id) {
         ConsumerController.setup();
-		Optional<Consumer> consumer = consumerService.findById((id));
+		Optional<Consumer> consumer = consumerService.findByIndex((id));
         
 		if(!consumer.isPresent()){
 			return ResponseEntity
@@ -150,7 +150,7 @@ public class ConsumerController{
 
 			this.consumerService.update(id, newConsumer);  
 			
-			newConsumer.setId(id);
+			newConsumer.setIndex(id);
 			EntityModel<Consumer> entityModel = assembler.toModel(newConsumer);
 	
 			return ResponseEntity 
@@ -163,9 +163,9 @@ public class ConsumerController{
 	@DeleteMapping("/{id}")
 	ResponseEntity<?> delete(@PathVariable Integer id) {
 		ConsumerController.setup();
-		Optional<Consumer> consumer = consumerService.findById(id);
+		Optional<Consumer> consumer = consumerService.findByIndex(id);
 		if(consumer.isPresent()){
-			consumerService.deleteById(id);
+			consumerService.deleteByIndex(id);
 			return ResponseEntity.noContent().build();
 		}
 

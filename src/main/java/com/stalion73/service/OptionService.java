@@ -29,12 +29,14 @@ public class OptionService {
 
     @Transactional
     public void save(Option option){
+        Integer size = this.optionRepository.tableSize();
+        option.setIndex(size + 1);
         optionRepository.save(option);
     }
 
     @Transactional
     public void delete(Option option) {
-        int id = businessRepository.findBusinessByOptionId(option.getId()).getId();
+        int id = businessRepository.findBusinessByOptionIndex(option.getIndex()).getIndex();
         businessRepository.deleteById(id);
         optionRepository.delete(option);
     }
@@ -60,7 +62,7 @@ public class OptionService {
                         }
                     )
                     .orElseGet(()->{
-                        newOption.setId(id);
+                        newOption.setIndex(id);
                         this.optionRepository.save(newOption);
                         return newOption;
                     });

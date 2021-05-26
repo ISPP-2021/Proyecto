@@ -2,6 +2,9 @@ package com.stalion73.service;
 
 import java.util.Collection;
 import java.util.Optional;
+
+import javax.persistence.Index;
+
 import java.util.List;
 import java.util.ArrayList;
 
@@ -47,12 +50,14 @@ public class ConsumerService {
     }
     
     @Transactional(readOnly = true)
-    public Optional<Consumer> findById(Integer id){
-      return consumerRepository.findById(id);
+    public Optional<Consumer> findByIndex(Integer index){
+      return consumerRepository.findByIndex(index);
     }
 
     @Transactional
     public void save(Consumer consumer){
+        Integer size = this.consumerRepository.tableSize();
+        consumer.setIndex(size + 1);
         consumerRepository.save(consumer);
         User user = consumer.getUser();
 		userService.saveUser(user);
@@ -62,8 +67,8 @@ public class ConsumerService {
     }
 
     @Transactional
-    public void deleteById(Integer id){
-        consumerRepository.deleteById(id);
+    public void deleteByIndex(Integer index){
+        consumerRepository.deleteByIndex(index);
     }
 
     @Transactional

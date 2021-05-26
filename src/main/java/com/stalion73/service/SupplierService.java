@@ -34,13 +34,13 @@ public class SupplierService {
     }
     
     @Transactional(readOnly = true)
-    public Optional<Supplier> findById(Integer id){
-      return supplierRepository.findById(id);
+    public Optional<Supplier> findByIndex(Integer index){
+      return supplierRepository.findByIndex(index);
     }
 
     @Transactional(readOnly = true)
-    public void deleteById(Integer id){
-        supplierRepository.deleteById(id);
+    public void deleteByIndex(Integer index){
+        supplierRepository.deleteByIndex(index);
     }
 
     @Transactional
@@ -49,14 +49,14 @@ public class SupplierService {
     }
 
     @Transactional
-    public Optional<Booking> findBookingOnSupplier(Supplier supplier, Integer id){
+    public Optional<Booking> findBookingOnSupplier(Supplier supplier, Integer index){
         Set<Business> business = supplier.getBusiness();
         for(Business b : business){
             Set<Servise> servises = b.getServices();
             for(Servise s : servises){
                 Set<Booking> bookings = s.getBookings();
                 for(Booking book : bookings){
-                    if(book.getId().equals(id)){
+                    if(book.getIndex().equals(index)){
                         return Optional.of(book);
                     }
                 }
@@ -68,6 +68,8 @@ public class SupplierService {
 
     @Transactional
     public void save(Supplier supplier){
+        Integer size = this.supplierRepository.tableSize();
+        supplier.setIndex(size + 1);
         if(supplier.getSubscription()==null){
             
             supplier.setSubscription(SubscriptionType.FREE);
@@ -84,18 +86,18 @@ public class SupplierService {
 
     }*/
     
-    public void deleteBusinessBySupplierId(Integer id){
-        businessRepository.findBusinessBySupplierId(id).stream()
+    public void deleteBusinessBySupplierIndex(Integer index){
+        businessRepository.findBusinessBySupplierIndex(index).stream()
                                                         .forEach(business -> {
-                                                        businessRepository.deleteById(business.getId());
+                                                        businessRepository.deleteById(business.getIndex());
                                                         });
     }
 
     @Transactional
     public void delete(Supplier supplier) {
-        businessRepository.findBusinessBySupplierId(supplier.getId()).stream()
+        businessRepository.findBusinessBySupplierIndex(supplier.getIndex()).stream()
                                         .forEach(business -> {
-                                         businessRepository.deleteById(business.getId());
+                                         businessRepository.deleteByIndex(business.getIndex());
                                          });
         supplierRepository.delete(supplier);
     }
@@ -117,7 +119,7 @@ public class SupplierService {
                         }
                     ) 
                     .orElseGet(() -> {
-                        newSupplier.setId(id);
+                        newSupplier.setIndex(id);
                         this.supplierRepository.save(newSupplier);
                         return newSupplier;
                     });
