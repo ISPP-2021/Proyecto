@@ -14,9 +14,9 @@ spring:
       hibernate:
         format_sql: true  
   datasource:  
-    url: "jdbc:postgresql://localhost:5432/stalion73"  
-    username: stalion76  
-    password: stalion76
+    url: "jdbc:postgresql://ec2-99-80-200-225.eu-west-1.compute.amazonaws.com:5432/d15ccopo42lqjv"  
+    username: wodjyuaxnbpqnj  
+    password: d9e00795489bae695643b4a9209335279a267ccd84ac0a8b28374377ac5356f4
     sqlScriptEncoding: UTF-8
     type: org.apache.tomcat.jdbc.pool.DataSource
 stripe:
