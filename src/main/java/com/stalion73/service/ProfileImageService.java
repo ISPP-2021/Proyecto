@@ -36,7 +36,8 @@ public class ProfileImageService {
 
     @Transactional
     public void save(ProfileImage profileImage) {
-		Integer index = profileImage.getIndex() != null ? profileImage.getIndex() : this.profileImageRepository.tableSize() + 1;
+		Integer index = profileImage.getIndex() != null ? profileImage.getIndex() : 
+            this.profileImageRepository.maxIndex() == null ? 1 : this.profileImageRepository.maxIndex() + 1;
 		profileImage.setIndex(index);
         this.profileImageRepository.save(profileImage);
     }

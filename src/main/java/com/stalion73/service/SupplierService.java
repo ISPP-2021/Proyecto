@@ -68,7 +68,7 @@ public class SupplierService {
 
     @Transactional
     public void save(Supplier supplier){
-        Integer index = supplier.getIndex() != null ? supplier.getIndex() : this.supplierRepository.tableSize() + 1;
+        Integer index = supplier.getIndex() != null ? supplier.getIndex() : this.supplierRepository.maxIndex() + 1;
 		supplier.setIndex(index);
         if(supplier.getSubscription()==null){
             
@@ -89,22 +89,18 @@ public class SupplierService {
     public void deleteBusinessBySupplierIndex(Integer index){
         businessRepository.findBusinessBySupplierIndex(index).stream()
                                                         .forEach(business -> {
-                                                        businessRepository.deleteById(business.getIndex());
+                                                        businessRepository.delete(business);
                                                         });
     }
 
     @Transactional
     public void delete(Supplier supplier) {
-        businessRepository.findBusinessBySupplierIndex(supplier.getIndex()).stream()
-                                        .forEach(business -> {
-                                         businessRepository.deleteByIndex(business.getIndex());
-                                         });
         supplierRepository.delete(supplier);
     }
 
     @Transactional
-    public void update(Integer id, Supplier newSupplier){
-        Supplier updatedSupplier = this.supplierRepository.findById(id)
+    public void update(Integer index, Supplier newSupplier){
+        Supplier updatedSupplier = this.supplierRepository.findByIndex(index)
                     .map(supplier -> {
                             String name = newSupplier.getName() == null ? supplier.getName() : newSupplier.getName();
                             supplier.setName(name);
@@ -119,7 +115,7 @@ public class SupplierService {
                         }
                     ) 
                     .orElseGet(() -> {
-                        newSupplier.setIndex(id);
+                        newSupplier.setIndex(index);
                         this.supplierRepository.save(newSupplier);
                         return newSupplier;
                     });

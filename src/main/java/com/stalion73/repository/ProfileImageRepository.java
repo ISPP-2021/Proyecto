@@ -20,4 +20,7 @@ public interface ProfileImageRepository extends CrudRepository<ProfileImage, Int
     @Query("SELECT count(x) FROM ProfileImage x")
     Integer tableSize();
 
+    @Query("SELECT MAX(index) FROM ProfileImage")
+    Integer maxIndex();
+
 }

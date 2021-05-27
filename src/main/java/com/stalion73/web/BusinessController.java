@@ -105,10 +105,7 @@ public class BusinessController {
             String username = (String)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             Supplier supplier = this.supplierService.findSupplierByUsername(username).get();
             
-            if(supplier.getSubscription()==SubscriptionType.PREMIUM &&!supplier.getExpiration().equals(null)){
-
-                if(supplier.getExpiration().after(new Date())) {
-
+            if(supplier.getSubscription()==SubscriptionType.PREMIUM){
                     supplier.addBusiness(business);
                     business.setSupplier(supplier);
                     Set<Servise> servises = business.getServices();
@@ -125,7 +122,6 @@ public class BusinessController {
                     this.supplierService.save(supplier);
                     headers.setLocation(ucBuilder.path("/business").buildAndExpand(business.getId()).toUri());
                     return ResponseEntity.status(HttpStatus.CREATED).headers(headers).body(business);
-                }
             }
             if(supplier.getBusiness().size()>=1){
 

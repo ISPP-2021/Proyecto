@@ -22,6 +22,9 @@ public interface SupplierRepository extends CrudRepository<Supplier, Integer>{
     @Query("SELECT count(x) FROM Supplier x")
     Integer tableSize();
 
+    @Query("SELECT MAX(index) FROM Supplier")
+    Integer maxIndex();
+
     @Modifying
 	@Query("delete from Supplier s where s.index =:index")
 	void deleteByIndex(@Param("index") Integer index);

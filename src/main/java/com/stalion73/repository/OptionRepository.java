@@ -18,5 +18,8 @@ public interface OptionRepository extends CrudRepository<Option, Integer> {
     @Query("SELECT count(x) FROM Option x")
     Integer tableSize();
 
+    @Query("SELECT MAX(index) FROM Option")
+    Integer maxIndex();
+
 
 }

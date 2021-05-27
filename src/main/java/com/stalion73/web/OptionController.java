@@ -141,7 +141,7 @@ public class OptionController {
 		Optional<Option> option = this.optionService.findById(id);
 		
 		if(option.isPresent()){
-            this.optionService.deleteById(id);
+            this.optionService.delete(option.get());
 			return ResponseEntity.noContent().build();
 
 		}else{

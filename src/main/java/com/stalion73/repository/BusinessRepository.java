@@ -32,6 +32,9 @@ public interface BusinessRepository extends CrudRepository<Business, Integer> {
 	@Query("SELECT count(x) FROM Business x")
     Integer tableSize();
 
+	@Query("SELECT MAX(index) FROM Business")
+    Integer maxIndex();
+
 	@Query("SELECT b FROM Business b WHERE b.index =:index")
     Optional<Business> findByIndex(@Param("index")Integer index);
 

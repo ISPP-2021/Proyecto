@@ -23,6 +23,9 @@ public interface ConsumerRepository extends CrudRepository<Consumer, Integer> {
   @Query("SELECT count(x) FROM Consumer x")
   Integer tableSize();
 
+  @Query("SELECT MAX(index) FROM Consumer")
+  Integer maxIndex();
+
   @Modifying
 	@Query("delete from Consumer c where c.index =:index")
 	void deleteByIndex(@Param("index") Integer index);

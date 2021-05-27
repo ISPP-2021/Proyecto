@@ -38,7 +38,8 @@ public class ImageService {
 
     @Transactional
     public void save(Image image) {
-        Integer index = image.getIndex() != null ? image.getIndex() : this.imageRepository.tableSize() + 1;
+        Integer index = image.getIndex() != null ? image.getIndex() : 
+            this.imageRepository.maxIndex() == null ? 1 : this.imageRepository.maxIndex() + 1;
 		image.setIndex(index);
         this.imageRepository.save(image);
     }

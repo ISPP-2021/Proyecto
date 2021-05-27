@@ -16,6 +16,9 @@ public interface ServiseRepository extends CrudRepository<Servise, Integer>{
     @Query("SELECT count(x) FROM Servise x")
     Integer tableSize();
 
+    @Query("SELECT MAX(index) FROM Servise")
+    Integer maxIndex();
+
     @Query("SELECT s FROM Servise s WHERE s.index =:index")
     Optional<Servise> findByIndex(@Param("index")Integer index);
 

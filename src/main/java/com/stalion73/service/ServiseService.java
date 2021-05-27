@@ -35,15 +35,15 @@ public class ServiseService {
 
     @Transactional
     public void save(Servise servise){
-		Integer index = servise.getIndex() != null ? servise.getIndex() : this.serviseRepository.tableSize() + 1;
+		Integer index = servise.getIndex() != null ? servise.getIndex() : this.serviseRepository.maxIndex() + 1;
 		servise.setIndex(index);
         serviseRepository.save(servise);
     }
 
     @Transactional
-    public void update(Integer id, Servise newServise){
-        assertNotNull(this.serviseRepository.findById(id).get());
-        Servise updatedServise = this.serviseRepository.findById(id).map(servise -> {
+    public void update(Integer index, Servise newServise){
+        assertNotNull(this.serviseRepository.findByIndex(index).get());
+        Servise updatedServise = this.serviseRepository.findByIndex(index).map(servise -> {
 			String name = newServise.getName() == null ? servise.getName() : newServise.getName();
 			servise.setName(name);
 			String description = newServise.getDescription() == null ? servise.getDescription()

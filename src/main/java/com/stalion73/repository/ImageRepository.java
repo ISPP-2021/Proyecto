@@ -28,5 +28,8 @@ public interface ImageRepository extends CrudRepository<Image, Integer> {
     @Query("SELECT count(x) FROM Image x")
     Integer tableSize();
 
+    @Query("SELECT MAX(index) FROM Image")
+    Integer maxIndex();
+
 
 }

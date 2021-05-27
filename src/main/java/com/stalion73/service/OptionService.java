@@ -29,7 +29,7 @@ public class OptionService {
 
     @Transactional
     public void save(Option option){
-		Integer index = option.getIndex() != null ? option.getIndex() : this.optionRepository.tableSize() + 1;
+		Integer index = option.getIndex() != null ? option.getIndex() : this.optionRepository.maxIndex() + 1;
 		option.setIndex(index);
         optionRepository.save(option);
     }
@@ -41,14 +41,10 @@ public class OptionService {
         optionRepository.delete(option);
     }
 
-    @Transactional
-    public void deleteById(Integer id){
-        optionRepository.deleteById(id);
-    }
 
     @Transactional
-    public void update(Integer id, Option newOption){
-        Option updatedOption = this.optionRepository.findById(id)
+    public void update(Integer index, Option newOption){
+        Option updatedOption = this.optionRepository.findByIndex(index)
                     .map(option-> {
                         Boolean automatedAccept = newOption.isAutomatedAccept() == false ? option.isAutomatedAccept() : newOption.isAutomatedAccept();
                         option.setAutomatedAccept(automatedAccept);
@@ -62,7 +58,7 @@ public class OptionService {
                         }
                     )
                     .orElseGet(()->{
-                        newOption.setIndex(id);
+                        newOption.setIndex(index);
                         this.optionRepository.save(newOption);
                         return newOption;
                     });

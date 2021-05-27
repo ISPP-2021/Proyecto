@@ -10,5 +10,8 @@ public interface AuthoritiesRepository extends  CrudRepository<Authorities, Stri
 
     @Query("SELECT count(x) FROM Authorities x")
     Integer tableSize();
+
+    @Query("SELECT MAX(index) FROM Authorities")
+    Integer maxIndex();
 	
 }

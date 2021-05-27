@@ -22,6 +22,9 @@ public interface BookingRepository extends CrudRepository<Booking,Integer>{
 	@Query("SELECT b FROM Booking b WHERE b.index =:index")
     Optional<Booking> findByIndex(@Param("index")Integer index);
 
+	@Query("SELECT MAX(index) FROM Booking")
+    Integer maxIndex();
+
 	@Query("SELECT count(x) FROM Booking x")
     Integer tableSize();
 
