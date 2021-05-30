@@ -15,8 +15,8 @@ spring:
         format_sql: true  
   datasource:  
     url: "jdbc:postgresql://ec2-99-80-200-225.eu-west-1.compute.amazonaws.com:5432/d15ccopo42lqjv"  
-    username: wodjyuaxnbpqnj  
-    password: d9e00795489bae695643b4a9209335279a267ccd84ac0a8b28374377ac5356f4
+    username: pcaazqsilzfoak  
+    password: be095ae58bfeda2bccde2b683f9ad7b1143c646dbbf2c4c5f83f8dd2d28c520d
     sqlScriptEncoding: UTF-8
     type: org.apache.tomcat.jdbc.pool.DataSource
 stripe:
