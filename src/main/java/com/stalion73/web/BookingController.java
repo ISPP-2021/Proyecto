@@ -239,7 +239,7 @@ public class BookingController {
                                                 .getAuthentication().getPrincipal()).get();
             Optional<Business> business = supplier.getBusiness().stream()
                                     .filter(x -> x.getServices().stream()
-                                                    .filter(y -> y.getId().equals(id_servise))
+                                                    .filter(y -> y.getIndex().equals(id_servise))
                                                     .findAny().isPresent())
                                     .findAny();
             if(business.isPresent()){
