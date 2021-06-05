@@ -1,6 +1,7 @@
 package com.stalion73.repository;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import com.stalion73.model.*;
@@ -29,6 +30,9 @@ public interface ConsumerRepository extends CrudRepository<Consumer, Integer> {
   @Modifying
 	@Query("delete from Consumer c where c.index =:index")
 	void deleteByIndex(@Param("index") Integer index);
+
+  @Query("SELECT c.email FROM Consumer c")
+  List<String> findAllEmails();
 
 
 }

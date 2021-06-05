@@ -1,6 +1,7 @@
 package com.stalion73.repository;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import com.stalion73.model.Supplier;
@@ -28,5 +29,8 @@ public interface SupplierRepository extends CrudRepository<Supplier, Integer>{
     @Modifying
 	@Query("delete from Supplier s where s.index =:index")
 	void deleteByIndex(@Param("index") Integer index);
+
+    @Query("SELECT s.email FROM Supplier s")
+    List<String> findAllEmails();
     
 }

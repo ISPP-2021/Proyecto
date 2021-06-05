@@ -96,4 +96,10 @@ public class ConsumerService {
     public void delete(Consumer consumer) {
         consumerRepository.delete(consumer);
     }
+
+
+    @Transactional
+    public List<String> findAllEmails(){
+        return consumerRepository.findAllEmails();
+    }
 }

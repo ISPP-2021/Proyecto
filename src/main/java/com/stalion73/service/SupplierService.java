@@ -1,6 +1,7 @@
 package com.stalion73.service;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -120,5 +121,10 @@ public class SupplierService {
                         return newSupplier;
                     });
         this.supplierRepository.save(updatedSupplier);
+    }
+
+    @Transactional
+    public List<String> findAllEmails(){
+        return supplierRepository.findAllEmails();
     }
 }
