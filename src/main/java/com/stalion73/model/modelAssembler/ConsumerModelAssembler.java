@@ -16,7 +16,7 @@ public class ConsumerModelAssembler implements RepresentationModelAssembler<Cons
   public EntityModel<Consumer> toModel(Consumer consumer) {
     // Unconditional links to single-item resource and aggregate root
     EntityModel<Consumer> consumerModel = EntityModel.of(consumer,
-        linkTo(methodOn(ConsumerController.class).one(consumer.getId())).withSelfRel(),
+        linkTo(methodOn(ConsumerController.class).one(consumer.getIndex())).withSelfRel(),
         linkTo(methodOn(ConsumerController.class).all()).withRel("/consumers"));
 
     return consumerModel;

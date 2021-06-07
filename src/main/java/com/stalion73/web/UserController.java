@@ -117,7 +117,7 @@ public class UserController {
 		    Supplier user = this.supplierService.findSupplierByUsername((String)SecurityContextHolder.getContext()
 												.getAuthentication().getPrincipal()).get();
 
-			Collection<Business> business = this.businessService.findBusinessBySupplierId(user.getId());
+			Collection<Business> business = this.businessService.findBusinessBySupplierIndex(user.getIndex());
 			if(business.isEmpty()){
 				return ResponseEntity.status(HttpStatus.OK).headers(headers).body(user);
 			}
@@ -146,8 +146,18 @@ public class UserController {
 					.withTitle("Error de validación")
 					.withDetail("El usuario no se ha podido validar correctamente."));
 		}else{
+			
 			//String token = getJWTToken(user)
 			//user.setToken(token)
+			List<String> emails = consumerService.findAllEmails();
+            if(emails.contains(consumer.getEmail())){
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .headers(headers)
+                        .body(Problem.create()
+                                .withTitle("Correo usado")
+                                .withDetail("Ya hay un usuario con este correo registrado."));
+            }
 			User user = consumer.getUser();
 			String username = user.getUsername();
 			if(this.consumerService.findConsumerByUsername(username).isPresent()
@@ -192,6 +202,15 @@ public class UserController {
 						.withTitle("Error de validación")
 						.withDetail("El usuario no se ha podido validadar correctamente."));
 		}else{
+			List<String> emails = supplierService.findAllEmails();
+            if(emails.contains(supplier.getEmail())){
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .headers(headers)
+                        .body(Problem.create()
+                                .withTitle("Correo usado")
+                                .withDetail("Ya hay un usuario con este correo registrado."));
+            }
 			//String token = getJWTToken(user)
 			//user.setToken(token)
 			User user = supplier.getUser();

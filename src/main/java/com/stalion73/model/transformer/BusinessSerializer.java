@@ -13,7 +13,7 @@ public class BusinessSerializer extends JsonSerializer<Business> {
    
     @Override
 	public void serialize(Business value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-		gen.writeString(value.getId().toString());		
+		gen.writeString(value.getIndex().toString());		
 	}
 
 }

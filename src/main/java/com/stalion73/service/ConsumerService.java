@@ -2,6 +2,9 @@ package com.stalion73.service;
 
 import java.util.Collection;
 import java.util.Optional;
+
+import javax.persistence.Index;
+
 import java.util.List;
 import java.util.ArrayList;
 
@@ -47,12 +50,14 @@ public class ConsumerService {
     }
     
     @Transactional(readOnly = true)
-    public Optional<Consumer> findById(Integer id){
-      return consumerRepository.findById(id);
+    public Optional<Consumer> findByIndex(Integer index){
+      return consumerRepository.findByIndex(index);
     }
 
     @Transactional
     public void save(Consumer consumer){
+		Integer index = consumer.getIndex() != null ? consumer.getIndex() : this.consumerRepository.maxIndex() + 1;
+		consumer.setIndex(index);
         consumerRepository.save(consumer);
         User user = consumer.getUser();
 		userService.saveUser(user);
@@ -62,13 +67,13 @@ public class ConsumerService {
     }
 
     @Transactional
-    public void deleteById(Integer id){
-        consumerRepository.deleteById(id);
+    public void deleteByIndex(Integer index){
+        consumerRepository.deleteByIndex(index);
     }
 
     @Transactional
-    public void update(Integer id, Consumer newConsumer){
-        Consumer updatedConsumer = this.consumerRepository.findById(id)
+    public void update(Integer index, Consumer newConsumer){
+        Consumer updatedConsumer = this.consumerRepository.findByIndex(index)
                     .map(consumer -> {
                         String name = newConsumer.getName() == null ? consumer.getName() : newConsumer.getName();
                         consumer.setName(name);
@@ -90,5 +95,11 @@ public class ConsumerService {
     @Transactional
     public void delete(Consumer consumer) {
         consumerRepository.delete(consumer);
+    }
+
+
+    @Transactional
+    public List<String> findAllEmails(){
+        return consumerRepository.findAllEmails();
     }
 }

@@ -42,7 +42,7 @@ public class OptionServiceTest {
 	@Test
 	void saveOptionTest() {
 		Option option = new Option();
-		option.setId(5);
+		option.setIndex(5);
 		option.setAutomatedAccept(true);
 		option.setGas(2);
 		option.setDefaultDeposit(0.6);

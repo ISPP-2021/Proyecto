@@ -34,7 +34,7 @@ public class ConsumerServiceTest {
 
 	@Test
 	void findConsumerByIdTest() {
-		Optional<Consumer> consumer = this.consumerService.findById(1);
+		Optional<Consumer> consumer = this.consumerService.findByIndex(1);
 		Assertions.assertTrue(consumer.get().getName().equals("José") && consumer.get().getLastname().equals("García")
 				&& consumer.get().getDni().equals("23487343A") && consumer.get().getEmail().equals("josito@gmail.com")
 				&& consumer.get().getUser().getUsername().equals("josito"));
@@ -54,15 +54,15 @@ public class ConsumerServiceTest {
 
 	@Test
 	void deleteConsumerByIdTest() {
-		Consumer consumer = this.consumerService.findById(1).get();
-		this.consumerService.deleteById(consumer.getId());
+		Consumer consumer = this.consumerService.findByIndex(1).get();
+		this.consumerService.deleteByIndex(consumer.getIndex());
 		List<Consumer> consumers = (List<Consumer>) this.consumerService.findAll();
 		Assertions.assertTrue(consumers.size() == count - 1);
 	}
 
 	@Test
 	void deleteConsumerTest() {
-		Consumer consumer = this.consumerService.findById(2).get();
+		Consumer consumer = this.consumerService.findByIndex(2).get();
 		this.consumerService.delete(consumer);
 		List<Consumer> consumers = (List<Consumer>) this.consumerService.findAll();
 		Assertions.assertTrue(consumers.size() == count - 1);

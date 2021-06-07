@@ -30,18 +30,20 @@ public class BookingService {
 	}
 
 	@Transactional(readOnly = true)
-	public Optional<Booking> findById(Integer id) {
-		return bookingRepository.findById(id);
+	public Optional<Booking> findByIndex(Integer index) {
+		return bookingRepository.findByIndex(index);
 	}
 
 	@Transactional
 	public void save(Booking booking) {
+		Integer index = booking.getIndex() != null ? booking.getIndex() : this.bookingRepository.maxIndex() + 1;
+		booking.setIndex(index);
 		bookingRepository.save(booking);
 	}
 
 	@Transactional
-	public void update(Integer id, Booking newBooking) {
-		Booking updatedBooking = this.bookingRepository.findById(id).map(booking -> {
+	public void update(Integer index, Booking newBooking) {
+		Booking updatedBooking = this.bookingRepository.findByIndex(index).map(booking -> {
 			Date bookDate = newBooking.getBookDate() == null ? booking.getBookDate() : newBooking.getBookDate();
 			booking.setBookDate(bookDate);
 			Date emisionDate = newBooking.getEmisionDate() == null ? booking.getEmisionDate()
@@ -60,8 +62,8 @@ public class BookingService {
 	}
 
 	@Transactional
-	public void deleteById(Integer id) {
-		bookingRepository.deleteById(id);
+	public void deleteByIndex(Integer index) {
+		bookingRepository.deleteByIndex(index);
 	}
 
 	@Transactional

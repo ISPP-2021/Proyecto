@@ -15,6 +15,8 @@
  */
 package com.stalion73.model;
 
+import java.util.UUID;
+
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -31,15 +33,26 @@ import javax.persistence.MappedSuperclass;
 public class BaseEntity {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	protected Integer id;
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	protected UUID id;
 
-	public Integer getId() {
+	protected Integer index;
+
+	
+	public UUID getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(UUID id) {
 		this.id = id;
+	}
+
+	public Integer getIndex() {
+		return index;
+	}
+
+	public void setIndex(Integer index) {
+		this.index = index;
 	}
 
 	public boolean isNew() {

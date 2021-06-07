@@ -67,8 +67,8 @@ public class StripeController {
         System.out.println(usuario);
         HttpHeaders headers = new HttpHeaders();
         SessionCreateParams params = new SessionCreateParams.Builder()
-                .setSuccessUrl("https://bico-ds4.netlify.app")
-                .setCancelUrl("https://bico-ds4.netlify.app")
+                .setSuccessUrl("https://bico.netlify.app")
+                .setCancelUrl("https://bico.netlify.app")
                 .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
                 .setClientReferenceId(usuario)
                 .setMode(SessionCreateParams.Mode.SUBSCRIPTION)
@@ -91,7 +91,7 @@ public class StripeController {
     @PostMapping("/subscription")
     public ResponseEntity<String> webhook(@RequestHeader("Stripe-Signature") String sigHeader,@RequestBody String body){
         String payload = body;
-        String endpointSecret = "whsec_T7OT824Ffd6MC8rzSvGy6HdzutO6bMS7";
+        String endpointSecret = "whsec_CMPKqBrrA9EXTjD08pTA1NNkL4xgdmM1";
 
         Event event = null;
 

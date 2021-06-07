@@ -24,7 +24,7 @@ public class AuthoritiesServiceTest {
 		User user = new User();
 		user.setUsername("josito");
 		Authorities authorities = new Authorities();
-		authorities.setId(48);
+		authorities.setIndex(48);
 		authorities.setAuthority("user");
 		authorities.setUser(user);
 		this.authoritiesService.saveAuthorities(authorities);
@@ -37,7 +37,7 @@ public class AuthoritiesServiceTest {
 		User user = new User();
 		user.setUsername("aug");
 		Authorities authorities = new Authorities();
-		authorities.setId(48);
+		authorities.setIndex(48);
 		authorities.setAuthority("owner");
 		authorities.setUser(user);
 		this.authoritiesService.saveAuthorities("aug", "owner");

@@ -29,18 +29,20 @@ public class BusinessService {
 	}
 
 	@Transactional(readOnly = true)
-	public Optional<Business> findById(Integer id) {
-		return businessRepository.findById(id);
+	public Optional<Business> findByIndex(Integer index) {
+		return businessRepository.findByIndex(index);
 	}
 
 	@Transactional
 	public void save(Business business) {
+		Integer index = business.getIndex() != null ? business.getIndex() : this.businessRepository.maxIndex() + 1;
+		business.setIndex(index);
 		businessRepository.save(business);
 	}
 
 	@Transactional
-	public void deleteById(Integer id) {
-		businessRepository.deleteById(id);
+	public void deleteByIndex(Integer index) {
+		businessRepository.deleteByIndex(index);
 	}
 
 	@Transactional
@@ -49,9 +51,9 @@ public class BusinessService {
 	}
 
 	@Transactional
-	public void update(Integer id, Business newBusiness) {
+	public void update(Integer index, Business newBusiness) {
 		// business(name, address, businessType, automatedAccept, Supplier, Servises)
-		Business updatedBusiness = this.businessRepository.findById(id).map(business -> {
+		Business updatedBusiness = this.businessRepository.findByIndex(index).map(business -> {
 			String name = newBusiness.getName() == null ? business.getName() : newBusiness.getName();
 			business.setName(name);
 			String address = newBusiness.getAddress() == null ? business.getAddress() : newBusiness.getAddress();
@@ -93,7 +95,7 @@ public class BusinessService {
 	}
 
     @Transactional
-    public Collection<Business> findBusinessBySupplierId(Integer supplierId) {
-        return this.businessRepository.findBusinessBySupplierId(supplierId);
+    public Collection<Business> findBusinessBySupplierIndex(Integer supplierIndex) {
+        return this.businessRepository.findBusinessBySupplierIndex(supplierIndex);
     }
 }

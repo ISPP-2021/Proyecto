@@ -31,6 +31,8 @@ public class AuthoritiesService {
 
 	@Transactional
 	public void saveAuthorities(Authorities authorities) throws DataAccessException {
+		Integer index = authorities.getIndex() != null ? authorities.getIndex() : this.authoritiesRepository.maxIndex() + 1;
+		authorities.setIndex(index);
 		authoritiesRepository.save(authorities);
 	}
 	

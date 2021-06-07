@@ -61,7 +61,7 @@ public class SupplierController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<?> one(@PathVariable("id") Integer id) {
-        Optional<Supplier> supplier = this.supplierService.findById(id);
+        Optional<Supplier> supplier = this.supplierService.findByIndex(id);
         HttpHeaders headers = new HttpHeaders();
         if (!supplier.isPresent()) {
             return ResponseEntity
@@ -119,7 +119,7 @@ public class SupplierController {
                 .body(Problem.create()
                         .withTitle("Datos incorrectos")
                         .withDetail("Algunos datos son incorrectos. Revisalos."));
-        }else if(!this.supplierService.findById(id).isPresent()){
+        }else if(!this.supplierService.findByIndex(id).isPresent()){
             return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
@@ -130,7 +130,7 @@ public class SupplierController {
         }else{
     
             this.supplierService.update(id, newSupplier);
-            Supplier updatedSupplier = this.supplierService.findById(id).get();
+            Supplier updatedSupplier = this.supplierService.findByIndex(id).get();
             return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
 					.headers(headers)
 					.body(updatedSupplier);
@@ -139,9 +139,9 @@ public class SupplierController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "application/json")
 	public ResponseEntity<?> delete(@PathVariable("id") Integer id){
-		Optional<Supplier> supplier = this.supplierService.findById(id);
+		Optional<Supplier> supplier = this.supplierService.findByIndex(id);
 		if(supplier.isPresent()){
-            this.supplierService.deleteBusinessBySupplierId(id);
+            this.supplierService.deleteBusinessBySupplierIndex(id);
             this.supplierService.delete(supplier.get());
 			return ResponseEntity.noContent().build();
 		}else{

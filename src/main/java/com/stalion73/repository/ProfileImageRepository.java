@@ -17,4 +17,10 @@ public interface ProfileImageRepository extends CrudRepository<ProfileImage, Int
     @Query("SELECT pic FROM ProfileImage pic WHERE pic.user.username LIKE :username")
     Optional<ProfileImage> findByUsername(@Param("username") String username);
 
+    @Query("SELECT count(x) FROM ProfileImage x")
+    Integer tableSize();
+
+    @Query("SELECT MAX(index) FROM ProfileImage")
+    Integer maxIndex();
+
 }
